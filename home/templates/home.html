@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  LeafyReads - Your Digital Bookshelf
+{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block body %}
+  <main>
+    <section class="hero-bg">
+      <div class="container">
+        <h1>Dive into Your Next Favorite Book</h1>
+        <p>LeafyReads is your personal reading sanctuary. Discover thousands of books, track your progress, and connect with a community of fellow readers.</p>
+        <form class="hero-search-form" onsubmit="event.preventDefault();">
+          <input type="text" placeholder="Search for books, authors, or genres..." />
+          <button type="submit" class="btn primary-btn">
+            <i data-lucide="search" style="width:1rem; height:1rem;"></i>
+            <span>Search</span>
+          </button>
+        </form>
+      </div>
+    </section>
+    <section class="bg-white">
+      <div class="container">
+        <div class="section-header">
+          <h2>New & Trending Reads</h2>
+          <p>Handpicked selections just for you.</p>
+        </div>
+        <div class="books-grid">
+          <div class="book-item">
+            <a href="{% url 'book' %}">
+            <img src="https://placehold.co/400x600/3B82F6/FFFFFF?text=The+Mind's+Maze" alt="Book Cover 1" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+            <h3>The Mind's Maze</h3>
+            <p>Alexandre Dusk</p>
+            </a>
+          </div>
+          <div class="book-item">
+            <img src="https://placehold.co/400x600/10B981/FFFFFF?text=Echoes+of+Jade" alt="Book Cover 2" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+            <h3>Echoes of Jade</h3>
+            <p>Lila Chen</p>
+          </div>
+          <div class="book-item">
+            <img src="https://placehold.co/400x600/F97316/FFFFFF?text=Starlight+Protocol" alt="Book Cover 3" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+            <h3>Starlight Protocol</h3>
+            <p>Kenji Tanaka</p>
+          </div>
+          <div class="book-item">
+            <img src="https://placehold.co/400x600/8B5CF6/FFFFFF?text=The+Last+Lighthouse" alt="Book Cover 4" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+            <h3>The Last Lighthouse</h3>
+            <p>Eleanor Vance</p>
+          </div>
+          <div class="book-item">
+            <img src="https://placehold.co/400x600/EC4899/FFFFFF?text=City+of+Whispers" alt="Book Cover 5" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+            <h3>City of Whispers</h3>
+            <p>Marcus Finch</p>
+          </div>
+          <div class="book-item">
+            <img src="https://placehold.co/400x600/6366F1/FFFFFF?text=Beneath+a+Paper+Sky" alt="Book Cover 6" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+            <h3>Beneath a Paper Sky</h3>
+            <p>Sarah Jones</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="container">
+        <div class="section-header">
+          <h2>Browse by Category</h2>
+          <p>Explore books by your favorite genres and topics.</p>
+        </div>
+        <div class="books-category-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="book" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Fiction</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="globe" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Non-Fiction</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="feather" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Poetry</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="star" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Fantasy</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="heart" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Romance</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="cpu" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Science Fiction</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="user" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Biography</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="book-open" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Classics</div>
+          </a>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="container">
+        <div class="section-header">
+          <h2>Everything You Need to Read More</h2>
+          <p>All the tools to enhance your reading experience.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon bg-blue">
+              <i data-lucide="library"></i>
+            </div>
+            <h3>Vast Digital Library</h3>
+            <p>Access thousands of titles from every genre imaginable, from timeless classics to modern bestsellers.</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon bg-green">
+              <i data-lucide="bar-chart-3"></i>
+            </div>
+            <h3>Track Your Progress</h3>
+            <p>Set reading goals, log your reading sessions, and watch your virtual bookshelf grow over time.</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon bg-purple">
+              <i data-lucide="highlighter"></i>
+            </div>
+            <h3>Notes & Highlights</h3>
+            <p>Capture your thoughts and favorite passages directly in the book. Never lose a great idea again.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bg-white">
+      <div class="container">
+        <div class="section-header">
+          <h2>Loved by Readers Everywhere</h2>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <p>"LeafyReads has completely changed how I read. I've discovered so many new authors and the progress tracking keeps me motivated. It's a must-have for any book lover!"</p>
+            <div class="testimonial-author">
+              <img src="https://i.pravatar.cc/150?img=1" alt="Avatar of Sarah K." />
+              <div>
+                <p class="author-name">Sarah K.</p>
+                <p class="author-title">Avid Reader</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <p>"Finally, a beautiful and functional app for my reading life. Joining the book club discussions has been amazing. It feels like a real community."</p>
+            <div class="testimonial-author">
+              <img src="https://i.pravatar.cc/150?img=2" alt="Avatar of Michael B." />
+              <div>
+                <p class="author-name">Michael B.</p>
+                <p class="author-title">Book Club Organizer</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
