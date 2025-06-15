@@ -1,7 +1,11 @@
 lucide.createIcons();
 $(function () {
   const $flipbook = $(".flipbook");
+  const $container = $("#container");
+  const $pages = $(".flipbook .page");
   const $spine = $("#spine-illusion");
+  const $prevBtn = $("#prevBtn");
+  const $nextBtn = $("#nextBtn");
   const flipForward = document.getElementById("flipForward");
   const flipBackward = document.getElementById("flipBackward");
   const fullscreenBtn = document.getElementById("fullscreenBtn");
@@ -9,22 +13,17 @@ $(function () {
   const muteBtn = document.getElementById("muteBtn");
   const click = new Audio("/static/sounds/click.mp3");
 
-  // Apply saved dark mode preference
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-    document.documentElement.classList.add("dark-mode");
-
-    if (darkModeBtn) {
-      darkModeBtn.innerText = "☀️";
-    }
-  }
-
+  let isFullscreen = false;
   let lastPage = 1;
   let isMuted = false;
 
+  // === Default (non-fullscreen) dimensions ===
+  let currentWidth = 880;
+  let currentHeight = 580;
+
   $flipbook.turn({
-    width: 1300,
-    height: 750,
+    width: currentWidth,
+    height: currentHeight,
     autoCenter: true,
     elevation: 50,
     gradients: true,
@@ -92,19 +91,42 @@ $(function () {
   function toggleFullscreen() {
     click.currentTime = 0;
     click.play();
+
     if (!document.fullscreenElement) {
-      document.documentElement
-        .requestFullscreen()
-        .catch((err) => alert(`Error: ${err.message}`));
+      document.documentElement.requestFullscreen().catch((err) => alert(`Error: ${err.message}`));
       fullscreenBtn.innerText = "🗗";
       document.querySelector(".co-header").style.display = "none";
+      isFullscreen = true;
+
+      applyFullscreenStyles();
     } else {
-      click.currentTime = 0;
-      click.play();
       document.exitFullscreen();
       fullscreenBtn.innerText = "⛶";
       document.querySelector(".co-header").style.display = "block";
+      isFullscreen = false;
+
+      applyNormalStyles();
     }
+  }
+
+  function applyFullscreenStyles() {
+    $container.css({ width: "1320px", height: "820px",marginTop:"0px" });
+    $flipbook.css({ width: "1300px", height: "800px" });
+    $pages.css({ width: "650px", height: "800px",fontSize:"0.85rem"});
+     $nextBtn.css({ right: "3%"});
+    $prevBtn.css({ left: "3%"});
+
+    $flipbook.turn("size", 1300, 800);
+  }
+
+  function applyNormalStyles() {
+    $container.css({ width: "900px", height: "600px",marginTop:"50px" });
+    $flipbook.css({ width: "880px", height: "580px" });
+    $pages.css({ width: "440px", height: "580px",fontSize:"0.6rem" });
+    $nextBtn.css({ right: "15%"});
+    $prevBtn.css({ left: "15%"});
+
+    $flipbook.turn("size", 880, 580);
   }
 
   function toggleDarkMode() {
@@ -114,7 +136,6 @@ $(function () {
     document.documentElement.classList.toggle("dark-mode");
 
     localStorage.setItem("darkMode", isDark ? "enabled" : "disabled");
-
     darkModeBtn.innerText = isDark ? "☀️" : "🌙";
   }
 
@@ -125,25 +146,35 @@ $(function () {
     flipBackward.muted = isMuted;
     muteBtn.innerText = isMuted ? "🔇" : "🔊";
   }
+
+  // === Dark mode on load ===
+  if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+    document.documentElement.classList.add("dark-mode");
+    if (darkModeBtn) darkModeBtn.innerText = "☀️";
+  }
 });
 
+// === Alert Logic ===
 const myAlert = document.getElementById("myAlert");
-const closeButton = myAlert.querySelector(".alert-close-btn");
+const closeButton = myAlert?.querySelector(".alert-close-btn");
 
 function hideAlert() {
-  myAlert.classList.add("alert-hide");
-  myAlert.addEventListener(
+  myAlert?.classList.add("alert-hide");
+  myAlert?.addEventListener(
     "transitionend",
     () => {
-      if (myAlert.classList.contains("alert-hide")) {
+      if (myAlert?.classList.contains("alert-hide")) {
         myAlert.remove();
       }
     },
     { once: true }
   );
 }
-setTimeout(hideAlert, 4000);
-closeButton.addEventListener("click", hideAlert);
+setTimeout(hideAlert, 3000);
+closeButton?.addEventListener("click", hideAlert);
+
+// === Shortcuts Panel ===
 const shortcutsBtn = document.getElementById("shortcutsBtn");
 const shortcutsPanel = document.getElementById("shortcutsPanel");
 const closeShortcuts = document.getElementById("closeShortcuts");
@@ -151,7 +182,6 @@ const closeShortcuts = document.getElementById("closeShortcuts");
 shortcutsBtn?.addEventListener("click", () => {
   shortcutsPanel.classList.toggle("visible");
 });
-
 closeShortcuts?.addEventListener("click", () => {
   shortcutsPanel.classList.remove("visible");
 });

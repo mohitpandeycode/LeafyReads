@@ -1,158 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-  {% load static %}
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Book</title>
-     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="{% static 'css/book.css' %}" />
-  </head>
-  <body>
-    <header class="co-header">
-      <div class="co-container">
-        <div class="co-header-content">
-          <a href="#" class="co-logo">
-            <i data-lucide="book-open"></i>
-            <span>LeafyReads</span>
-          </a>
+{% load static %}
 
-          <nav class="co-desktop-nav">
-            <a href="#">Features</a>
-            <a href="#">Pricing</a>
-            <a href="#">Community</a>
-          </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/book.css' %}" />
+  <style>
+    body {
+      background-image: url('{% static "images/backk.jpg" %}');
+      width: 100%;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      background-attachment: fixed;
+    }
 
-          <div class="co-header-actions">
-            <a href="#" class="co-login-btn">Log In</a>
-            <a href="#" class="co-btn co-primary-btn">Start Reading Now</a>
+  </style>
+</head>
+
+<body>
+  <header class="co-header">
+    <div class="co-container">
+      <div class="co-header-content">
+        <a href="#" class="co-logo">
+          <i data-lucide="book-open"></i>
+          <span>LeafyReads</span>
+        </a>
+
+        <nav class="co-desktop-nav">
+          <a href="#">Features</a>
+          <a href="#">Pricing</a>
+          <a href="#">Community</a>
+        </nav>
+
+        <div class="co-header-actions">
+          <a href="#" class="co-login-btn">Log In</a>
+          <a href="#" class="co-btn co-primary-btn">Start Reading Now</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="actionbtns">
+    <div id="myAlert" class="alert-container">
+      <span class="alert-message">Tip: Press "F" for batter expirence.</span>
+      <button class="alert-close-btn" aria-label="Close alert">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+        </svg>
+      </button>
+    </div>
+    <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
+    <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 70px; padding: 8px"
+      title="Dark Mode">🌙</button>
+    <button id="muteBtn" class="control-button fullscreen-button" style="top: 120px; padding: 8px"
+      title="Mute/Unmute Audio">🔊</button>
+    <button id="highlightBtn" class="control-button fullscreen-button" style="top: 170px; padding: 8px"
+      title="Highlighter">🖍️</button>
+    <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 220px; padding: 8px"
+      title="Keyboard Shortcuts">⌨️</button>
+  </div>
+
+  <main id="container-wrapper">
+    <button id="prevBtn" class="nav-button prev" aria-label="Previous"><span class="icon">&larr;</span></button>
+
+    <section id="container">
+      <div id="spine-illusion" hidden></div>
+
+      <div class="flipbook">
+        <article class="page cover" style="border: 2px solid white;">
+          <img src="{% static 'images/cover.jpg' %}" alt="Cover Image" class="cover-image" />
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+            <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste
+              delectus dignissimos itaque vero amet deleniti quos deserunt facere dolorum earum.</p>
           </div>
-        </div>
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+            <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor, sit amet consectetur adipisicing elit. At
+              eos ullam placeat! Quibusdam dolorem a est. Deserunt eum sed quos laudantium, atque repellat. Accusantium
+              vitae deserunt, debitis ipsum eveniet exercitationem laudantium fugiat nulla, quidem possimus magni, iste
+              tenetur. Enim eveniet eaque fugiat eligendi et neque autem beatae molestias nam ab, ducimus maxime error
+              quas architecto maiores! Omnis placeat voluptatibus cupiditate, magnam labore dolor quidem ullam obcaecati
+              doloremque fugiat. Architecto repudiandae ipsa autem vel dignissimos asperiores. Lorem ipsum dolor sit
+              amet consectetur adipisicing elit. Animi quos et maxime, rem commodi a velit temporibus! Fugiat nulla et
+              sapiente, rerum doloremque natus voluptas est aliquam, odio quo rem facilis tempore fugit, repellat
+              commodi quaerat quidem quis ut accusamus officia aut. Ipsam quos temporibus fugit corrupti saepe, ducimus
+              praesentium? Lorem ipsum dolor sit amet consectetur adipisicing elit. Id ipsa eveniet dicta maiores est
+              blanditiis, enim deserunt aspernatur odit optio, dolor nostrum tenetur, doloribus ipsum repellendus
+              voluptas sit. Quibusdam quo aliquid soluta culpa incidunt perspiciatis perferendis doloribus cum quas quam
+              facilis, voluptatem nulla inventore animi aspernatur reiciendis odit. Temporibus molestiae consequuntur
+              voluptatem sequi modi id dolores natus debitis at. Voluptate unde itaque ad, placeat reiciendis doloremque
+              ex temporibus repudiandae magni. Excepturi fugiat beatae neque aliquam pariatur ab unde in ea, doloremque
+              expedita adipisci aut aspernatur fuga recusandae vero quos est sed, perferendis facilis asperiores ipsum
+              nam explicabo? Autem sequi laboriosam nostrum deleniti in eaque voluptatem alias tempore, corporis vitae
+              non nulla saepe, voluptas ullam facilis dolores laudantium distinctio, doloremque minus nam aliquid ipsum.
+              Accusantium quis quae, totam error hic a. Nostrum, velit error! Eaque dolorem sapiente, dignissimos beatae
+              non nemo laborum rerum velit in fugiat magni, aspernatur consequatur dolores blanditiis ex neque hic quas
+              laboriosam magnam dolore. Dolores quod maxime repellat mollitia molestiae recusandae, nihil quam et, earum
+              voluptatibus dolorum aliquid inventore, eveniet ad numquam eius placeat. Reiciendis iusto ipsum facilis,
+              quidem numquam ad aspernatur illo fuga explicabo consectetur ipsa culpa sequi accusamus minima labore
+              placeat soluta, delectus, facere autem.</p>
+            <h3>So here I am</h3>
+            <p>what happend to you my boy tell me please</p>
+            <p>what happend to you my boy tell me please</p>
+          </div>
+        </article>
+        <article class="page">
+          <div class="pagestyle">
+            <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste
+              delectus dignissimos itaque vero amet deleniti quos deserunt facere dolorum earum.</p>
+          </div>
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+            <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor, sit amet consectetur adipisicing elit. At
+              eos ullam placeat! Quibusdam dolorem a est. Deserunt eum sed quos laudantium, atque repellat. Accusantium
+              vitae deserunt, debitis ipsum eveniet exercitationem laudantium fugiat nulla, quidem possimus magni, iste
+              tenetur. Enim eveniet eaque fugiat eligendi et neque autem beatae molestias nam ab, ducimus maxime error
+              quas architecto maiores! Omnis placeat voluptatibus cupiditate, magnam labore dolor quidem ullam obcaecati
+              doloremque fugiat. Architecto repudiandae ipsa autem vel dignissimos asperiores.</p>
+            <h3>So here I am</h3>
+            <p>what happend to you</p>
+          </div>
+        </article>
+        <article class="page">
+          <div class="pagestyle">
+            <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste
+              delectus dignissimos itaque vero amet deleniti quos deserunt facere dolorum earum.</p>
+          </div>
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+            <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor, sit amet consectetur adipisicing elit. At
+              eos ullam placeat! Quibusdam dolorem a est. Deserunt eum sed quos laudantium, atque repellat. Accusantium
+              vitae deserunt, debitis ipsum eveniet exercitationem laudantium fugiat nulla, quidem possimus magni, iste
+              tenetur. Enim eveniet eaque fugiat eligendi et neque autem beatae molestias nam ab, ducimus maxime error
+              quas architecto maiores! Omnis placeat voluptatibus cupiditate, magnam labore dolor quidem ullam obcaecati
+              doloremque fugiat. Architecto repudiandae ipsa autem vel dignissimos asperiores.</p>
+            <h3>So here I am</h3>
+            <p>what happend to you</p>
+          </div>
+        </article>
+
+        <article class="page">
+          <img src="page3.jpg" alt="Page 3" />
+        </article>
+
+        <article class="page">
+          <img src="page4.jpg" alt="Page 4" />
+        </article>
+
+        <article class="page cover" style="border: 2px solid white;">
+          <img src="{% static 'images/backcover.jpg' %}" alt="Back Cover Image" class="cover-image" />
+        </article>
       </div>
-    </header>
-    <div class="actionbtns">
-      <div id="myAlert" class="alert-container">
-        <span class="alert-message">Tip: Press "F" for batter expirence.</span>
-        <button class="alert-close-btn" aria-label="Close alert">
-          <svg viewBox="0 0 24 24">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-          </svg>
-        </button>
-      </div>
-      <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
-      <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 70px; padding: 8px" title="Dark Mode">🌙</button>
-      <button id="muteBtn" class="control-button fullscreen-button" style="top: 120px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
-      <button id="highlightBtn" class="control-button fullscreen-button" style="top: 170px; padding: 8px" title="Highlighter">🖍️</button>
-      <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 220px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
+    </section>
+
+    <button id="nextBtn" class="nav-button next" aria-label="Next"><span class="icon">&rarr;</span></button>
+  </main>
+
+  <div id="progress-bar-container" aria-label="Page Progress">
+    <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+  </div>
+
+  <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
+  <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
+  <div id="shortcutsPanel" class="shortcuts-panel">
+    <div class="shortcuts-header">
+      <h2>Keyboard Shortcuts</h2>
+      <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
     </div>
+    <ul>
+      <li>
+        <b>( ᖴ )</b> ☛ Fullscreen Mode
+      </li>
+      <li>
+        <b>( D )</b> ☛ Dark Mode/Light Mode
+      </li>
+      <li>
+        <b>( M )</b> ☛ Mute/Unmute
+      </li>
+      <li>
+        <b>( H )</b> ☛ Highlighter Pen
+      </li>
+      <li>
+        <b>(➡️)</b> ☛ Next Page
+      </li>
+      <li>
+        <b>(⬅️)</b> ☛ Previous Page
+      </li>
+    </ul>
+  </div>
 
-    <main id="container-wrapper">
-      <button id="prevBtn" class="nav-button prev" aria-label="Previous"><span class="icon">&larr;</span></button>
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/turn.min.js' %}"></script>
+  <script src="{% static 'js/highlight.js' %}"></script>
+  <script src="{% static 'js/book.js' %}"></script>
+</body>
 
-      <section id="container">
-        <div id="spine-illusion" hidden></div>
-
-        <div class="flipbook">
-          <article class="page cover" style="border: 2px solid white;">
-            <img src="{% static 'images/cover.jpg' %}" alt="Cover Image" class="cover-image" />
-          </article>
-
-          <article class="page">
-            <div class="pagestyle">
-              <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste delectus dignissimos itaque vero amet deleniti quos deserunt facere dolorum earum.</p>
-            </div>
-          </article>
-
-          <article class="page">
-            <div class="pagestyle">
-              <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor, sit amet consectetur adipisicing elit. At eos ullam placeat! Quibusdam dolorem a est. Deserunt eum sed quos laudantium, atque repellat. Accusantium vitae deserunt, debitis ipsum eveniet exercitationem laudantium fugiat nulla, quidem possimus magni, iste tenetur. Enim eveniet eaque fugiat eligendi et neque autem beatae molestias nam ab, ducimus maxime error quas architecto maiores! Omnis placeat voluptatibus cupiditate, magnam labore dolor quidem ullam obcaecati doloremque fugiat. Architecto repudiandae ipsa autem vel dignissimos asperiores.</p>
-              <h3>So here I am</h3>
-              <p>what happend to you</p>
-            </div>
-          </article>
-          <article class="page">
-            <div class="pagestyle">
-              <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste delectus dignissimos itaque vero amet deleniti quos deserunt facere dolorum earum.</p>
-            </div>
-          </article>
-
-          <article class="page">
-            <div class="pagestyle">
-              <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor, sit amet consectetur adipisicing elit. At eos ullam placeat! Quibusdam dolorem a est. Deserunt eum sed quos laudantium, atque repellat. Accusantium vitae deserunt, debitis ipsum eveniet exercitationem laudantium fugiat nulla, quidem possimus magni, iste tenetur. Enim eveniet eaque fugiat eligendi et neque autem beatae molestias nam ab, ducimus maxime error quas architecto maiores! Omnis placeat voluptatibus cupiditate, magnam labore dolor quidem ullam obcaecati doloremque fugiat. Architecto repudiandae ipsa autem vel dignissimos asperiores.</p>
-              <h3>So here I am</h3>
-              <p>what happend to you</p>
-            </div>
-          </article>
-          <article class="page">
-            <div class="pagestyle">
-              <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste delectus dignissimos itaque vero amet deleniti quos deserunt facere dolorum earum.</p>
-            </div>
-          </article>
-
-          <article class="page">
-            <div class="pagestyle">
-              <p>Hi everyone. Lorem ipsum dolor sit amet... Lorem ipsum dolor, sit amet consectetur adipisicing elit. At eos ullam placeat! Quibusdam dolorem a est. Deserunt eum sed quos laudantium, atque repellat. Accusantium vitae deserunt, debitis ipsum eveniet exercitationem laudantium fugiat nulla, quidem possimus magni, iste tenetur. Enim eveniet eaque fugiat eligendi et neque autem beatae molestias nam ab, ducimus maxime error quas architecto maiores! Omnis placeat voluptatibus cupiditate, magnam labore dolor quidem ullam obcaecati doloremque fugiat. Architecto repudiandae ipsa autem vel dignissimos asperiores.</p>
-              <h3>So here I am</h3>
-              <p>what happend to you</p>
-            </div>
-          </article>
-
-          <article class="page">
-            <img src="page3.jpg" alt="Page 3" />
-          </article>
-
-          <article class="page">
-            <img src="page4.jpg" alt="Page 4" />
-          </article>
-
-          <article class="page cover" style="border: 2px solid white;">
-            <img src="{% static 'images/backcover.jpg' %}" alt="Back Cover Image" class="cover-image" />
-          </article>
-        </div>
-      </section>
-
-      <button id="nextBtn" class="nav-button next" aria-label="Next"><span class="icon">&rarr;</span></button>
-    </main>
-
-    <div id="progress-bar-container" aria-label="Page Progress">
-      <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-    </div>
-
-    <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
-    <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
-    <div id="shortcutsPanel" class="shortcuts-panel">
-      <div class="shortcuts-header">
-        <h2>Keyboard Shortcuts</h2>
-        <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
-      </div>
-      <ul>
-        <li>
-          <b>ᖴ</b> ☛ Fullscreen Mode
-        </li>
-        <li>
-          <b>D</b> ☛ Dark Mode/Light Mode
-        </li>
-        <li>
-          <b>M</b> ☛ Mute/Unmute
-        </li>
-        <li>
-          <b>H</b> ☛ Highlighter Pen
-        </li>
-        <li>
-          <b>➡️</b> ☛ Next Page
-        </li>
-        <li>
-          <b>⬅️</b> ☛ Previous Page
-        </li>
-      </ul>
-    </div>
-
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/turn.min.js' %}"></script>
-    <script src="{% static 'js/highlight.js' %}"></script>
-    <script src="{% static 'js/book.js' %}"></script>
-  </body>
 </html>

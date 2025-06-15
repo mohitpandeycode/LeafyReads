@@ -15,22 +15,12 @@ body {
 }
 
 #container-wrapper {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
+
 }
 
-#container {
-    position: relative;
-    width: 1300px;
-    height: 750px;
-    border-radius: 20px;
-    z-index: 1;
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
 /* CSS Reset and Base Styles (retained as they are global/utility-like) */
 :root {
     --color-primary: #3B82F6;
@@ -219,6 +209,7 @@ ul {
 /* Responsive Media Queries */
 
 @media (min-width: 640px) {
+
     /* sm */
     .co-header-actions .co-login-btn {
         display: inline;
@@ -226,6 +217,7 @@ ul {
 }
 
 @media (min-width: 768px) {
+
     /* md */
     .co-desktop-nav {
         display: flex;
@@ -271,23 +263,38 @@ ul {
     transition: background 0.5s;
 }
 
+#container {
+    position: relative;
+    width: 900px;
+    height: 600px;
+    border-radius: 20px;
+    padding-left: 20px;
+    padding-top: 20px;
+    margin-top: 50px;
+    z-index: 1;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgb(81 81 81 / 6%);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
 
 .flipbook {
-    width: 1300px;
-    height: 750px;
+    width: 880px;
+    height: 580px;
     position: relative;
     z-index: 1;
 }
 
 .flipbook .page {
-    width: 650px;
-    height: 750px;
+    width: 440px;
+    height: 580px;
     background: white;
     overflow: hidden;
     display: flex;
     align-items: start;
     justify-content: start;
-    font-size: 16px;
+    font-size: 0.6rem;
     box-sizing: border-box;
     border-radius: 20px;
     transition: background 0.5s, color 0.5s;
@@ -326,11 +333,10 @@ ul {
     display: block;
 }
 
-.page-wrapper{
+.page-wrapper {
     border-radius: 20px;
-     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.245),
-              /* Second shadow: slightly larger and softer, for more diffused light */
-              0 8px 24px rgba(0, 0, 0, 0.245);
+    filter: drop-shadow(4px 4px 12px rgba(0, 0, 0, 0.445));
+
 }
 
 .fullscreen-button {
@@ -360,15 +366,10 @@ body.dark-mode {
     color: #f0f0f0;
 }
 
-html.dark-mode #container-wrapper,
-body.dark-mode #container-wrapper,
-html.dark-mode .flipbook,
-body.dark-mode .flipbook {
-    background: #1A202C;
-}
 
 body.dark-mode #container {
     border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.048);
 }
 
 body.dark-mode .flipbook .page {
@@ -400,17 +401,15 @@ body.dark-mode #spine-illusion {
             rgba(255, 255, 255, 0.0) 100%) !important;
 }
 
-body.dark-mode .page-wrapper{
+body.dark-mode .page-wrapper {
     border-radius: 20px;
-box-shadow: 0 4px 8px rgba(130, 130, 130, 0.245),
-            0 8px 24px rgba(130, 130, 130, 0.245);
+    filter: drop-shadow(4px 6px 12px rgba(168, 168, 168, 0.285));
 
 }
 
 
 .nav-button {
-    position: relative;
-    padding: 10px 20px;
+    padding: 10px 15px;
     transform: translateY(-50%);
     background: linear-gradient(to bottom right, #ffffff, #f0f0f0);
     border: none;
@@ -422,9 +421,6 @@ box-shadow: 0 4px 8px rgba(130, 130, 130, 0.245),
     cursor: pointer;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .nav-button:hover {
@@ -440,11 +436,17 @@ box-shadow: 0 4px 8px rgba(130, 130, 130, 0.245),
 }
 
 .nav-button.prev {
-    left: 40px;
+    position: absolute;
+    left: 15%;
+    top: 50%;
+    z-index: 9999;
 }
 
 .nav-button.next {
-    right: 40px;
+    position: absolute;
+    right: 15%;
+    top: 50%;
+    z-index: 9999;
 }
 
 .nav-button.prev:hover .icon {
@@ -481,12 +483,12 @@ box-shadow: 0 4px 8px rgba(130, 130, 130, 0.245),
 
 #progress-bar-container {
     position: absolute;
-    bottom: 20px;
+    bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
     height: 5px;
-    background: rgba(200, 200, 200, 0.471);
+    background: rgba(129, 129, 129, 0.471);
     border-radius: 20px;
     overflow: hidden;
     z-index: 999;
@@ -502,7 +504,7 @@ box-shadow: 0 4px 8px rgba(130, 130, 130, 0.245),
 
 /* Dark mode adjustment */
 body.dark-mode #progress-bar-container {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(217, 217, 217, 0.792);
 }
 
 body.dark-mode #progress-bar {
@@ -589,109 +591,114 @@ body.dark-mode #progress-bar {
     pointer-events: none;
 }
 
-body, * {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
+body,
+* {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 /* Allow selection only inside #container */
-#container, #container * {
-  user-select: text;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
+#container,
+#container * {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
 }
 
 .highlighted {
-  background-color: rgb(255 118 0 / 88%);
-  border-radius: 3px;
-  padding: 0 2px;
+    background-color: rgb(255 118 0 / 88%);
+    border-radius: 3px;
+    padding: 0 2px;
 }
-.shortcuts-panel {
-  position: fixed;
-  top: 80px;
-  right: 75px;
-  width: 255px;
-  max-height: 85vh;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(8px);
-  color: #222;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  padding: 20px;
-  z-index: 1000;
 
-  opacity: 0;
-  transform: translateX(100%);
-  pointer-events: none;
-  transition: all 0.35s ease;
+.shortcuts-panel {
+    position: fixed;
+    top: 80px;
+    right: 75px;
+    width: 255px;
+    max-height: 85vh;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    color: #222;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    z-index: 1000;
+
+    opacity: 0;
+    transform: translateX(100%);
+    pointer-events: none;
+    transition: all 0.35s ease;
 }
 
 .shortcuts-panel.visible {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
 }
 
 .shortcuts-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
 .shortcuts-header h2 {
-  margin: 0;
-  font-size: 20px;
+    margin: 0;
+    font-size: 20px;
 }
+
 .shortcuts-header b {
-  font-size:18px;
+    font-size: 18px;
 }
 
 
 #closeShortcuts {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #555;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
 }
 
 #closeShortcuts:hover {
-  color: #d00;
+    color: #d00;
 }
 
 .shortcuts-panel ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .shortcuts-panel li {
-  padding: 4px 0;
-  border-bottom: 1px solid #b6b6b6;
-  font-size: 16px;
+    padding: 4px 0;
+    border-bottom: 1px solid #b6b6b6;
+    font-size: 16px;
 }
 
 .shortcuts-panel li:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
+
 body.dark-mode .shortcuts-panel {
-  background: rgba(40, 40, 40, 0.25);
-  color: #fff;
-  border: 1px solid #555;
+    background: rgba(40, 40, 40, 0.25);
+    color: #fff;
+    border: 1px solid #555;
 }
 
 body.dark-mode #closeShortcuts {
-  color: #ccc;
+    color: #ccc;
 }
 
 body.dark-mode #closeShortcuts:hover {
-  color: #ff4d4d;
+    color: #ff4d4d;
 }
 
 body.dark-mode .shortcuts-panel li {
-  border-bottom: 1px solid #444;
+    border-bottom: 1px solid #444;
 }
