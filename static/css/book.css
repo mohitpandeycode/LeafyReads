@@ -286,6 +286,7 @@ ul {
     z-index: 1;
 }
 
+
 .flipbook .page {
     width: 440px;
     height: 580px;
@@ -294,7 +295,7 @@ ul {
     display: flex;
     align-items: start;
     justify-content: start;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     box-sizing: border-box;
     border-radius: 20px;
     transition: background 0.5s, color 0.5s;
@@ -304,6 +305,12 @@ ul {
 
 .pagestyle {
     padding: 20px;
+}
+.pagestyle img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 1rem;
 }
 
 .flipbook .page.cover {
@@ -322,16 +329,11 @@ ul {
 .cover-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
     border-radius: 20px;
 }
 
-.flipbook .page img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-    display: block;
-}
+
 
 .page-wrapper {
     border-radius: 20px;
@@ -373,7 +375,7 @@ body.dark-mode #container {
 }
 
 body.dark-mode .flipbook .page {
-    background: #202c39;
+    background: #2f2f2f;
     color: #f0f0f0;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: none !important;
@@ -599,13 +601,14 @@ body,
     -ms-user-select: none;
 }
 
-/* Allow selection only inside #container */
-#container,
-#container * {
-    user-select: text;
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
+
+
+.allow-selection,
+.allow-selection * {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
 }
 
 .highlighted {

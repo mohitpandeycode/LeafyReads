@@ -130,7 +130,7 @@ $(function () {
   function applyFullscreenStyles() {
     $container.css({ width: "1320px", height: "820px", marginTop: "0px" });
     $flipbook.css({ width: "1300px", height: "800px" });
-    $pages.css({ width: "650px", height: "800px", fontSize: "0.85rem" });
+    $pages.css({ width: "650px", height: "800px", fontSize: "1rem" });
     $nextBtn.css({ right: "3%" });
     $prevBtn.css({ left: "3%" });
 
@@ -141,7 +141,7 @@ $(function () {
   function applyNormalStyles() {
     $container.css({ width: "900px", height: "600px", marginTop: "50px" });
     $flipbook.css({ width: "880px", height: "580px" });
-    $pages.css({ width: "440px", height: "580px", fontSize: "0.6rem" });
+    $pages.css({ width: "440px", height: "580px", fontSize: "0.7rem" });
     $nextBtn.css({ right: "15%" });
     $prevBtn.css({ left: "15%" });
 

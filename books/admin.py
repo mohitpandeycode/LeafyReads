@@ -13,10 +13,6 @@ class CategoryAdmin(admin.ModelAdmin):
 class GenreAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
-class BookPageInline(admin.TabularInline):
-    model = BookPage
-    extra = 0
-
 class BookContentInline(admin.StackedInline):
     model = BookContent
     extra = 0
@@ -27,18 +23,12 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ('genre', 'category', 'is_published')
     search_fields = ('title', 'author', 'isbn')
     prepopulated_fields = {'slug': ('title',)}
-    inlines = [BookContentInline, BookPageInline]
+
 
 @admin.register(BookContent)
 class BookContentAdmin(admin.ModelAdmin):
     list_display = ('book', 'updated_at')
     search_fields = ('book__title',)
-
-@admin.register(BookPage)
-class BookPageAdmin(admin.ModelAdmin):
-    list_display = ('book', 'page_number')
-    list_filter = ('book',)
-    search_fields = ('book__title', 'content')
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):

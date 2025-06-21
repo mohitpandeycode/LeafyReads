@@ -1,18 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  {% load static %}
+{% load static %}
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Book</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="{% static 'css/book.css' %}" />
-    <style>
-               body {
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/book.css' %}" />
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const loaderOverlay = document.getElementById('loader-overlay')
+      const mainContent = document.getElementById('container-wrapper')
+
+      setTimeout(() => {
+
+        loaderOverlay.classList.add('hidden')
+
+        loaderOverlay.addEventListener(
+          'transitionend',
+          function () {
+            if (loaderOverlay.classList.contains('hidden')) {
+              loaderOverlay.remove()
+              document.body.style.overflow = ''
+              mainContent.classList.add('visible')
+            }
+          },
+          { once: true }
+        )
+        if (loaderOverlay.style.opacity === '0') {
+          mainContent.classList.add('visible')
+          loaderOverlay.remove()
+          document.body.style.overflow = ''
+        }
+      }, 1500)
+    })
+  </script>
+  <style>
+    body {
       background-image: url('{% static "images/backk.jpg" %}');
       width: 100%;
       background-repeat: no-repeat;
@@ -20,110 +48,266 @@
       background-size: cover;
       background-attachment: fixed;
     }
-    </style>
-  </head>
 
-  <body>
-    <header class="co-header">
-      <div class="co-container">
-        <div class="co-header-content">
-          <a href="/" class="co-logo">
-            <i data-lucide="book-open"></i>
-            <span>LeafyReads</span>
-          </a>
+    /* Loader Overlay */
+    #loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      /* White background for loader */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      /* Ensure it's on top of everything */
+      opacity: 1;
+      transition: opacity 0.8s ease-out;
+      /* Smooth fade-out */
+    }
 
-          <nav class="co-desktop-nav">
-            <a href="#">Features</a>
-            <a href="#">Pricing</a>
-            <a href="#">Community</a>
-          </nav>
+    /* Hidden class to fade out the loader */
+    #loader-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+      /* Disable interaction once hidden */
+    }
 
-          <div class="co-header-actions">
-            <a href="#" class="co-login-btn">Log In</a>
-            <a href="#" class="co-btn co-primary-btn">Start Reading Now</a>
+    /* Loader Spinner (simple CSS spinner) */
+    #loader-spinner {
+      border: 6px solid #f3f3f3;
+      /* Light grey */
+      border-top: 6px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      /* Spin animation */
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loader-overlay">
+    <div id="loader-spinner"></div>
+  </div>
+  <header class="co-header">
+    <div class="co-container">
+      <div class="co-header-content">
+        <a href="/" class="co-logo">
+          <i data-lucide="book-open"></i>
+          <span>LeafyReads</span>
+        </a>
+
+        <nav class="co-desktop-nav">
+          <a href="#">Features</a>
+          <a href="#">Pricing</a>
+          <a href="#">Community</a>
+        </nav>
+
+        <div class="co-header-actions">
+          <a href="#" class="co-login-btn">Log In</a>
+          <a href="#" class="co-btn co-primary-btn">Start Reading Now</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="actionbtns">
+    <div id="myAlert" class="alert-container">
+      <span class="alert-message">Tip : Press "F" for batter expirence.</span>
+      <button class="alert-close-btn" aria-label="Close alert">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+        </svg>
+      </button>
+    </div>
+    <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
+    <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 70px; padding: 8px"
+      title="Dark Mode">🌙</button>
+    <button id="muteBtn" class="control-button fullscreen-button" style="top: 120px; padding: 8px"
+      title="Mute/Unmute Audio">🔊</button>
+    <button id="highlightBtn" class="control-button fullscreen-button" style="top: 170px; padding: 8px"
+      title="Highlighter">🖍️</button>
+    <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 220px; padding: 8px"
+      title="Keyboard Shortcuts">⌨️</button>
+  </div>
+
+  <main id="container-wrapper">
+    <button id="prevBtn" class="nav-button prev" aria-label="Previous"><span class="icon">&larr;</span></button>
+
+    <section id="container">
+      <div id="spine-illusion" hidden></div>
+
+      <div class="flipbook">
+        <article class="page hard cover" style="border: 2px solid white;">
+          <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" />
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+                {% for paragraph in bookcontent.splitlines %}
+                <p>{{ paragraph }}</p>
+              {% endfor %}
           </div>
-        </div>
+        </article>
+
+
+        <article class="page cover hard" style="border: 2px solid white;">
+          <img src="{{ book.cover_back.url }}" alt="Back Cover Image" class="cover-image" />
+        </article>
       </div>
-    </header>
-    <div class="actionbtns">
-      <div id="myAlert" class="alert-container">
-        <span class="alert-message">Tip : Press "F" for batter expirence.</span>
-        <button class="alert-close-btn" aria-label="Close alert">
-          <svg viewBox="0 0 24 24">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-          </svg>
-        </button>
-      </div>
-      <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
-      <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 70px; padding: 8px" title="Dark Mode">🌙</button>
-      <button id="muteBtn" class="control-button fullscreen-button" style="top: 120px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
-      <button id="highlightBtn" class="control-button fullscreen-button" style="top: 170px; padding: 8px" title="Highlighter">🖍️</button>
-      <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 220px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
+    </section>
+
+    <button id="nextBtn" class="nav-button next" aria-label="Next"><span class="icon">&rarr;</span></button>
+  </main>
+
+  <div id="progress-bar-container" aria-label="Page Progress">
+    <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+  </div>
+
+  <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
+  <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
+  <div id="shortcutsPanel" class="shortcuts-panel">
+    <div class="shortcuts-header">
+      <h2>Keyboard Shortcuts</h2>
+      <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
     </div>
+    <ul>
+      <li>
+        <b>( ᖴ )</b> ☛ Fullscreen Mode
+      </li>
+      <li>
+        <b>( D )</b> ☛ Dark Mode/Light Mode
+      </li>
+      <li>
+        <b>( M )</b> ☛ Mute/Unmute
+      </li>
+      <li>
+        <b>( H )</b> ☛ Highlighter Pen
+      </li>
+      <li>
+        <b>(➡️)</b> ☛ Next Page
+      </li>
+      <li>
+        <b>(⬅️)</b> ☛ Previous Page
+      </li>
+    </ul>
+  </div>
 
-    <main id="container-wrapper">
-      <button id="prevBtn" class="nav-button prev" aria-label="Previous"><span class="icon">&larr;</span></button>
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/turn.min.js' %}"></script>
+  <script src="{% static 'js/highlight.js' %}"></script>
+  <script src="{% static 'js/book.js' %}"></script>
+  <script>
+    function paginateBookContent() {
+      const flipbook = document.querySelector('.flipbook')
 
-      <section id="container">
-        <div id="spine-illusion" hidden></div>
+      const frontCover = flipbook.querySelector('article.page.cover.hard:first-child')?.cloneNode(true)
+      const backCover = flipbook.querySelector('article.page.cover.hard:last-child')?.cloneNode(true)
 
-        <div class="flipbook">
-          <article class="page hard cover" style="border: 2px solid white;">
-            <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" />
-          </article>
-          {% for page in pages %}
-            <article class="page">
-              <div class="pagestyle">{{ page.content|linebreaks }}</div>
-            </article>
-          {% endfor %}
-          {% if not pages|length|divisibleby:2 %}
-            <article class="page cover hard" style="border: 2px solid white;"></article>
-          {% endif %}
-          <article class="page cover hard" style="border: 2px solid white;">
-            <img src="{{ book.cover_back.url }}" alt="Back Cover Image" class="cover-image" />
-          </article>
-        </div>
-      </section>
+      const originalPage = flipbook.querySelector('article.page:not(.cover)')
+      if (!originalPage) return
 
-      <button id="nextBtn" class="nav-button next" aria-label="Next"><span class="icon">&rarr;</span></button>
-    </main>
+      const originalContentHTML = originalPage.querySelector('.pagestyle')?.innerHTML || ''
 
-    <div id="progress-bar-container" aria-label="Page Progress">
-      <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-    </div>
+      // Parse content into individual elements
+      const parser = document.createElement('div')
+      parser.innerHTML = originalContentHTML
+      const elements = Array.from(parser.childNodes)
 
-    <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
-    <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
-    <div id="shortcutsPanel" class="shortcuts-panel">
-      <div class="shortcuts-header">
-        <h2>Keyboard Shortcuts</h2>
-        <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
-      </div>
-      <ul>
-        <li>
-          <b>( ᖴ )</b> ☛ Fullscreen Mode
-        </li>
-        <li>
-          <b>( D )</b> ☛ Dark Mode/Light Mode
-        </li>
-        <li>
-          <b>( M )</b> ☛ Mute/Unmute
-        </li>
-        <li>
-          <b>( H )</b> ☛ Highlighter Pen
-        </li>
-        <li>
-          <b>(➡️)</b> ☛ Next Page
-        </li>
-        <li>
-          <b>(⬅️)</b> ☛ Previous Page
-        </li>
-      </ul>
-    </div>
+      // Measurement container
+      const tempPage = document.createElement('div')
+      tempPage.style.width = '440px'
+      tempPage.style.height = '510px'
+      tempPage.style.position = 'absolute'
+      tempPage.style.visibility = 'hidden'
+      tempPage.style.overflow = 'hidden'
+      tempPage.style.padding = '20px'
+      tempPage.style.fontSize = '0.7rem'
+      tempPage.style.boxSizing = 'border-box'
+      tempPage.style.lineHeight = '1.4'
+      tempPage.className = 'pagestyle'
+      document.body.appendChild(tempPage)
 
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/turn.min.js' %}"></script>
-    <script src="{% static 'js/highlight.js' %}"></script>
-    <script src="{% static 'js/book.js' %}"></script>
-  </body>
+      const maxHeight = tempPage.clientHeight
+
+      let pages = []
+      let currentPage = document.createElement('div')
+      currentPage.className = 'pagestyle'
+
+      elements.forEach((el) => {
+        const clone = el.cloneNode(true)
+
+        // Test fit
+        currentPage.appendChild(clone)
+        tempPage.innerHTML = currentPage.innerHTML
+
+        if (tempPage.scrollHeight > maxHeight) {
+          // Remove the last clone that caused overflow
+          currentPage.removeChild(clone)
+
+          // Save the page
+          pages.push(currentPage.innerHTML)
+
+          // Start new page with the current (overflowing) element
+          currentPage = document.createElement('div')
+          currentPage.className = 'pagestyle'
+          currentPage.appendChild(clone)
+
+          // Test if single element itself overflows page
+          tempPage.innerHTML = currentPage.innerHTML
+          if (tempPage.scrollHeight > maxHeight) {
+            // Forcefully split large single blocks (like images or big <p>)
+            pages.push(currentPage.innerHTML)
+            currentPage = document.createElement('div')
+            currentPage.className = 'pagestyle'
+          }
+        }
+      })
+
+      // Push last page
+      if (currentPage.childNodes.length > 0) {
+        pages.push(currentPage.innerHTML)
+      }
+
+      document.body.removeChild(tempPage)
+
+      // Rebuild flipbook
+      flipbook.innerHTML = ''
+      if (frontCover) flipbook.appendChild(frontCover)
+
+      pages.forEach((html) => {
+        const article = document.createElement('article')
+        article.className = 'page'
+
+        const inner = document.createElement('div')
+        inner.className = 'pagestyle'
+        inner.innerHTML = html
+
+        article.appendChild(inner)
+        flipbook.appendChild(article)
+      })
+
+      if (backCover) flipbook.appendChild(backCover)
+    }
+
+    // Call function after DOM is loaded
+    window.addEventListener('DOMContentLoaded', paginateBookContent)
+  </script>
+</body>
+
 </html>

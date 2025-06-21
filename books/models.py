@@ -30,7 +30,6 @@ class Book(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     isbn = models.CharField(max_length=20, blank=True, null=True)
     cover_front = models.ImageField(upload_to=book_media_upload_path)
-    cover_back = models.ImageField(upload_to=book_media_upload_path)
     pdf_file = models.FileField(upload_to=book_media_upload_path, blank=True, null=True)
     is_published = models.BooleanField(default=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
@@ -49,43 +48,10 @@ class BookContent(models.Model):
     content = models.TextField()
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.split_into_pages(chars_per_page=2835)  # 🔥 exactly 2900 chars per page
-
-    def split_into_pages(self, chars_per_page=2835):
-        self.book.pages.all().delete()  # Clear previous pages
-
-        full_text = self.content.strip()
-        total_length = len(full_text)
-        page_number = 1
-
-        for start in range(0, total_length, chars_per_page):
-            end = start + chars_per_page
-            chunk = full_text[start:end].strip()
-
-            BookPage.objects.create(
-                book=self.book,
-                page_number=page_number,
-                content=chunk
-            )
-            page_number += 1
 
     def __str__(self):
         return f"Content for {self.book.title}"
 
-
-class BookPage(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='pages')
-    page_number = models.PositiveIntegerField()
-    content = models.TextField()
-
-    class Meta:
-        unique_together = ('book', 'page_number')
-        ordering = ['page_number']
-
-    def __str__(self):
-        return f"{self.book.title} - Page {self.page_number}"
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
