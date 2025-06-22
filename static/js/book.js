@@ -206,3 +206,16 @@ shortcutsBtn?.addEventListener("click", () => {
 closeShortcuts?.addEventListener("click", () => {
   shortcutsPanel.classList.remove("visible");
 });
+
+
+// === Comment panel toggle ===
+const commentBtn = document.getElementById("commentBtn");
+const commentPannel = document.getElementById("commentPannel");
+const closeComment = document.getElementById("closeComment");
+
+commentBtn?.addEventListener("click", () => {
+  commentPannel.classList.toggle("visible");
+});
+closeComment?.addEventListener("click", () => {
+  commentPannel.classList.remove("visible");
+});

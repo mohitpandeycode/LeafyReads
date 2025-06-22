@@ -11,34 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="{% static 'css/book.css' %}" />
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const loaderOverlay = document.getElementById('loader-overlay')
-      const mainContent = document.getElementById('container-wrapper')
+  <script src="{% static 'js/loading.js' %}"></script>
 
-      setTimeout(() => {
-
-        loaderOverlay.classList.add('hidden')
-
-        loaderOverlay.addEventListener(
-          'transitionend',
-          function () {
-            if (loaderOverlay.classList.contains('hidden')) {
-              loaderOverlay.remove()
-              document.body.style.overflow = ''
-              mainContent.classList.add('visible')
-            }
-          },
-          { once: true }
-        )
-        if (loaderOverlay.style.opacity === '0') {
-          mainContent.classList.add('visible')
-          loaderOverlay.remove()
-          document.body.style.overflow = ''
-        }
-      }, 1500)
-    })
-  </script>
   <style>
     body {
       background-image: url('{% static "images/backk.jpg" %}');
@@ -47,55 +21,6 @@
       background-position: center center;
       background-size: cover;
       background-attachment: fixed;
-    }
-
-    /* Loader Overlay */
-    #loader-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #ffffff;
-      /* White background for loader */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      /* Ensure it's on top of everything */
-      opacity: 1;
-      transition: opacity 0.8s ease-out;
-      /* Smooth fade-out */
-    }
-
-    /* Hidden class to fade out the loader */
-    #loader-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-      /* Disable interaction once hidden */
-    }
-
-    /* Loader Spinner (simple CSS spinner) */
-    #loader-spinner {
-      border: 6px solid #f3f3f3;
-      /* Light grey */
-      border-top: 6px solid #3498db;
-      /* Blue */
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      /* Spin animation */
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
     }
   </style>
 </head>
@@ -113,9 +38,11 @@
         </a>
 
         <nav class="co-desktop-nav">
-          <a href="#">Features</a>
-          <a href="#">Pricing</a>
-          <a href="#">Community</a>
+           <a href="#">Library</a>
+            <a href="#">My Books</a>
+            <a href="#">Categories</a>
+            <a href="#">Community</a>
+            <a href="#">About US</a>
         </nav>
 
         <div class="co-header-actions">
@@ -125,6 +52,7 @@
       </div>
     </div>
   </header>
+  
   <div class="actionbtns">
     <div id="myAlert" class="alert-container">
       <span class="alert-message">Tip : Press "F" for batter expirence.</span>
@@ -144,16 +72,24 @@
       title="Highlighter">🖍️</button>
     <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 220px; padding: 8px"
       title="Keyboard Shortcuts">⌨️</button>
+    <button id="likeBtn" class="control-button fullscreen-button" style="top: 520px; padding: 8px"
+      title="Like">❤️</button>
+    <button id="commentBtn" class="control-button fullscreen-button" style="top: 570px; padding: 8px"
+      title="Comment">💬</button>
+    <button id="saveBtn" class="control-button fullscreen-button" style="top: 620px; padding: 8px"
+      title="Save">⭐</button>
+    <button id="saveBtn" class="control-button fullscreen-button" style="top: 620px; padding: 8px"
+      title="Save"></button>
   </div>
 
   <main id="container-wrapper">
-    <button id="prevBtn" class="nav-button prev" aria-label="Previous"><span class="icon">&larr;</span></button>
+    <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
 
     <section id="container">
       <div id="spine-illusion" hidden></div>
 
       <div class="flipbook">
-        <article class="page hard cover" style="border: 2px solid white;">
+        <article class="page hard cover" style="border: 1px double white;">
           <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" />
         </article>
 
@@ -167,17 +103,18 @@
 
 
         <article class="page cover hard" style="border: 2px solid white;">
-          <img src="{{ book.cover_back.url }}" alt="Back Cover Image" class="cover-image" />
+          <img src="{% static 'images/endpage.png' %}" alt="Back Cover Image" class="cover-image" />
         </article>
       </div>
     </section>
 
-    <button id="nextBtn" class="nav-button next" aria-label="Next"><span class="icon">&rarr;</span></button>
+    <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span></button>
   </main>
 
   <div id="progress-bar-container" aria-label="Page Progress">
     <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
   </div>
+  
 
   <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
   <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
@@ -206,108 +143,24 @@
         <b>(⬅️)</b> ☛ Previous Page
       </li>
     </ul>
+
   </div>
+    <div id="commentPannel" style="height: 80%;width:300px;padding:10px;z-index:10000;" class="shortcuts-panel">
+    <div class="shortcuts-header">
+      <h2>Comments</h2>
+      <button id="closeComment" aria-label="Close comment Panel">✖️</button>
+    </div>
+    <hr>
+
+      
+  </div>
+  
 
   <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/turn.min.js' %}"></script>
   <script src="{% static 'js/highlight.js' %}"></script>
   <script src="{% static 'js/book.js' %}"></script>
-  <script>
-    function paginateBookContent() {
-      const flipbook = document.querySelector('.flipbook')
-
-      const frontCover = flipbook.querySelector('article.page.cover.hard:first-child')?.cloneNode(true)
-      const backCover = flipbook.querySelector('article.page.cover.hard:last-child')?.cloneNode(true)
-
-      const originalPage = flipbook.querySelector('article.page:not(.cover)')
-      if (!originalPage) return
-
-      const originalContentHTML = originalPage.querySelector('.pagestyle')?.innerHTML || ''
-
-      // Parse content into individual elements
-      const parser = document.createElement('div')
-      parser.innerHTML = originalContentHTML
-      const elements = Array.from(parser.childNodes)
-
-      // Measurement container
-      const tempPage = document.createElement('div')
-      tempPage.style.width = '440px'
-      tempPage.style.height = '510px'
-      tempPage.style.position = 'absolute'
-      tempPage.style.visibility = 'hidden'
-      tempPage.style.overflow = 'hidden'
-      tempPage.style.padding = '20px'
-      tempPage.style.fontSize = '0.7rem'
-      tempPage.style.boxSizing = 'border-box'
-      tempPage.style.lineHeight = '1.4'
-      tempPage.className = 'pagestyle'
-      document.body.appendChild(tempPage)
-
-      const maxHeight = tempPage.clientHeight
-
-      let pages = []
-      let currentPage = document.createElement('div')
-      currentPage.className = 'pagestyle'
-
-      elements.forEach((el) => {
-        const clone = el.cloneNode(true)
-
-        // Test fit
-        currentPage.appendChild(clone)
-        tempPage.innerHTML = currentPage.innerHTML
-
-        if (tempPage.scrollHeight > maxHeight) {
-          // Remove the last clone that caused overflow
-          currentPage.removeChild(clone)
-
-          // Save the page
-          pages.push(currentPage.innerHTML)
-
-          // Start new page with the current (overflowing) element
-          currentPage = document.createElement('div')
-          currentPage.className = 'pagestyle'
-          currentPage.appendChild(clone)
-
-          // Test if single element itself overflows page
-          tempPage.innerHTML = currentPage.innerHTML
-          if (tempPage.scrollHeight > maxHeight) {
-            // Forcefully split large single blocks (like images or big <p>)
-            pages.push(currentPage.innerHTML)
-            currentPage = document.createElement('div')
-            currentPage.className = 'pagestyle'
-          }
-        }
-      })
-
-      // Push last page
-      if (currentPage.childNodes.length > 0) {
-        pages.push(currentPage.innerHTML)
-      }
-
-      document.body.removeChild(tempPage)
-
-      // Rebuild flipbook
-      flipbook.innerHTML = ''
-      if (frontCover) flipbook.appendChild(frontCover)
-
-      pages.forEach((html) => {
-        const article = document.createElement('article')
-        article.className = 'page'
-
-        const inner = document.createElement('div')
-        inner.className = 'pagestyle'
-        inner.innerHTML = html
-
-        article.appendChild(inner)
-        flipbook.appendChild(article)
-      })
-
-      if (backCover) flipbook.appendChild(backCover)
-    }
-
-    // Call function after DOM is loaded
-    window.addEventListener('DOMContentLoaded', paginateBookContent)
-  </script>
+  <script src="{% static 'js/pagination.js' %}"></script>
 </body>
 
 </html>
