@@ -1,14 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from books.models import Book, BookContent
 
-def home(request):
-    book_content = BookContent.objects.first()
-    book = Book.objects.first()
+def home(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    bookcontent = get_object_or_404(BookContent,book=book)
+    
+    return render(request, 'book.html', {'book': book,'bookcontent':bookcontent.content})
 
-    if not book_content or not book:
-        return render(request, 'not_found.html', status=404)  # Or show a proper message/template
-
-    return render(request, 'book.html', {
-        'bookcontent': book_content.content,
-        'book': book
-    })

@@ -19,11 +19,11 @@ class BookContentInline(admin.StackedInline):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'genre', 'category', 'price', 'is_published', 'uploaded_at')
-    list_filter = ('genre', 'category', 'is_published')
+    list_display = ('title', 'author', 'genre', 'price', 'is_published', 'uploaded_at')
+    list_filter = ('genre', 'is_published')
     search_fields = ('title', 'author', 'isbn')
     prepopulated_fields = {'slug': ('title',)}
-
+    inlines = [BookContentInline] 
 
 @admin.register(BookContent)
 class BookContentAdmin(admin.ModelAdmin):

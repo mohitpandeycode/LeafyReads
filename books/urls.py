@@ -3,7 +3,7 @@ from books import views
 
 
 urlpatterns = [
-    path('', views.home, name='book'),
+    path('book/<slug>', views.home, name='book'),
     
 
 ]

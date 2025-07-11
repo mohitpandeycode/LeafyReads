@@ -308,19 +308,23 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
   }
+  .book-item{
+    width: 200px;
+  }
 
   .book-item img {
       width: 100%;
+      height: 250px;
       border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      box-shadow: 4px 0px 20px -1px rgba(0, 0, 0, 0.64), 4px -4px 10px 0px rgb(0, 0, 0, 0.64);
       aspect-ratio: 2 / 3;
-      object-fit: cover;
+      object-fit: fill;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   body.dark-mode .book-item img {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  }
+      box-shadow: 5px 0px 8px -1px rgb(66, 66, 66), 4px -3px 8px 0px rgb(45, 45, 45);
+}
 
   .book-item img:hover {
       transform: scale(1.05) translateY(-8px) rotateZ(1deg);
@@ -381,6 +385,14 @@
       background-color: #E9D5FF;
       color: #9333EA;
   }
+
+  .truncate {
+  width: 100%;
+  white-space: nowrap;       
+  overflow: hidden;           
+  text-overflow: ellipsis;    
+}
+
 
   body.dark-mode .feature-icon.bg-blue {
       background-color: #1E3A8A;

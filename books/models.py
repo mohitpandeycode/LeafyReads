@@ -16,6 +16,7 @@ class Category(models.Model):
         return self.name
 
 class Genre(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='genres')
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -26,7 +27,6 @@ class Book(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     author = models.CharField(max_length=100)
     genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True, related_name='books')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='books')
     price = models.DecimalField(max_digits=6, decimal_places=2)
     isbn = models.CharField(max_length=20, blank=True, null=True)
     cover_front = models.ImageField(upload_to=book_media_upload_path)
@@ -57,7 +57,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews')
     comment = models.TextField()
-    rating = models.PositiveSmallIntegerField(default=1)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

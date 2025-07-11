@@ -11,6 +11,7 @@
 
 {% block body %}
   <main>
+    <!-- Landing page -->
     <section class="hero-bg">
       <div class="container">
         <h1>Dive into Your Next Favorite Book</h1>
@@ -24,48 +25,8 @@
         </form>
       </div>
     </section>
-    <section class="bg-white">
-      <div class="container">
-        <div class="section-header">
-          <h2>New & Trending Reads</h2>
-          <p>Handpicked selections just for you.</p>
-        </div>
-        <div class="books-grid">
-          <div class="book-item">
-            <a href="{% url 'book' %}">
-            <img src="https://placehold.co/400x600/3B82F6/FFFFFF?text=The+Mind's+Maze" alt="Book Cover 1" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-            <h3>The Mind's Maze</h3>
-            <p>Alexandre Dusk</p>
-            </a>
-          </div>
-          <div class="book-item">
-            <img src="https://placehold.co/400x600/10B981/FFFFFF?text=Echoes+of+Jade" alt="Book Cover 2" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-            <h3>Echoes of Jade</h3>
-            <p>Lila Chen</p>
-          </div>
-          <div class="book-item">
-            <img src="https://placehold.co/400x600/F97316/FFFFFF?text=Starlight+Protocol" alt="Book Cover 3" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-            <h3>Starlight Protocol</h3>
-            <p>Kenji Tanaka</p>
-          </div>
-          <div class="book-item">
-            <img src="https://placehold.co/400x600/8B5CF6/FFFFFF?text=The+Last+Lighthouse" alt="Book Cover 4" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-            <h3>The Last Lighthouse</h3>
-            <p>Eleanor Vance</p>
-          </div>
-          <div class="book-item">
-            <img src="https://placehold.co/400x600/EC4899/FFFFFF?text=City+of+Whispers" alt="Book Cover 5" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-            <h3>City of Whispers</h3>
-            <p>Marcus Finch</p>
-          </div>
-          <div class="book-item">
-            <img src="https://placehold.co/400x600/6366F1/FFFFFF?text=Beneath+a+Paper+Sky" alt="Book Cover 6" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-            <h3>Beneath a Paper Sky</h3>
-            <p>Sarah Jones</p>
-          </div>
-        </div>
-      </div>
-    </section>
+
+    <!-- category page div -->
     <section>
       <div class="container">
         <div class="section-header">
@@ -91,7 +52,7 @@
           </a>
           <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
             <i data-lucide="heart" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Romance</div>
+            <div>Love</div>
           </a>
           <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
             <i data-lucide="cpu" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
@@ -102,12 +63,55 @@
             <div>Biography</div>
           </a>
           <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="amphora" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>History</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
             <i data-lucide="book-open" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Classics</div>
+            <div>Story</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="skull" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Horror</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="shield-user" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Adult (YA)</div>
+          </a>
+          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+            <i data-lucide="circle-chevron-right" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Others</div>
           </a>
         </div>
       </div>
     </section>
+    <!-- Featured books page -->
+    <section class="bg-white">
+      <div class="container">
+        <div class="section-header">
+          <h2>New & Trending Reads</h2>
+          <p>Handpicked selections just for you.</p>
+        </div>
+        <div class="books-grid">
+          {% for book in books %}
+            <div class="book-item">
+              <a href="{% url 'book' book.slug %}">
+                <img src="{{ book.cover_front.url }}" alt="Book Cover 1" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+                <div style="box-shadow: 2px 2px 2px #3a3a3a78;padding: 5px;border-radius: 0px 0px 5px 5px;">
+                  <h5 class="truncate">{{ book.title }}</h5>
+                  <p class="truncate"><span style="font-weight: 700;">by: </span> {{ book.author }}</p>
+                  <div style="padding: 5px 0px; display: flex;justify-content: space-between;align-items: center;">
+                    <p class="truncate"><span style="font-weight: 700;">type: </span> {{ book.genre }}</p>
+                    <p>4.3⭐</p>
+                  </div>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
     <section>
       <div class="container">
         <div class="section-header">

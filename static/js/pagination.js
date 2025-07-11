@@ -17,7 +17,7 @@ function paginateBookContent() {
   // Measurement container
   const tempPage = document.createElement('div');
   tempPage.style.width = '440px';
-  tempPage.style.height = '580px';
+  tempPage.style.height = '550px';
   tempPage.style.position = 'absolute';
   tempPage.style.visibility = 'hidden';
   tempPage.style.overflow = 'hidden';

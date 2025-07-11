@@ -1,6 +1,9 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 
-# Create your views here.
+from books.models import Book, BookContent
 
 def home(request):
-    return render(request, 'home.html')
+    books = Book.objects.all()
+    return render(request, 'home.html', {
+        'books': books
+    })

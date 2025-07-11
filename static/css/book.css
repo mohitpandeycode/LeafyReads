@@ -771,3 +771,62 @@ body.dark-mode #closeShortcuts:hover {
 body.dark-mode .shortcuts-panel li {
     border-bottom: 1px solid #444;
 }
+
+.comment-list {
+    overflow-y: auto;
+    max-height: 60%;
+    padding: 0;
+    margin-bottom: 12px;
+    list-style: none;
+}
+
+.comment-item {
+    background: rgba(255, 255, 255, 0.4);
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.comment-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#commentInput {
+    width: 100%;
+    resize: none;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 14px;
+    background: #fff;
+    color: #000;
+}
+
+#addComment {
+    align-self: flex-end;
+    background-color: #0066cc;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#addComment:hover {
+    background-color: #004d99;
+}
+
+/* Dark mode */
+body.dark-mode .comment-item {
+    background: rgba(60, 60, 60, 0.4);
+    color: #eee;
+}
+
+body.dark-mode #commentInput {
+    background: #222;
+    color: #eee;
+    border: 1px solid #444;
+}
