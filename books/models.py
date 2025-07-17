@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
+from django_ckeditor_5.fields import CKEditor5Field
 
 # Custom upload path for images and PDFs
 def book_media_upload_path(instance, filename):
@@ -45,7 +46,7 @@ class Book(models.Model):
 
 class BookContent(models.Model):
     book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name='content')
-    content = models.TextField()
+    content = CKEditor5Field('content', config_name='extends')
     updated_at = models.DateTimeField(auto_now=True)
 
 

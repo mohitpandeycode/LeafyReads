@@ -92,14 +92,9 @@
         <article class="page">
           <div class="pagestyle">
                 {% for paragraph in bookcontent.splitlines %}
-                <p>{{ paragraph }}</p>
+                <p>{{ paragraph | safe }}</p>
               {% endfor %}
           </div>
-        </article>
-
-
-        <article class="page cover hard" style="border: 2px solid white;">
-          <img src="{% static 'images/endpage.png' %}" alt="Back Cover Image" class="cover-image" />
         </article>
       </div>
     </section>

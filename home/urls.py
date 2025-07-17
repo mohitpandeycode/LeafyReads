@@ -5,5 +5,6 @@ from home import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('book/', include('books.urls')),
+    path('library/', include('books.urls')),
 
 ]

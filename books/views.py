@@ -7,3 +7,6 @@ def home(request, slug):
     
     return render(request, 'book.html', {'book': book,'bookcontent':bookcontent.content})
 
+def library(request):
+    books = Book.objects.all().order_by('-uploaded_at')
+    return render(request,'library.html',{'books':books})
