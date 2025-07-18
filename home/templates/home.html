@@ -34,53 +34,15 @@
           <p>Explore books by your favorite genres and topics.</p>
         </div>
         <div class="books-category-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="book" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Fiction</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="globe" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Non-Fiction</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="feather" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Poetry</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="star" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Fantasy</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="heart" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Love</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="cpu" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Science Fiction</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="user" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Biography</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="amphora" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>History</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="book-open" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Story</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="skull" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Horror</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
-            <i data-lucide="shield-user" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Adult (YA)</div>
-          </a>
-          <a href="#" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+          {% for cat in category %}
+            <a href="{% url 'category' cat.slug %}" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
+              <i data-lucide="{{ cat.lucidicon }}" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+              <div>{{ cat.name }}</div>
+            </a>
+          {% endfor %}
+          <a href="" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 0.2s;">
             <i data-lucide="circle-chevron-right" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>Others</div>
+            <div>Other</div>
           </a>
         </div>
       </div>
@@ -94,19 +56,28 @@
         </div>
         <div class="books-grid">
           {% for book in books %}
-            <div class="book-item">
-              <a href="{% url 'book' book.slug %}">
-                <img src="{{ book.cover_front.url }}" alt="Book Cover 1" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-                <div style="box-shadow: 2px 2px 2px #3a3a3a78;padding: 5px;border-radius: 0px 0px 5px 5px;">
-                  <h5 class="truncate">{{ book.title }}</h5>
-                  <p class="truncate"><span style="font-weight: 700;">by: </span> {{ book.author }}</p>
-                  <div style="padding: 5px 0px; display: flex;justify-content: space-between;align-items: center;">
-                    <p class="truncate"><span style="font-weight: 700;">type: </span> {{ book.genre }}</p>
-                    <p>4.3⭐</p>
+            {% if book.is_published %}
+              <div class="book-item">
+                <a href="{% url 'book' book.slug %}">
+                  <img src="{{ book.cover_front.url }}" alt="Book Cover 1" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+                  <div style="box-shadow: 2px 2px 2px #3a3a3a78;padding: 5px;border-radius: 0px 0px 5px 5px;">
+                    <h5 class="truncate">{{ book.title }}</h5>
+                    <p class="truncate">
+                      <span style="font-weight: 700;">by:</span> {{ book.author }}
+                    </p>
+                    <div style="padding: 5px 0px; display: flex;justify-content: space-between;align-items: center;">
+                      <p class="truncate">
+                        <span style="font-weight: 700;">type:</span> {{ book.genre }}
+                      </p>
+                      <div style="display: flex;justify-content: center;align-items: center;">
+                        <i style="width: 14px;fill: #00deff;" data-lucide="thumbs-up"></i>
+                        <p>43</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </a>
-            </div>
+                </a>
+              </div>
+            {% endif %}
           {% endfor %}
         </div>
       </div>

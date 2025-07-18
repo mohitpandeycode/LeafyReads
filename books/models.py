@@ -4,6 +4,7 @@ from django.utils.text import slugify
 import os
 from django_ckeditor_5.fields import CKEditor5Field
 
+
 # Custom upload path for images and PDFs
 def book_media_upload_path(instance, filename):
     folder = slugify(instance.title)
@@ -19,6 +20,8 @@ class Category(models.Model):
 class Genre(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='genres')
     name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+    lucidicon = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name

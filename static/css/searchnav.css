@@ -1,0 +1,43 @@
+  .nav-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: width 0.4s ease;
+    overflow: hidden;
+    width: 60px;
+  }
+
+  .nav-search-wrapper.expanded {
+    width: 250px;
+  }
+
+  .nav-search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
+
+  .nav-search-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav-search-wrapper.expanded .nav-search-input {
+    opacity: 1;
+  }
+
+  ::placeholder {
+    color: #aaa;
+  }

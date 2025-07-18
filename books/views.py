@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404
-from books.models import Book, BookContent
+from django.shortcuts import render, get_object_or_404,HttpResponse
+from books.models import *
 
 def home(request, slug):
     book = get_object_or_404(Book, slug=slug)
@@ -10,3 +10,7 @@ def home(request, slug):
 def library(request):
     books = Book.objects.all().order_by('-uploaded_at')
     return render(request,'library.html',{'books':books})
+
+def categories(request, slug):
+    category = get_object_or_404(Genre, slug = slug)
+    return HttpResponse(f"Category: {category.name}")
