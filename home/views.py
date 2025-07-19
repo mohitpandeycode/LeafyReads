@@ -10,3 +10,4 @@ def home(request):
         'category':category
     })
 
+    

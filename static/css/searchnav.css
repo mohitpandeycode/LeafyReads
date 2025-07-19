@@ -41,3 +41,10 @@
   ::placeholder {
     color: #aaa;
   }
+
+  body.dark-mode .nav-search-input {
+      color: #ffffff;
+  }
+  body.dark-mode  .nav-search-button {
+      color: #ffffff;
+  }

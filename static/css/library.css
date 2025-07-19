@@ -1,0 +1,51 @@
+  .fallback-modern {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .fallback-card {
+    max-width: 800px;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 16px;
+    background-color: #f9fafb;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .fallback-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+    opacity: 0.85;
+  }
+
+  .fallback-card h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+
+  .fallback-card p {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+  }
+
+  .fallback-link {
+    display: inline-block;
+    padding: 0.6rem 1.25rem;
+    background-color: #3b82f6;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .fallback-link:hover {
+    background-color: #111827;
+  }

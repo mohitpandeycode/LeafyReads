@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="{% static 'css/book.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
   <script src="{% static 'js/loading.js' %}"></script>
 
   <style>
@@ -22,12 +23,27 @@
       background-size: cover;
       background-attachment: fixed;
     }
+    .like {
+      position: fixed;
+      top: -40px;
+      font-size: 24px;
+      animation: fall linear;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div id="loader-overlay">
+  <div id="loader-overlay" style="display:flex;flex-direction: column;">
     <div id="loader-spinner"></div>
+    <h2>Unfolding stories, please wait...</h2>
   </div>
   <header class="co-header">
     <div class="co-container">
@@ -38,17 +54,20 @@
         </a>
 
         <nav class="co-desktop-nav">
-           <a href="#">Library</a>
-            <a href="#">My Books</a>
-            <a href="#">Categories</a>
-            <a href="#">Community</a>
-            <a href="#">About US</a>
+          <a href="{% url 'library' %}">Library</a>
+          <a href="{% url 'myBooks' %}">My Books</a>
+          <a href="#">Community</a>
+          <a href="#">About US</a>
+          <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
+                <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
+                <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
+                <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 5px;color: white;padding: 5px;}"><span>Search</span></button>
+          </form>
         </nav>
 
         <div class="co-header-actions">
-          <a href="#" class="co-login-btn">Log In</a>
           <a href="#" class="co-btn co-primary-btn">Start Reading Now</a>
-        </div>
+        </div> 
       </div>
     </div>
   </header>
@@ -73,9 +92,9 @@
     <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 220px; padding: 8px"
       title="Keyboard Shortcuts">⌨️</button>
     <button id="likeBtn" class="control-button fullscreen-button" style="top: 520px; padding: 8px"
-      title="Like">❤️</button>
+      title="Like"><i data-lucide="thumbs-up"></i></button>
     <button id="saveBtn" class="control-button fullscreen-button" style="top: 570px; padding: 8px"
-      title="Save">⭐</button>
+      title="Save"><i data-lucide="bookmark"></i></button>
   </div>
 
   <main id="container-wrapper">
@@ -143,6 +162,52 @@
   <script src="{% static 'js/highlight.js' %}"></script>
   <script src="{% static 'js/book.js' %}"></script>
   <script src="{% static 'js/pagination.js' %}"></script>
+  <script src="{% static 'js/navsearch.js' %}"></script>
+<script>
+    const clicks = new Audio("/static/sounds/click.mp3");
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const likeBtn = document.getElementById('likeBtn');
+    const saveBtn = document.getElementById('saveBtn');
+
+    likeBtn.addEventListener('click', () => {
+      const isActive = likeBtn.classList.contains('like-active');
+      
+      if (!isActive) {
+        for (let i = 0; i < 30; i++) {
+          createFallingLike();
+        }
+      }
+
+      likeBtn.classList.toggle('like-active');
+      clicks.currentTime = 0;
+      clicks.play();
+    });
+
+    saveBtn.addEventListener('click', () => {
+      saveBtn.classList.toggle('save-active');
+      clicks.currentTime = 0;
+      clicks.play();
+    });
+  });
+
+    function createFallingLike() {
+      const like = document.createElement('div');
+      like.classList.add('like');
+      like.innerText = '👍';
+
+      const size = Math.random() * 16 + 16; // 16–32px
+      like.style.fontSize = size + 'px';
+      like.style.left = Math.random() * window.innerWidth + 'px';
+      like.style.animationDuration = Math.random() * 2 + 2 + 's'; // 2–4s
+
+      document.body.appendChild(like);
+
+      setTimeout(() => {
+        like.remove();
+      }, 4000);
+    }
+</script>
 </body>
 
 </html>

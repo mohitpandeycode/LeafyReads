@@ -1,129 +1,149 @@
 <!DOCTYPE html>
 
 <html lang="en">
-{% load static %}
+  {% load static %}
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>
-    {% block title %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+
+      {% endblock %}
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+
+    {% block css %}
 
     {% endblock %}
-  </title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+  </head>
 
-  {% block css %}
-
-  {% endblock %}
-</head>
-
-<body>
-  <header class="header">
-    <div class="container">
-      <div class="header-content">
-        <a href="/" class="logo">
-          <i data-lucide="book-open"></i>
-          <span>LeafyReads</span>
-        </a>
-        <nav class="desktop-nav">
-          <a href="{% url 'library' %}">Library</a>
-          <a href="#">My Books</a>
-          <a href="#">Community</a>
-          <a href="#">About US</a>
-          <div id="navSearch" class="nav-search-wrapper">
-            <button id="navSearchBtn" class="nav-search-button" aria-label="Search">
-              <i data-lucide="search"></i>
-            </button>
-            <input type="text" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-          </div>
-        </nav>
-        <div class="header-actions">
-          <button id="theme-toggle" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
-          <a href="#" class="btn primary-btn">Start Reading Now</a>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  {% block body %}
-
-  {% endblock %}
-
-  <footer class="footer">
-    <div class="container footer-content">
-      <div class="footer-grid">
-        <div class="footer-about">
-          <div class="logo" style="margin-bottom: 1rem;">
-            <i data-lucide="book-open" style="color: var(--color-primary)"></i>
-            <span style="color: white">LeafyReads</span>
-          </div>
-          <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
-        </div>
-        <div>
-          <h4>Product</h4>
-          <ul>
-            <li>
-              <a href="#">Features</a>
-            </li>
-            <li>
-              <a href="#">Pricing</a>
-            </li>
-            <li>
-              <a href="#">Updates</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4>Company</h4>
-          <ul>
-            <li>
-              <a href="#">About Us</a>
-            </li>
-            <li>
-              <a href="#">Careers</a>
-            </li>
-            <li>
-              <a href="#">Contact</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4>Resources</h4>
-          <ul>
-            <li>
-              <a href="#">Blog</a>
-            </li>
-            <li>
-              <a href="#">Help Center</a>
-            </li>
-            <li>
-              <a href="#">Privacy</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4>Follow Us</h4>
-          <div class="footer-socials">
-            <a href="#"><i data-lucide="twitter"></i></a>
-            <a href="#"><i data-lucide="instagram"></i></a>
-            <a href="#"><i data-lucide="facebook"></i></a>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <a href="/" class="logo">
+            <i data-lucide="book-open"></i>
+            <span>LeafyReads</span>
+          </a>
+          <nav class="desktop-nav">
+            <a href="{% url 'library' %}">Library</a>
+            <a href="{% url 'myBooks' %}">My Books</a>
+            <a href="#">Community</a>
+            <a href="#">About US</a>
+            <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
+                <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
+                <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
+                <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 5px;color: white;padding: 5px;}"><span>Search</span></button>
+            </form>
+          </nav>
+          <div class="header-actions">
+            <button id="theme-toggle" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
+            <div id="startlogin" class="btn primary-btn">Start Reading Now</div>
           </div>
         </div>
       </div>
-      <div class="footer-copyright">&copy; 2024 LeafyReads. All Rights Reserved.</div>
-    </div>
-  </footer>
-  <script src="{% static 'js/home.js' %}"></script>
+    </header>
 
-  {% block script %}
+    {% block body %}
 
-  {% endblock %}
-</body>
+    {% endblock %}
 
+    <footer class="footer">
+      <div class="container footer-content">
+        <div class="footer-grid">
+          <div class="footer-about">
+            <div class="logo" style="margin-bottom: 1rem;">
+              <i data-lucide="book-open" style="color: var(--color-primary)"></i>
+              <span style="color: white">LeafyReads</span>
+            </div>
+            <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
+          </div>
+          <div>
+            <h4>Product</h4>
+            <ul>
+              <li>
+                <a href="#">Features</a>
+              </li>
+              <li>
+                <a href="#">Pricing</a>
+              </li>
+              <li>
+                <a href="#">Updates</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4>Company</h4>
+            <ul>
+              <li>
+                <a href="#">About Us</a>
+              </li>
+              <li>
+                <a href="#">Careers</a>
+              </li>
+              <li>
+                <a href="#">Contact</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4>Resources</h4>
+            <ul>
+              <li>
+                <a href="#">Blog</a>
+              </li>
+              <li>
+                <a href="#">Help Center</a>
+              </li>
+              <li>
+                <a href="#">Privacy</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4>Follow Us</h4>
+            <div class="footer-socials">
+              <a href="#"><i data-lucide="twitter"></i></a>
+              <a href="#"><i data-lucide="instagram"></i></a>
+              <a href="#"><i data-lucide="facebook"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-copyright">&copy; 2024 LeafyReads. All Rights Reserved.</div>
+      </div>
+    </footer>
+    <script src="{% static 'js/home.js' %}"></script>
+    <script src="{% static 'js/navsearch.js' %}"></script>
+    <script>
+      const startlogin = document.getElementById('startlogin')
+      const loginSection = document.getElementById('loginSection')
+      const closelogin = document.getElementById('closelogin')
+      
+      startlogin.addEventListener('click', () => {
+        loginSection.classList.add('active')
+      })
+      
+      closelogin.addEventListener('click', () => {
+        loginSection.classList.remove('active')
+      })
+      
+      // Close when clicking outside the login box
+      loginSection.addEventListener('click', (e) => {
+        if (e.target === loginSection) {
+          loginSection.classList.remove('active')
+        }
+      })
+    </script>
+
+    {% block script %}
+
+    {% endblock %}
+  </body>
 </html>

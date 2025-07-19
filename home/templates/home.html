@@ -10,14 +10,17 @@
 {% endblock %}
 
 {% block body %}
+
+<!-- loginpage-->
+{% include 'login.html' %}
   <main>
     <!-- Landing page -->
     <section class="hero-bg">
       <div class="container">
         <h1>Dive into Your Next Favorite Book</h1>
         <p>LeafyReads is your personal reading sanctuary. Discover thousands of books, track your progress, and connect with a community of fellow readers.</p>
-        <form class="hero-search-form" onsubmit="event.preventDefault();">
-          <input type="text" placeholder="Search for books, authors, or genres..." />
+        <form class="hero-search-form" action="{% url 'searchbooks' %}" method="get">
+          <input type="text" name="search" placeholder="Search for books, authors, or genres..." />
           <button type="submit" class="btn primary-btn">
             <i data-lucide="search" style="width:1rem; height:1rem;"></i>
             <span>Search</span>
@@ -25,6 +28,7 @@
         </form>
       </div>
     </section>
+
 
     <!-- category page div -->
     <section>

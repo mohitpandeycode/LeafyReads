@@ -394,13 +394,6 @@
 }
 
 
-  body.dark-mode .nav-search-input {
-      color: #ffffff;
-  }
-  body.dark-mode  .nav-search-button {
-      color: #ffffff;
-  }
-
   body.dark-mode .feature-icon.bg-blue {
       background-color: #1E3A8A;
       color: #60A5FA;

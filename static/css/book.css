@@ -427,6 +427,14 @@ body.dark-mode .page-number{
     background-color: #34495e;
 }
 
+.control-button.like-active {
+  background-color: #007BFF; /* Blue for Like */
+}
+
+.control-button.save-active {
+  background-color: #ff6b00; /* Yellow for Save */
+}
+
 /* Dark Mode Styles */
 html.dark-mode,
 body.dark-mode {
