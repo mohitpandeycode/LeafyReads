@@ -2,6 +2,7 @@
 <html lang="en">
 {% load static %}
 
+<!-- loginpage-->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,8 +13,11 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="{% static 'css/book.css' %}" />
   <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
   <script src="{% static 'js/loading.js' %}"></script>
-
+  <!-- Full version, works with turn.js -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+  
   <style>
     body {
       background-image: url('{% static "images/backk.jpg" %}');
@@ -26,21 +30,61 @@
     .like {
       position: fixed;
       top: -40px;
-      font-size: 24px;
-      animation: fall linear;
+      will-change: transform, opacity;
+      animation: fall linear forwards;
       pointer-events: none;
+      z-index: 1000;
     }
-
     @keyframes fall {
-      to {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
+    to {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
     }
+  }
+
+
   </style>
 </head>
 
 <body>
+
+  <!-- Login Model-->
+<section class="loginpagesection" id="loginSection">
+<div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
+  <button class="close-btn" id="closelogin">&times;</button>
+  <h2 style="margin-bottom: 5px;">Welcome to LeafyReads</h2>
+  <h3>Create Your Account</h3>
+  <div class="leafy-sub-text">
+    Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
+  </div>
+  <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" alt="Funny loading GIF" />
+
+  <button class="leafy-auth-button google">
+    <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
+    Continue with Google
+  </button>
+
+  <button class="leafy-auth-button github">
+    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub icon" />
+    Sign in with GitHub
+  </button>
+
+  <button class="leafy-auth-button apple">
+    <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple icon" />
+    Sign in with Apple
+  </button>
+
+  <div class="leafy-terms">
+    By clicking "signup" you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>.
+  </div>
+
+  <div class="leafy-explore">
+    Continue without signup? <a href="/">explore</a>
+  </div>
+</div>
+
+</section>
+
   <div id="loader-overlay" style="display:flex;flex-direction: column;">
     <div id="loader-spinner"></div>
     <h2>Unfolding stories, please wait...</h2>
@@ -66,7 +110,8 @@
         </nav>
 
         <div class="co-header-actions">
-          <a href="#" class="co-btn co-primary-btn">Start Reading Now</a>
+          <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
+         
         </div> 
       </div>
     </div>
@@ -156,15 +201,14 @@
 
   </div>
   
-
-  <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/turn.min.js' %}"></script>
   <script src="{% static 'js/highlight.js' %}"></script>
   <script src="{% static 'js/book.js' %}"></script>
   <script src="{% static 'js/pagination.js' %}"></script>
   <script src="{% static 'js/navsearch.js' %}"></script>
+
 <script>
-    const clicks = new Audio("/static/sounds/click.mp3");
+  const clicks = new Audio("/static/sounds/click.mp3");
 
   document.addEventListener('DOMContentLoaded', () => {
     const likeBtn = document.getElementById('likeBtn');
@@ -172,13 +216,7 @@
 
     likeBtn.addEventListener('click', () => {
       const isActive = likeBtn.classList.contains('like-active');
-      
-      if (!isActive) {
-        for (let i = 0; i < 30; i++) {
-          createFallingLike();
-        }
-      }
-
+      if (!isActive) burstLikes(30);
       likeBtn.classList.toggle('like-active');
       clicks.currentTime = 0;
       clicks.play();
@@ -191,23 +229,39 @@
     });
   });
 
-    function createFallingLike() {
-      const like = document.createElement('div');
-      like.classList.add('like');
-      like.innerText = '👍';
+  function burstLikes(count = 30) {
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= count) return clearInterval(interval);
+      requestAnimationFrame(() => {
+        const like = document.createElement('div');
+        like.classList.add('like');
+        like.textContent = '👍';
+        const size = Math.random() * 16 + 16;
+        like.style.cssText = `
+          font-size: ${size}px;
+          left: ${Math.random() * window.innerWidth}px;
+          animation-duration: ${Math.random() * 2 + 2}s;
+        `;
+        document.body.appendChild(like);
+        setTimeout(() => like.remove(), 4000);
+      });
+      i++;
+    }, 20);
+  }
 
-      const size = Math.random() * 16 + 16; // 16–32px
-      like.style.fontSize = size + 'px';
-      like.style.left = Math.random() * window.innerWidth + 'px';
-      like.style.animationDuration = Math.random() * 2 + 2 + 's'; // 2–4s
+  // Login Modal Toggle Logic
+  const startlogin = document.getElementById('startlogin');
+  const loginSection = document.getElementById('loginSection');
+  const closelogin = document.getElementById('closelogin');
 
-      document.body.appendChild(like);
-
-      setTimeout(() => {
-        like.remove();
-      }, 4000);
-    }
+  startlogin.addEventListener('click', () => loginSection.classList.add('active'));
+  closelogin.addEventListener('click', () => loginSection.classList.remove('active'));
+  loginSection.addEventListener('click', (e) => {
+    if (e.target === loginSection) loginSection.classList.remove('active');
+  });
 </script>
+
 </body>
 
 </html>
