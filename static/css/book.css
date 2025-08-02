@@ -450,7 +450,7 @@ body.dark-mode #container {
 
 body.dark-mode .flipbook .page {
     background: #2f2f2f;
-    color: #f0f0f0;
+    color: #d7d7d7;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: none !important;
 }
