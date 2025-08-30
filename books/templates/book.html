@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-{% load static %}
+  {% load static %}
 
-<!-- loginpage-->
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Book</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="{% static 'css/book.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-  <script src="{% static 'js/loading.js' %}"></script>
-  <!-- Full version, works with turn.js -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
-  
+  <!-- loginpage -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{% static 'css/book.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <script src="{% static 'js/loading.js' %}"></script>
+    <!-- Full version, works with turn.js -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+  </head>
+
   <style>
     body {
       background-image: url('{% static "images/backk.jpg" %}');
@@ -41,227 +42,236 @@
       opacity: 0;
     }
   }
+       .co-desktop-nav a.active {
+        color: #60a5fa !important;
+      }
 
 
   </style>
-</head>
-
-<body>
-
-  <!-- Login Model-->
-<section class="loginpagesection" id="loginSection">
-<div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
-  <button class="close-btn" id="closelogin">&times;</button>
-  <h2 style="margin-bottom: 5px;">Welcome to LeafyReads</h2>
-  <h3>Create Your Account</h3>
-  <div class="leafy-sub-text">
-    Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
-  </div>
-  <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" alt="Funny loading GIF" />
-
-  <button class="leafy-auth-button google">
-    <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
-    Continue with Google
-  </button>
-
-  <button class="leafy-auth-button github">
-    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub icon" />
-    Sign in with GitHub
-  </button>
-
-  <button class="leafy-auth-button apple">
-    <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple icon" />
-    Sign in with Apple
-  </button>
-
-  <div class="leafy-terms">
-    By clicking "signup" you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>.
-  </div>
-
-  <div class="leafy-explore">
-    Continue without signup? <a href="/">explore</a>
-  </div>
-</div>
-
-</section>
-
-  <div id="loader-overlay" style="display:flex;flex-direction: column;">
-    <div id="loader-spinner"></div>
-    <h2>Unfolding stories, please wait...</h2>
-  </div>
-  <header class="co-header">
-    <div class="co-container">
-      <div class="co-header-content">
-        <a href="/" class="co-logo">
-          <i data-lucide="book-open"></i>
-          <span>LeafyReads</span>
-        </a>
-
-        <nav class="co-desktop-nav">
-          <a href="{% url 'library' %}">Library</a>
-          <a href="{% url 'myBooks' %}">My Books</a>
-          <a href="#">Community</a>
-          <a href="#">About US</a>
-          <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
-                <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
-                <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-                <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 5px;color: white;padding: 5px;}"><span>Search</span></button>
-          </form>
-        </nav>
-
-        <div class="co-header-actions">
-          <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
-         
-        </div> 
-      </div>
-    </div>
-  </header>
-  
-  <div class="actionbtns">
-    <div id="myAlert" class="alert-container">
-      <span class="alert-message">Tip : Press "F" for batter expirence.</span>
-      <button class="alert-close-btn" aria-label="Close alert">
-        <svg viewBox="0 0 24 24">
-          <path
-            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-        </svg>
-      </button>
-    </div>
-    <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
-    <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 70px; padding: 8px"
-      title="Dark Mode">🌙</button>
-    <button id="muteBtn" class="control-button fullscreen-button" style="top: 120px; padding: 8px"
-      title="Mute/Unmute Audio">🔊</button>
-    <button id="highlightBtn" class="control-button fullscreen-button" style="top: 170px; padding: 8px"
-      title="Highlighter">🖍️</button>
-    <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 220px; padding: 8px"
-      title="Keyboard Shortcuts">⌨️</button>
-    <button id="likeBtn" class="control-button fullscreen-button" style="top: 520px; padding: 8px"
-      title="Like"><i data-lucide="thumbs-up"></i></button>
-    <button id="saveBtn" class="control-button fullscreen-button" style="top: 570px; padding: 8px"
-      title="Save"><i data-lucide="bookmark"></i></button>
-  </div>
-
-  <main id="container-wrapper">
-    <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
-
-    <section id="container">
-      <div id="spine-illusion" hidden></div>
-
-      <div class="flipbook">
-        <article class="page hard cover" style="border: 1px double white;">
-          <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" />
-        </article>
-
-        <article class="page">
-          <div class="pagestyle">
-                {% for paragraph in bookcontent.splitlines %}
-                <p>{{ paragraph | safe }}</p>
-              {% endfor %}
+  <body>
+    <!-- Login Model -->
+    <section class="loginpagesection" id="loginSection">
+      <div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
+        <button class="close-btn" id="closelogin">&times;</button>
+         <div style="border-radius: 15px;background-color:white;align-items: center;justify-content: center;display: flex;" >
+            <img style="width: 60px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
+            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
           </div>
-        </article>
+        <h3>Create Your Account</h3>
+        <div class="leafy-sub-text">
+          Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
+        </div>
+        <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" alt="Funny loading GIF" />
+
+        <button class="leafy-auth-button google">
+          <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
+          Continue with Google
+        </button>
+
+        <button class="leafy-auth-button github">
+          <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub icon" />
+          Sign in with GitHub
+        </button>
+
+        <button class="leafy-auth-button apple">
+          <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple icon" />
+          Sign in with Apple
+        </button>
+
+        <div class="leafy-terms">
+          By clicking "signup" you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>.
+        </div>
+
+        <div class="leafy-explore">
+          Continue without signup? <a href="/">explore</a>
+        </div>
       </div>
     </section>
 
-    <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span></button>
-  </main>
-
-  <div id="progress-bar-container" aria-label="Page Progress">
-    <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-  </div>
-  
-
-  <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
-  <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
-  <div id="shortcutsPanel" class="shortcuts-panel">
-    <div class="shortcuts-header">
-      <h2>Keyboard Shortcuts</h2>
-      <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
+    <div id="loader-overlay" style="display:flex;flex-direction: column;">
+      <div id="loader-spinner"></div>
+      <h2>Unfolding stories, please wait...</h2>
     </div>
-    <ul>
-      <li>
-        <b>( ᖴ )</b> ☛ Fullscreen Mode
-      </li>
-      <li>
-        <b>( D )</b> ☛ Dark Mode/Light Mode
-      </li>
-      <li>
-        <b>( M )</b> ☛ Mute/Unmute
-      </li>
-      <li>
-        <b>( H )</b> ☛ Highlighter Pen
-      </li>
-      <li>
-        <b>(➡️)</b> ☛ Next Page
-      </li>
-      <li>
-        <b>(⬅️)</b> ☛ Previous Page
-      </li>
-    </ul>
+    <header class="co-header">
+      <div class="co-container">
+        <div class="co-header-content">
+           <a href="/" class="co-logo" style="background-color: white;border-radius: 15px;">
+            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
+            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
+          </a>
 
-  </div>
-  
-  <script src="{% static 'js/turn.min.js' %}"></script>
-  <script src="{% static 'js/highlight.js' %}"></script>
-  <script src="{% static 'js/book.js' %}"></script>
-  <script src="{% static 'js/pagination.js' %}"></script>
-  <script src="{% static 'js/navsearch.js' %}"></script>
+          <nav class="co-desktop-nav">
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
+            <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
+            <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">My Books</a>
+            <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
+            <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
+            <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
+              <div id="navSearchBtn" class="nav-search-button" aria-label="Search">
+                <i data-lucide="search"></i>
+              </div>
+              <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
+              <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 5px;color: white;padding: 5px;}"><span>Search</span></button>
+            </form>
+          </nav>
 
-<script>
-  const clicks = new Audio("/static/sounds/click.mp3");
+          <div class="co-header-actions">
+            <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
+          </div>
+        </div>
+      </div>
+    </header>
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const likeBtn = document.getElementById('likeBtn');
-    const saveBtn = document.getElementById('saveBtn');
+    <div class="actionbtns">
+      <div id="myAlert" class="alert-container">
+        <span class="alert-message">Tip : Press "F" for batter expirence.</span>
+        <button class="alert-close-btn" aria-label="Close alert">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
+      </div>
+      <div>
+        <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
+        <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 130px; padding: 8px" title="Dark Mode">🌙</button>
+        <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;back" title="listen book"><i data-lucide="play"></i></button>
+        <button id="highlightBtn" class="control-button fullscreen-button" style="top: 230px; padding: 8px" title="Highlighter">🖍️</button>
+        <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
+         <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
+        <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px" title="Like"><i data-lucide="thumbs-up"></i></button>
+        <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px" title="Save"><i data-lucide="bookmark"></i></button>
+      </div>
+    </div>
 
-    likeBtn.addEventListener('click', () => {
-      const isActive = likeBtn.classList.contains('like-active');
-      if (!isActive) burstLikes(30);
-      likeBtn.classList.toggle('like-active');
-      clicks.currentTime = 0;
-      clicks.play();
+    <main id="container-wrapper">
+      <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
+
+      <section id="container">
+        <div id="spine-illusion" hidden></div>
+
+        <div class="flipbook">
+          <article class="page hard cover" style="border: 1px double white;">
+            <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" />
+          </article>
+
+          <article class="page">
+            <div class="pagestyle">
+              {% for paragraph in bookcontent.splitlines %}
+                <p>{{ paragraph|safe }}</p>
+              {% endfor %}
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span></button>
+    </main>
+
+    <div id="progress-bar-container" aria-label="Page Progress">
+      <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    </div>
+
+    <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
+    <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
+    <div id="shortcutsPanel" class="shortcuts-panel">
+      <div class="shortcuts-header">
+        <h2>Keyboard Shortcuts</h2>
+        <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
+      </div>
+      <ul>
+        <li>
+          <b>( ᖴ )</b> ☛ Fullscreen Mode
+        </li>
+        <li>
+          <b>( D )</b> ☛ Dark Mode/Light Mode
+        </li>
+        <li>
+          <b>( M )</b> ☛ Mute/Unmute
+        </li>
+        <li>
+          <b>( H )</b> ☛ Highlighter Pen
+        </li>
+        <li>
+          <b>(➡️)</b> ☛ Next Page
+        </li>
+        <li>
+          <b>(⬅️)</b> ☛ Previous Page
+        </li>
+      </ul>
+    </div>
+    <script src="{% static 'js/turn.min.js' %}"></script>
+    <script src="{% static 'js/highlight.js' %}"></script>
+    <script src="{% static 'js/book.js' %}"></script>
+    <script src="{% static 'js/pagination.js' %}"></script>
+    <script src="{% static 'js/navsearch.js' %}"></script>
+
+    <script>
+      const clicks = new Audio('/static/sounds/click.mp3')
+      let audioFile = new Audio("{{ book.audio_file.url }}");
+      let playBtn = document.getElementById("play");
+      playBtn.addEventListener('click', () => {
+      if (audioFile.paused) {
+        audioFile.play();
+        playBtn.innerHTML = '<i data-lucide="pause"></i>';
+      } else {
+        audioFile.pause();
+        playBtn.innerHTML = '<i data-lucide="play"></i>';
+      }
+
+      // re-render icons
+      lucide.createIcons();
     });
 
-    saveBtn.addEventListener('click', () => {
-      saveBtn.classList.toggle('save-active');
-      clicks.currentTime = 0;
-      clicks.play();
-    });
-  });
-
-  function burstLikes(count = 30) {
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i >= count) return clearInterval(interval);
-      requestAnimationFrame(() => {
-        const like = document.createElement('div');
-        like.classList.add('like');
-        like.textContent = '👍';
-        const size = Math.random() * 16 + 16;
-        like.style.cssText = `
-          font-size: ${size}px;
-          left: ${Math.random() * window.innerWidth}px;
-          animation-duration: ${Math.random() * 2 + 2}s;
-        `;
-        document.body.appendChild(like);
-        setTimeout(() => like.remove(), 4000);
-      });
-      i++;
-    }, 20);
-  }
-
-  // Login Modal Toggle Logic
-  const startlogin = document.getElementById('startlogin');
-  const loginSection = document.getElementById('loginSection');
-  const closelogin = document.getElementById('closelogin');
-
-  startlogin.addEventListener('click', () => loginSection.classList.add('active'));
-  closelogin.addEventListener('click', () => loginSection.classList.remove('active'));
-  loginSection.addEventListener('click', (e) => {
-    if (e.target === loginSection) loginSection.classList.remove('active');
-  });
-</script>
-
-</body>
-
+      document.addEventListener('DOMContentLoaded', () => {
+        const likeBtn = document.getElementById('likeBtn')
+        const saveBtn = document.getElementById('saveBtn')
+      
+        likeBtn.addEventListener('click', () => {
+          const isActive = likeBtn.classList.contains('like-active')
+          if (!isActive) burstLikes(30)
+          likeBtn.classList.toggle('like-active')
+          clicks.currentTime = 0
+          clicks.play()
+        })
+      
+        saveBtn.addEventListener('click', () => {
+          saveBtn.classList.toggle('save-active')
+          clicks.currentTime = 0
+          clicks.play()
+        })
+      })
+      
+      function burstLikes(count = 30) {
+        let i = 0
+        const interval = setInterval(() => {
+          if (i >= count) return clearInterval(interval)
+          requestAnimationFrame(() => {
+            const like = document.createElement('div')
+            like.classList.add('like')
+            like.textContent = '👍'
+            const size = Math.random() * 16 + 16
+            like.style.cssText = `
+                font-size: ${size}px;
+                left: ${Math.random() * window.innerWidth}px;
+                animation-duration: ${Math.random() * 2 + 2}s;
+              `
+            document.body.appendChild(like)
+            setTimeout(() => like.remove(), 4000)
+          })
+          i++
+        }, 20)
+      }
+      
+      // Login Modal Toggle Logic
+      const startlogin = document.getElementById('startlogin')
+      const loginSection = document.getElementById('loginSection')
+      const closelogin = document.getElementById('closelogin')
+      
+      startlogin.addEventListener('click', () => loginSection.classList.add('active'))
+      closelogin.addEventListener('click', () => loginSection.classList.remove('active'))
+      loginSection.addEventListener('click', (e) => {
+        if (e.target === loginSection) loginSection.classList.remove('active')
+      })
+    </script>
+  </body>
 </html>

@@ -353,6 +353,10 @@ ul {
     box-shadow: none !important;
 }
 
+.page{
+    border: 1px solid #ffffff !important;
+}
+
 .pagestyle {
     padding: 20px;
 }
@@ -409,7 +413,7 @@ body.dark-mode .page-number{
 
 .fullscreen-button {
     position: absolute;
-    top: 20px;
+    top: 80px;
     right: 20px;
     z-index: 999;
     padding: 8px 12px;

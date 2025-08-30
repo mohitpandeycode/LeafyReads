@@ -76,8 +76,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: 15px;
-      padding-bottom: 15px;
+      padding-top: 8px;
+      padding-bottom: 8px;
   }
 
   .logo {
@@ -323,7 +323,7 @@
   }
 
   body.dark-mode .book-item img {
-      box-shadow: 5px 0px 8px -1px rgb(66, 66, 66), 4px -3px 8px 0px rgb(45, 45, 45);
+      box-shadow: 5px 0px 8px -1px rgb(23 23 23), 4px -3px 8px 0px rgb(0 0 0);
 }
 
   .book-item img:hover {

@@ -18,6 +18,11 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}" />
     <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
     <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <style>
+      .desktop-nav a.active {
+        color: #60a5fa !important;
+      }
+    </style>
 
     {% block css %}
 
@@ -28,15 +33,17 @@
     <header class="header">
       <div class="container">
         <div class="header-content">
-          <a href="/" class="logo">
-            <i data-lucide="book-open"></i>
-            <span>LeafyReads</span>
+          <a href="/" class="logo" style="background-color: white;border-radius: 15px;">
+            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
+            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
           </a>
           <nav class="desktop-nav">
-            <a href="{% url 'library' %}">Library</a>
-            <a href="{% url 'myBooks' %}">My Books</a>
-            <a href="#">Community</a>
-            <a href="#">About US</a>
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
+            <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
+            <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">My Books</a>
+            <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
+            <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
+
             <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
                 <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
                 <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />

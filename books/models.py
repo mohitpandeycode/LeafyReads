@@ -44,6 +44,7 @@ class Book(models.Model):
     is_published = models.BooleanField(default=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    audio_file = models.FileField(upload_to='sounds/',null=True, blank=True)
 
     class Meta:
         ordering = ['-uploaded_at']
