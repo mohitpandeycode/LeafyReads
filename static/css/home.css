@@ -314,12 +314,13 @@
 
   .book-item img {
       width: 100%;
-      height: 250px;
-      border-radius: 0.5rem;
+      height: 230px;
+      border-radius: 0.5rem 0.5rem 0 0;
       box-shadow: 4px 0px 20px -1px rgba(0, 0, 0, 0.64), 4px -4px 10px 0px rgb(0, 0, 0, 0.64);
       aspect-ratio: 2 / 3;
       object-fit: fill;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-bottom: none;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
   }
 
   body.dark-mode .book-item img {
@@ -327,6 +328,8 @@
 }
 
   .book-item img:hover {
+      border: 2px solid #3b82f6;
+      border-radius: 0.5rem;
       transform: scale(1.05) translateY(-8px) rotateZ(1deg);
       box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.15);
   }
@@ -336,7 +339,6 @@
   }
 
   .book-item h3 {
-      margin-top: 0.75rem;
       font-weight: 600;
       color: var(--color-logo-dark);
       white-space: nowrap;
@@ -429,7 +431,7 @@
   /* Category Card Hover Effect */
   .books-category-grid .category-card {
       box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
-      transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+      transition: box-shadow 0.5s, transform 0.5s, background 0.5s;
   }
 
   .books-category-grid .category-card:hover {

@@ -111,7 +111,7 @@
                 <i data-lucide="search"></i>
               </div>
               <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-              <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 5px;color: white;padding: 5px;}"><span>Search</span></button>
+              <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;}"><span>Search</span></button>
             </form>
           </nav>
 
@@ -151,6 +151,7 @@
 
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
+            <img src="{% static 'images/frontpage.png' %}" class="cover-image" style="position: absolute;" alt="forntFrame">
             <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" />
           </article>
 
@@ -204,24 +205,26 @@
     <script src="{% static 'js/book.js' %}"></script>
     <script src="{% static 'js/pagination.js' %}"></script>
     <script src="{% static 'js/navsearch.js' %}"></script>
+    {% if book.audio_file %}
+    <script>
+    let audioFile = new Audio("{{ book.audio_file.url }}");
+          let playBtn = document.getElementById("play");
+          playBtn.addEventListener('click', () => {
+          if (audioFile.paused) {
+            audioFile.play();
+            playBtn.innerHTML = '<i data-lucide="pause"></i>';
+          } else {
+            audioFile.pause();
+            playBtn.innerHTML = '<i data-lucide="play"></i>';
+          }
 
+          // re-render icons
+          lucide.createIcons();
+        });
+    </script>
+    {% endif %}
     <script>
       const clicks = new Audio('/static/sounds/click.mp3')
-      let audioFile = new Audio("{{ book.audio_file.url }}");
-      let playBtn = document.getElementById("play");
-      playBtn.addEventListener('click', () => {
-      if (audioFile.paused) {
-        audioFile.play();
-        playBtn.innerHTML = '<i data-lucide="pause"></i>';
-      } else {
-        audioFile.pause();
-        playBtn.innerHTML = '<i data-lucide="play"></i>';
-      }
-
-      // re-render icons
-      lucide.createIcons();
-    });
-
       document.addEventListener('DOMContentLoaded', () => {
         const likeBtn = document.getElementById('likeBtn')
         const saveBtn = document.getElementById('saveBtn')

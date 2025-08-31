@@ -35,7 +35,7 @@ $(function () {
     `;
     const endPage = `
       <article class="page cover hard" style="border: 2px solid white;">
-        <img src="/static/images/endpage.png" alt="Back Cover Image" class="cover-image" />
+        <img src="/static/images/coverback.png" alt="Back Cover Image" class="cover-image" />
       </article>
     `;
     $flipbook.append(blankPage + endPage);
@@ -43,7 +43,7 @@ $(function () {
     // Odd → Add only end
     const endPage = `
       <article class="page cover hard" style="border: 2px solid white;">
-        <img src="/static/images/endpage.png" alt="Back Cover Image" class="cover-image" />
+        <img src="/static/images/coverback.png" alt="Back Cover Image" class="cover-image" />
       </article>
     `;
     $flipbook.append(endPage);
@@ -165,11 +165,7 @@ $(function () {
   function applyFullscreenStyles() {
     $container.css({ width: "1320px", height: "820px", marginTop: "0px" });
     $flipbook.css({ width: "1300px", height: "800px" });
-    $(".flipbook .page").css({
-      width: "650px",
-      height: "800px",
-      fontSize: "1rem",
-    });
+    document.body.classList.add("fullscreen");
     $nextBtn.css({ right: "3%" });
     $prevBtn.css({ left: "3%" });
     $flipbook.turn("size", 1300, 800);
@@ -178,11 +174,7 @@ $(function () {
   function applyNormalStyles() {
     $container.css({ width: "900px", height: "600px", marginTop: "50px" });
     $flipbook.css({ width: "880px", height: "580px" });
-    $(".flipbook .page").css({
-      width: "440px",
-      height: "580px",
-      fontSize: "0.7rem",
-    });
+    document.body.classList.remove("fullscreen");
     $nextBtn.css({ right: "15%" });
     $prevBtn.css({ left: "15%" });
     $flipbook.turn("size", 880, 580);
