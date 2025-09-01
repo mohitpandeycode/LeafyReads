@@ -34,10 +34,10 @@ class Genre(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=200, unique=True)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True)
     author = models.CharField(max_length=100)
     genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True, related_name='books')
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=6, decimal_places=2,blank=True, null=True)
     isbn = models.CharField(max_length=20, blank=True, null=True)
     cover_front = models.ImageField(upload_to=book_media_upload_path)
     pdf_file = models.FileField(upload_to=book_media_upload_path, blank=True, null=True)

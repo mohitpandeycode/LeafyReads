@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+
+      {% endblock %}
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <style>
+      .desktop-nav a.active {
+        color: #60a5fa !important;
+      }
+    </style>
+
+    {% block css %}
+
+    {% endblock %}
+  </head>
+
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <a href="/" class="logo" style="background-color: white;border-radius: 15px;">
+            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
+            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
+          </a>
+          <nav class="desktop-nav">
+            <a href="{% url 'dashboard' %}" class="{% if request.path == '/admin-dashboard/' %}active{% endif %}" >Admin Home</a>
+            <a href="{% url 'addBook' %}" class="{% if request.path == '/admin-dashboard/add-book' %}active{% endif %}" >Add Book</a>
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Visit Site</a>
+            <a href="#">Add Book Content</a>
+          </nav>
+          <div class="header-actions">
+            <button id="theme-toggle" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
+            <div class="btn primary-btn">Welcome Mr. User</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {% block body %}
+
+    {% endblock %}
+
+    <script src="{% static 'js/home.js' %}"></script>
+  </body>
+</html>

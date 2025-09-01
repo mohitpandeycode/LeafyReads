@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home.apps.HomeConfig',
     'books.apps.BooksConfig',
+    'LRAdmin.apps.LradminConfig',
     'django_ckeditor_5',
 ]
 

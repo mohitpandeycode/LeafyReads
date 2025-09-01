@@ -1,0 +1,65 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+
+{% block title %}
+All Books - LeafyReads Admin
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+{% endblock %}
+
+
+{% block body %}
+  <div class="books-container" style="margin: 5px 20px;">
+    <!-- Header -->
+    <div class="books-header">
+      <h2>All Books</h2>
+      <div class="action-bar">
+        <a href="{% url 'addBook' %}" class="btn-add">+ Add Book</a>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <table>
+      <thead>
+        <tr>
+          <th><input type="checkbox"></th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Genre</th>
+          <th>Price</th>
+          <th>Is Published</th>
+          <th>Uploaded At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>आज़ाद परिंदा</td>
+          <td>नेहा भारद्वाज</td>
+          <td>Story</td>
+          <td>₹500.00</td>
+          <td><span class="status">Published</span></td>
+          <td>Aug. 30, 2025, 11:49 p.m.</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>चाय की टपरी</td>
+          <td>Saurabh Srivastava</td>
+          <td>Love</td>
+          <td>₹500.00</td>
+          <td><span class="status">Published</span></td>
+          <td>Aug. 30, 2025, 11:04 p.m.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="books-footer">
+      2 books
+    </div>
+  </div>
+
+{% endblock body %}

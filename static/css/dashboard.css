@@ -1,0 +1,125 @@
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.books-container {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.books-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.books-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.action-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.action-bar select,
+.action-bar button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #cbd5e1;
+    transition: all 0.2s ease;
+}
+
+.action-bar select {
+    background: #fff;
+    color: #334155;
+}
+
+.btn-apply {
+    background: #3b82f6;
+    border: none;
+    color: #fff;
+    font-weight: 500;
+}
+
+.btn-apply:hover {
+    background: #2563eb;
+}
+
+.btn-add {
+    background: #22c55e;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add:hover {
+    background: #16a34a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f1f5f9;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 14px;
+}
+
+th {
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: #16a34a;
+}
+
+.status::before {
+    content: "●";
+    font-size: 10px;
+}
+
+.books-footer {
+    padding: 14px 20px;
+    font-size: 13px;
+    color: #64748b;
+    background: #f8fafc;
+}
