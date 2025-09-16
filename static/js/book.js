@@ -35,7 +35,7 @@ $(function () {
     `;
     const endPage = `
       <article class="page cover hard" style="border: 2px solid white;">
-        <img src="/static/images/coverback.png" alt="Back Cover Image" class="cover-image" />
+        <img src="/static/images/coverback2.png" alt="Back Cover Image" class="cover-image" />
       </article>
     `;
     $flipbook.append(blankPage + endPage);

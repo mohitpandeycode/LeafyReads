@@ -1,0 +1,93 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+
+{% block title %}
+Update Book - LeafyReads Admin
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/addBook.css' %}" />
+            {{ form.media }}
+{% endblock %}
+
+
+{% block body %}
+<div class="addbookcontainer">
+    <h1>Add Book - Admin</h1>
+
+    <form class="split-layout" method="POST" enctype="multipart/form-data">
+        <!-- Left side: book info -->
+        <div class="form-left">
+            <div style="margin-bottom: 10px;">
+                <label for="title">Title</label>
+                <input type="text" id="title" value="{{book.title}}" placeholder="Enter book title">
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label for="slug">Slug</label>
+                <input type="text" id="slug" value="{{book.slug}}" placeholder="book-title-slug">
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label for="author">Author</label>
+                <input type="text" value="{{book.author}}" id="author" placeholder="Enter author name">
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label for="genre">Genre</label>
+                <select id="genre">
+                    <option value="">-- Select genre --</option>
+                    <option>Fiction</option>
+                    <option>Non-Fiction</option>
+                    <option>Romance</option>
+                    <option>Fantasy</option>
+                    <option>Science</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label for="price">Price</label>
+                <input type="number" value="{{book.price}}" id="price" placeholder="Enter price">
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label for="isbn">ISBN</label>
+                <input type="text" value="{{book.isbn}}" id="isbn" placeholder="Enter ISBN number">
+            </div>
+
+            <div class="file-input">
+                <label for="cover">Cover Front</label>
+                <input type="file" id="cover">
+            </div>
+
+            <div class="checkbox">
+                <label style="color: white;" for="published">Is Published</label>
+                <input type="checkbox" id="published" {% if book.is_published %}checked{% endif %}>
+            </div>
+
+            <div class="file-input">
+                <label for="audio">Audio File</label>
+                <input type="file" id="audio">
+            </div>
+        </div>
+
+        <!-- Right side: book content -->
+        <div class="form-right">
+               {{ form.media }}
+            <label for="bookContent">Book Content</label>
+
+
+           {{ form.content }}
+        {{ form.content.errors }}
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save</button>
+                <button type="submit" class="btn-secondary">Save and Add Another</button>
+                <button type="submit" class="btn-secondary">Save and Continue Editing</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock body %}

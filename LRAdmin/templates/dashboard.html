@@ -35,24 +35,17 @@ All Books - LeafyReads Admin
         </tr>
       </thead>
       <tbody>
+        {% for book in books %}
         <tr>
           <td><input type="checkbox"></td>
-          <td>आज़ाद परिंदा</td>
-          <td>नेहा भारद्वाज</td>
-          <td>Story</td>
-          <td>₹500.00</td>
-          <td><span class="status">Published</span></td>
-          <td>Aug. 30, 2025, 11:49 p.m.</td>
+          <td><a style="color: #0037ff;" href="{% url 'updateBook' book.slug %}">{{book.title}}</a></td>
+          <td>{{book.author}}</td>
+          <td>{{book.genre}}</td>
+          <td>₹{{book.price}}</td>
+          <td><span class="status">{% if book.is_published %}Published {% else %} Not Published{% endif %}</span></td>
+          <td>{{book.updated_at}}</td>
         </tr>
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>चाय की टपरी</td>
-          <td>Saurabh Srivastava</td>
-          <td>Love</td>
-          <td>₹500.00</td>
-          <td><span class="status">Published</span></td>
-          <td>Aug. 30, 2025, 11:04 p.m.</td>
-        </tr>
+          {% endfor %}
       </tbody>
     </table>
 

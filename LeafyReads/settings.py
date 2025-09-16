@@ -44,10 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_ckeditor_5',
     'home.apps.HomeConfig',
     'books.apps.BooksConfig',
     'LRAdmin.apps.LradminConfig',
-    'django_ckeditor_5',
 ]
 
 MIDDLEWARE = [
@@ -232,7 +232,9 @@ CKEDITOR_5_CONFIGS = {
     }
 }
 
-CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"  
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = None  # allow all users to upload temporarily
+CKEDITOR_5_IMAGE_BACKEND = "pillow"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
