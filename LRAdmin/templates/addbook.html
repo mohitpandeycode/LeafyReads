@@ -1,7 +1,6 @@
 {% extends 'basic.html' %}
 {% load static %}
 
-
 {% block title %}
 Add Book - LeafyReads Admin
 {% endblock title %}
@@ -10,79 +9,106 @@ Add Book - LeafyReads Admin
 <link rel="stylesheet" href="{% static 'css/addBook.css' %}" />
 {% endblock %}
 
-
 {% block body %}
-
 <div class="addbookcontainer">
-    <h1>Add Book - Admin</h1>
-
-    <form class="split-layout">
-        <!-- Left side: book info -->
-        <div class="form-left">
-            <div style="margin-bottom: 10px;">
-                <label for="title">Title</label>
-                <input type="text" id="title" placeholder="Enter book title">
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="slug">Slug</label>
-                <input type="text" id="slug" placeholder="book-title-slug">
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="author">Author</label>
-                <input type="text" id="author" placeholder="Enter author name">
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="genre">Genre</label>
-                <select id="genre">
-                    <option value="">-- Select genre --</option>
-                    <option>Fiction</option>
-                    <option>Non-Fiction</option>
-                    <option>Romance</option>
-                    <option>Fantasy</option>
-                    <option>Science</option>
-                </select>
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="price">Price</label>
-                <input type="number" id="price" placeholder="Enter price">
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="isbn">ISBN</label>
-                <input type="text" id="isbn" placeholder="Enter ISBN number">
-            </div>
-
-            <div class="file-input">
-                <label for="cover">Cover Front</label>
-                <input type="file" id="cover">
-            </div>
-
-            <div class="checkbox">
-                <label style="color: white;" for="published">Is Published</label>
-                <input type="checkbox" id="published">
-            </div>
-
-            <div class="file-input">
-                <label for="audio">Audio File</label>
-                <input type="file" id="audio">
-            </div>
+    <h1>Add Book - LeafyReads</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" name="action" value="save" class="btn-primary">Save</button>
+            <button type="submit" name="action" value="add_another" class="btn-primary">Save and Add Another</button>
+            <button type="submit" name="action" value="continue" class="btn-secondary">Save and Continue Editing</button>
         </div>
 
-        <!-- Right side: book content -->
-        <div class="form-right">
-            <label for="bookContent">Book Content</label>
-            <textarea id="bookContent" placeholder="Write or paste book content here..."></textarea>
+        <div class="split-layout">
+            <!-- Left side: book info -->
+            <div class="form-left">
+                <div style="margin-bottom: 10px;">
+                    <label for="title">Title <span style="color: red;">*</span></label>
+                    <input type="text" name="title" id="title" placeholder="Enter book title" required>
+                </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Save</button>
-                <button type="submit" class="btn-secondary">Save and Add Another</button>
-                <button type="submit" class="btn-secondary">Save and Continue Editing</button>
+                <div style="margin-bottom: 10px;">
+                    <label for="slug">Slug <span style="color: red;">*</span></label>
+                    <input type="text" name="slug" id="slug" placeholder="book-title-slug" required>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="author">Author <span style="color: red;">*</span></label>
+                    <input type="text" name="author" id="author" placeholder="Enter author name" required>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="genre">Genre <span style="color: red;">*</span></label>
+                    <select id="genre" name="genre" required>
+                        <option value="">-- Select genre --</option>
+                        {% for g in genres %}
+                            <option value="{{ g.id }}">{{ g.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="price">Price <span style="color: red;">*</span></label>
+                    <input type="number" name="price" id="price" placeholder="Enter price" required>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="isbn">ISBN <span style="color: red;">*</span></label>
+                    <input type="text" name="isbn" id="isbn" placeholder="Enter ISBN number" required>
+                </div>
+
+                <label for="cover">Front Cover <span style="color: red;">*</span></label>
+                <div class="image-upload">
+                    <img id="preview" src="{% static 'images/uploadimage.png' %}" alt="Cover Front">
+                    <input type="hidden" id="original_cover" value="{% static 'images/uploadimage.png' %}">
+                    <!-- Camera icon -->
+                    <label for="cover" class="overlay">📷</label>
+                    <input type="file" id="cover" name="cover_front" accept="image/*" onchange="previewImage(event)" required>
+                </div>
+
+                <div class="checkbox">
+                    <label style="color: white;" for="published">Is Published</label>
+                    <input type="checkbox" name="is_published" id="published">
+                </div>
+
+                <div class="file-input">
+                    <label for="audio">Audio File</label>
+                    <input type="file" name="audio_file" id="audio">
+                </div>
+            </div>
+
+            <!-- Right side: book content -->
+            <div class="form-right">
+                {{ form.media }}
+                <label for="bookContent">Book Content <span style="color: red;">*</span></label>
+                {{ form.content }}
+                {{ form.content.errors }}
+
+                <div class="form-actions">
+                    <button type="submit" name="action" value="save" class="btn-primary">Save</button>
+                    <button type="submit" name="action" value="add_another" class="btn-primary">Save and Add Another</button>
+                    <button type="submit" name="action" value="continue" class="btn-secondary">Save and Continue Editing</button>
+                </div>
             </div>
         </div>
     </form>
 </div>
+
+<script>
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function() {
+        document.getElementById('preview').src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+function resetImage() {
+    // restore original cover
+    const original = document.getElementById('original_cover').value;
+    document.getElementById('preview').src = original;
+    document.getElementById('cover').value = "";
+}
+</script>
 {% endblock body %}

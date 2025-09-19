@@ -22,37 +22,71 @@ All Books - LeafyReads Admin
     </div>
 
     <!-- Table -->
-    <table>
-      <thead>
-        <tr>
-          <th><input type="checkbox"></th>
-          <th>Title</th>
-          <th>Author</th>
-          <th>Genre</th>
-          <th>Price</th>
-          <th>Is Published</th>
-          <th>Uploaded At</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for book in books %}
-        <tr>
-          <td><input type="checkbox"></td>
-          <td><a style="color: #0037ff;" href="{% url 'updateBook' book.slug %}">{{book.title}}</a></td>
-          <td>{{book.author}}</td>
-          <td>{{book.genre}}</td>
-          <td>₹{{book.price}}</td>
-          <td><span class="status">{% if book.is_published %}Published {% else %} Not Published{% endif %}</span></td>
-          <td>{{book.updated_at}}</td>
-        </tr>
-          {% endfor %}
-      </tbody>
-    </table>
+  <form method="POST" id="bulk-action-form">
+  {% csrf_token %}
+  <div class="bulk-actions" style="margin-bottom: 10px;">
+    <select name="action" id="action-select">
+      <option value="">-- Select Action --</option>
+      <option value="delete">Delete selected books</option>
+    </select>
+    <button type="submit">Go</button>
+    <span id="selected-count">0 of {{ books|length }} selected</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><input type="checkbox" id="select-all"></th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Price</th>
+        <th>Is Published</th>
+        <th>Uploaded At</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+      <tr>
+        <td><input type="checkbox" class="book-checkbox" name="selected_books" value="{{ book.id }}"></td>
+        <td><a style="color: #4b72ff;" href="{% url 'updateBook' book.slug %}">{{book.title}}</a></td>
+        <td>{{book.author}}</td>
+        <td>{{book.genre}}</td>
+        <td>₹{{book.price}}</td>
+        {% if book.is_published %}
+        <td><span class="status">Published</span></td>
+        {% else %}
+        <td><span class="status" style="color: rgb(255, 81, 0);">Not Published</span></td>
+        {% endif %}
+        <td>{{book.updated_at}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
+
 
     <!-- Footer -->
     <div class="books-footer">
       2 books
     </div>
   </div>
+<script>
+  const selectAllCheckbox = document.getElementById('select-all');
+const checkboxes = document.querySelectorAll('.book-checkbox');
+const selectedCountSpan = document.getElementById('selected-count');
 
+function updateSelectedCount() {
+  const selected = document.querySelectorAll('.book-checkbox:checked').length;
+  selectedCountSpan.textContent = `${selected} of {{ books|length }} selected`;
+}
+
+selectAllCheckbox.addEventListener('change', function() {
+  checkboxes.forEach(cb => cb.checked = this.checked);
+  updateSelectedCount();
+});
+
+checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedCount));
+
+</script>
 {% endblock body %}

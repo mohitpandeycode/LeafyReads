@@ -532,7 +532,7 @@
   .footer h4 {
       font-weight: 600;
       margin-bottom: 1rem;
-      color: var(--color-text-dark);
+      color: white;
       transition: color 0.3s ease;
   }
 

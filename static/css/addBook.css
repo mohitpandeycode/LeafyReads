@@ -1,6 +1,5 @@
 body {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    background: #f9fafb;
     margin: 0;
     padding: 0;
     color: #333;
@@ -119,4 +118,72 @@ button {
 
 .btn-secondary:hover {
     background: #e5e7eb;
+}
+.image-upload {
+    position: relative;
+    display: inline-block;
+    border: 2px dashed #3b82f6;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.image-upload img {
+    max-width: 250px;
+    width: 250px;
+    border-radius: 10px;
+    display: block;
+}
+
+.image-upload input[type="file"] {
+    display: none;
+}
+
+/* Camera icon overlay */
+.image-upload .overlay {
+    position: absolute;
+    top: 38%;
+    left: 39%;
+    font-size: 35px;
+    background-color: #000000ad;
+    padding: 0px 5px 13px 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none;
+}
+
+.image-upload:hover .overlay {
+    display: block;
+}
+
+/* Remove (X) button */
+.image-upload .remove-btn {
+   position: absolute;
+    top: 2px;
+    right: 2px;
+    color: white;
+    background-color: #424242;
+    font-size: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.ck.ck-content.ck-editor__editable {
+    height: 823px !important;
+}
+
+body.dark-mode .addbookcontainer {
+      background-color: #2d3748;
+      color: #e2e8f0;
+  }
+body.dark-mode label, h1{
+      color: #e2e8f0;
+  }
+body.dark-mode input{
+      color: #e2e8f0;
+      background-color: #2d3748;
+  }
+body.dark-mode .ck.ck-content.ck-editor__editable {
+    background-color: #2d3748;
+      color: #e2e8f0;
 }
