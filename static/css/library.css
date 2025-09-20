@@ -49,3 +49,47 @@
   .fallback-link:hover {
     background-color: #111827;
   }
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    gap: 5px;
+    font-family: Arial, sans-serif;
+}
+
+.page-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #3399ff;
+    text-decoration: none;
+    color: #3399ff;
+    transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+    background-color: #3399ff;
+    color: #fff;
+}
+
+.page-btn.current {
+    background-color: #3399ff;
+    color: #fff;
+    pointer-events: none;
+}
+
+.page-btn.disabled {
+    color: #aaa;
+    border-color: #aaa;
+    pointer-events: none;
+}
+
+.dots {
+    padding: 8px 5px;
+    color: #999;
+    pointer-events: none;
+}
+

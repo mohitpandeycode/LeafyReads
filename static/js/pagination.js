@@ -22,7 +22,7 @@ function paginateBookContent() {
   tempPage.style.visibility = 'hidden';
   tempPage.style.overflow = 'hidden';
   tempPage.style.padding = '20px';
-  tempPage.style.fontSize = '0.7rem';
+  tempPage.style.fontSize = '0.86rem';
   tempPage.style.boxSizing = 'border-box';
   tempPage.style.lineHeight = '1.4';
   tempPage.className = 'pagestyle';

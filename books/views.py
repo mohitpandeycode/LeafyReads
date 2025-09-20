@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from books.models import Book, BookContent, Genre, ReadLater
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 def home(request, slug):
     # Use select_related to fetch related genre in one query if needed in template
@@ -9,14 +10,21 @@ def home(request, slug):
     bookcontent = get_object_or_404(BookContent.objects.only('content'), book=book)
     return render(request, 'book.html', {'book': book, 'bookcontent': bookcontent.content})
 
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import Book
+
 def library(request):
-    # Use select_related to fetch related genre in one query for all books
-    books = Book.objects.select_related('genre').all().order_by('-uploaded_at')
+    books_list = Book.objects.select_related('genre').all().order_by('-uploaded_at')
+    paginator = Paginator(books_list, 30)
+    page_number = request.GET.get('page')
+    books = paginator.get_page(page_number)
     context = {
         'books': books,
         'title': "The books Library"
     }
     return render(request, 'library.html', context)
+
 
 def categories(request, slug):
     # Use select_related to fetch related category in one query

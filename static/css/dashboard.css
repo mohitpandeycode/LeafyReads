@@ -145,7 +145,7 @@ th {
     font-weight: 600;
     color: #475569;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 tbody tr {
@@ -191,7 +191,7 @@ body.dark-mode .bulk-actions {
   }
 body.dark-mode th {
       color: #e2e8f0;
-      background-color: #3f95ff;
+      background-color: #306eba;
   }
 body.dark-mode .books-footer {
       color: #e2e8f0;

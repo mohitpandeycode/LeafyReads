@@ -137,32 +137,32 @@ CKEDITOR5_UPLOAD_PATH = "uploads/"
 
 
 customColorPalette = [
-        {
-            'color': 'hsl(4, 90%, 58%)',
-            'label': 'Red'
-        },
-        {
-            'color': 'hsl(340, 82%, 52%)',
-            'label': 'Pink'
-        },
-        {
-            'color': 'hsl(291, 64%, 42%)',
-            'label': 'Purple'
-        },
-        {
-            'color': 'hsl(262, 52%, 47%)',
-            'label': 'Deep Purple'
-        },
-        {
-            'color': 'hsl(231, 48%, 48%)',
-            'label': 'Indigo'
-        },
-        {
-            'color': 'hsl(207, 90%, 54%)',
-            'label': 'Blue'
-        },
-    ]
-
+    {'color': 'hsl(0, 0%, 0%)', 'label': 'Black'},
+    {'color': 'hsl(0, 0%, 30%)', 'label': 'Dim grey'},
+    {'color': 'hsl(0, 0%, 60%)', 'label': 'Grey'},
+    {'color': 'hsl(0, 0%, 90%)', 'label': 'Light grey'},
+    {'color': 'hsl(0, 0%, 100%)', 'label': 'White'},
+    {'color': 'hsl(0, 75%, 60%)', 'label': 'Red'},
+    {'color': 'hsl(0, 75%, 30%)', 'label': 'Dark red'},
+    {'color': 'hsl(30, 75%, 60%)', 'label': 'Orange'},
+    {'color': 'hsl(30, 75%, 30%)', 'label': 'Dark orange'},
+    {'color': 'hsl(60, 75%, 60%)', 'label': 'Yellow'},
+    {'color': 'hsl(60, 75%, 30%)', 'label': 'Dark yellow'},
+    {'color': 'hsl(100, 75%, 60%)', 'label': 'Light green'},
+    {'color': 'hsl(100, 75%, 30%)', 'label': 'Dark green'},
+    {'color': 'hsl(135, 75%, 60%)', 'label': 'Green'},
+    {'color': 'hsl(135, 75%, 30%)', 'label': 'Dark green'},
+    {'color': 'hsl(165, 75%, 60%)', 'label': 'Cyan'},
+    {'color': 'hsl(165, 75%, 30%)', 'label': 'Dark cyan'},
+    {'color': 'hsl(195, 75%, 60%)', 'label': 'Light blue'},
+    {'color': 'hsl(195, 75%, 30%)', 'label': 'Dark blue'},
+    {'color': 'hsl(225, 75%, 60%)', 'label': 'Blue'},
+    {'color': 'hsl(225, 75%, 30%)', 'label': 'Dark blue'},
+    {'color': 'hsl(270, 75%, 60%)', 'label': 'Purple'},
+    {'color': 'hsl(270, 75%, 30%)', 'label': 'Dark purple'},
+    {'color': 'hsl(300, 75%, 60%)', 'label': 'Light purple'},
+    {'color': 'hsl(300, 75%, 30%)', 'label': 'Dark purple'}
+]
 
 # CKEDITOR_5_FILE_STORAGE = "path_to_storage.CustomStorage" # optional
 CKEDITOR_5_CONFIGS = {
@@ -190,6 +190,22 @@ CKEDITOR_5_CONFIGS = {
                     ],
             'shouldNotGroupWhenFull': 'true'
         },
+        'mediaEmbed': {
+            'previewsInData': True,
+            'extraProviders': [
+                {
+                    'name': 'youtube',
+                    'url': r'^https?://(www\.)?youtube\.com/watch\?v=.+',
+                    'html': '<div class="video-container"><iframe src="{url}" frameborder="0" allowfullscreen></iframe></div>'
+                },
+                {
+                    'name': 'vimeo',
+                    'url': r'^https?://(www\.)?vimeo\.com/.+',
+                    'html': '<div class="video-container"><iframe src="{url}" frameborder="0" allowfullscreen></iframe></div>'
+                }
+            ]
+        },
+
         'image': {
             'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft',
                         'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  '|'],

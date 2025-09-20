@@ -63,7 +63,7 @@
             {% if book.is_published %}
               <div class="book-item">
                 <a href="{% url 'book' book.slug %}">
-                  <img src="{{ book.cover_front.url }}" alt="Book Cover 1" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+                  <img src="{{ book.cover_front.url }}" alt="Book Cover 1" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
                   <div style="box-shadow: 2px 2px 3px #3a3a3a38;border-radius: 0px 0px 5px 5px;">
                     <h3 class="truncate">{{ book.title }}</h3>
                     <p class="truncate">
@@ -84,6 +84,11 @@
             {% endif %}
           {% endfor %}
         </div>
+
+        <div class="btn-donate">
+          <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Explore More...</a>
+        </div>
+
       </div>
     </section>
 
@@ -127,7 +132,7 @@
           <div class="testimonial-card">
             <p>"LeafyReads has completely changed how I read. I've discovered so many new authors and the progress tracking keeps me motivated. It's a must-have for any book lover!"</p>
             <div class="testimonial-author">
-              <img src="https://i.pravatar.cc/150?img=1" alt="Avatar of Sarah K." />
+              <img src="https://i.pravatar.cc/150?img=1" loading="lazy" alt="Avatar of Sarah K." />
               <div>
                 <p class="author-name">Sarah K.</p>
                 <p class="author-title">Avid Reader</p>
@@ -137,7 +142,7 @@
           <div class="testimonial-card">
             <p>"Finally, a beautiful and functional app for my reading life. Joining the book club discussions has been amazing. It feels like a real community."</p>
             <div class="testimonial-author">
-              <img src="https://i.pravatar.cc/150?img=2" alt="Avatar of Michael B." />
+              <img src="https://i.pravatar.cc/150?img=2" loading="lazy" alt="Avatar of Michael B." />
               <div>
                 <p class="author-name">Michael B.</p>
                 <p class="author-title">Book Club Organizer</p>

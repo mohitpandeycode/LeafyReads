@@ -1,9 +1,11 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from books.models import *
 from .forms import BookContentForm
+from django.db.models import Q
 # Create your views here.
 
 def dashboard(request):
+    books = Book.objects.all().order_by("-uploaded_at")
     if request.method == "POST":
         action = request.POST.get('action')
         selected_books = request.POST.getlist('selected_books')
@@ -11,7 +13,21 @@ def dashboard(request):
             Book.objects.filter(id__in=selected_books).delete()
         return redirect('dashboard')  # refresh page after action
 
-    books = Book.objects.all().order_by("-uploaded_at")
+    book_query = request.GET.get('search', '').strip()
+    books = Book.objects.select_related('genre').all().order_by('-uploaded_at')
+
+    if book_query:
+        keywords = book_query.split()
+        query = Q()
+        for keyword in keywords:
+            q = (
+                Q(title__icontains=keyword) |
+                Q(author__icontains=keyword) |
+                Q(genre__name__icontains=keyword) |
+                Q(slug__icontains=keyword)
+            )
+            query |= q
+        books = books.filter(query).distinct()
     context = {"books": books}
     return render(request, 'dashboard.html', context)
 
@@ -99,3 +115,9 @@ def addBook(request):
         form = BookContentForm()
 
     return render(request, "addbook.html", {"form": form, "genres": genres})
+
+
+def viewBookAdmin(request, slug):
+    book = get_object_or_404(Book.objects.select_related('genre'), slug=slug)
+    bookcontent = get_object_or_404(BookContent.objects.only('content'), book=book)
+    return render(request, 'viewBook.html', {'book': book, 'bookcontent': bookcontent.content})

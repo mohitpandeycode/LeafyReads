@@ -40,9 +40,17 @@
           <nav class="desktop-nav">
             <a href="{% url 'dashboard' %}" class="{% if request.path == '/admin-dashboard/' %}active{% endif %}" >Admin Home</a>
             <a href="{% url 'addBook' %}" class="{% if request.path == '/admin-dashboard/add-book' %}active{% endif %}" >Add Book</a>
+           {% if request.resolver_match.url_name == 'updateBook' %}
+                <a href="{% url 'viewBookAdmin' book.slug %}" target="_blank" class="">View Book</a>
+            {% endif %}
             <a href="/" class="{% if request.path == '/' %}active{% endif %}">Visit Site</a>
-            <a href="#">Add Book Content</a>
+            <form id="navSearch" class="nav-search-wrapper" method="get">
+                <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
+                <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
+                <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
+            </form>
           </nav>
+           
           <div class="header-actions">
             <button id="theme-toggle" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
             <div class="btn primary-btn">Welcome Mr. User</div>
@@ -56,5 +64,6 @@
     {% endblock %}
 
     <script src="{% static 'js/home.js' %}"></script>
+     <script src="{% static 'js/navsearch.js' %}"></script>
   </body>
 </html>

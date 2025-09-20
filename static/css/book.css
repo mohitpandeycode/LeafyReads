@@ -341,11 +341,11 @@ ul {
     width: 440px;
     height: 580px;
     background: white;
+    /* display: flex;
+    justify-content: start; */
     overflow: hidden;
-    display: flex;
-    align-items: start;
-    justify-content: start;
-    font-size: 0.7rem;
+    align-items: center;
+    font-size: 0.84rem;
     box-sizing: border-box;
     border-radius: 20px;
     transition: background 0.5s, color 0.5s;
@@ -355,7 +355,7 @@ ul {
 
 /* fullscreen mode */
 .fullscreen .flipbook .page {
-  font-size: 1rem;
+  font-size: 1.2rem;
   width: 650px;
   height: 800px;
 }
@@ -367,11 +367,65 @@ ul {
 .pagestyle {
     padding: 20px;
 }
-.pagestyle img {
+.media{
+    width: 100%;
+    margin: 0;
+}
+.pagestyle a {
+  color: #4881ff;
+  text-decoration: none;
+}
+.pagestyle a:hover {
+  color: #144cc4;
+}
+.pagestyle iframe {
+  width: 100%;
   max-width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  margin: 1.5rem auto;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.page-wrapper code {
+  background: #e7eff7ad;
+  color: black;
+  display: inline;             
+  padding: 0.2rem 0.4rem;      
+  border-radius: 0.5rem;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
+}
+
+/* Code blocks (inside <pre>) */
+.page-wrapper pre code {
+  display: block;                            
+  padding: 1rem;
+  background: hsla(0, 0%, 77%, 0.3);
+  border-radius: 0.5rem;
+  color: #610000;
+  overflow-x: auto;
+}
+.page-wrapper blockquote {
+  border-left: 6px solid #2563eb;
+  margin: 1.2rem 0;
+  font-style: italic;
+  color: #4a5568;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+  height: 40px;
+  align-items: center;
+  display: flex;
+  padding: 0px 10px;
+
+}
+
+.pagestyle img {
   height: auto;
   display: block;
-  margin-bottom: 1rem;
+  margin-left: -40px;
+  width: 125%;
 }
 
 .page-number {
@@ -524,14 +578,14 @@ body.dark-mode .page-wrapper {
 
 .nav-button.prev {
     position: absolute;
-    left: 15%;
+    left: 10%;
     top: 50%;
     z-index: 9999;
 }
 
 .nav-button.next {
     position: absolute;
-    right: 15%;
+    right: 10%;
     top: 50%;
     z-index: 9999;
 }
@@ -848,4 +902,12 @@ body.dark-mode #commentInput {
     background: #222;
     color: #eee;
     border: 1px solid #444;
+}
+body.dark-mode pre code {
+  color: #00ffcc;
+}
+
+body.dark-mode blockquote{
+    color: #202020;
+    background: #ffffffb8;
 }

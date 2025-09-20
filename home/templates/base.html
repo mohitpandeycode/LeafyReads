@@ -6,6 +6,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="LeafyReads is your personal reading sanctuary. Discover thousands of books, track your reading progress, and connect with a community of book lovers.">
     <title>
       {% block title %}
 
@@ -47,11 +48,11 @@
             <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
                 <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
                 <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-                <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;"><span>Search</span></button>
+                <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
             </form>
           </nav>
           <div class="header-actions">
-            <button id="theme-toggle" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
+            <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
             <div id="startlogin" class="btn primary-btn">Start Reading Now</div>
           </div>
         </div>

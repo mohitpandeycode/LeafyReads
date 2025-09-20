@@ -46,6 +46,8 @@ All Books - LeafyReads Admin
       </tr>
     </thead>
     <tbody>
+      
+      {% if books %}
       {% for book in books %}
       <tr>
         <td><input type="checkbox" class="book-checkbox" name="selected_books" value="{{ book.id }}"></td>
@@ -61,6 +63,9 @@ All Books - LeafyReads Admin
         <td>{{book.updated_at}}</td>
       </tr>
       {% endfor %}
+      {% else %}
+      <td style="width: 20vw;font-size:16px">Hmm... No books matched your search!</td>
+      {% endif %}
     </tbody>
   </table>
 </form>
@@ -68,7 +73,7 @@ All Books - LeafyReads Admin
 
     <!-- Footer -->
     <div class="books-footer">
-      2 books
+      {{books.count}} books
     </div>
   </div>
 <script>
