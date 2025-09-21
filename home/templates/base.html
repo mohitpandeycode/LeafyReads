@@ -31,6 +31,7 @@
   </head>
 
   <body>
+    {% include 'loader.html' %}
     <header class="header">
       <div class="container">
         <div class="header-content">
@@ -149,7 +150,18 @@
         }
       })
     </script>
+<script>
+// Wait for the page to fully load
+window.addEventListener("load", function() {
+    // Hide the loader
+    const loader = document.getElementById("loader");
+    loader.style.display = "none";
 
+    // Show the main content
+    const content = document.getElementById("content");
+    content.style.display = "block";
+});
+</script>
     {% block script %}
 
     {% endblock %}

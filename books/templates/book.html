@@ -6,6 +6,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="LeafyReads - read, search, and explore books online with a fast and smooth experience.">
+
     <title>Book</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -89,7 +91,7 @@
     </section>
 
     <div id="loader-overlay" style="display:flex;flex-direction: column;">
-      <div id="loader-spinner"></div>
+      <img src="{% static 'images/Book.gif' %}" alt="Loading..." />
       <h2>Unfolding stories, please wait...</h2>
     </div>
     <header class="co-header">
@@ -201,7 +203,7 @@
         </li>
       </ul>
     </div>
-    <script src="{% static 'js/turn.min.js' %}"></script>
+    <script src="{% static 'js/turn.min.js' %}" defer></script>
     <script src="{% static 'js/highlight.js' %}"></script>
     <script src="{% static 'js/book.js' %}"></script>
     <script src="{% static 'js/pagination.js' %}"></script>
