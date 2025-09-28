@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   {% load static %}
+{% load socialaccount %}
 
   <!-- loginpage -->
   <head>
@@ -44,13 +45,92 @@
       opacity: 0;
     }
   }
-       .co-desktop-nav a.active {
-        color: #60a5fa !important;
-      }
+    .co-desktop-nav a.active {
+    color: #60a5fa !important;
+  }
+  .error {
+    width: 300px;
+    padding: 0px 8px;
+    position: absolute;
+    top: 10%;
+    right: 1%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    background: #defcdb;
+    border-radius: 8px;
+    border: 1px solid #00ff37;
+    box-shadow: 0px 0px 5px -3px #111;
+    z-index: 9999;
+  }
 
+  .error__icon {
+    width: 20px;
+    height: 20px;
+    transform: translateY(-2px);
+    margin-right: 8px;
+  }
+
+  .error__icon path {
+    fill: #2cc921;
+  }
+
+  .error__title {
+    font-weight: 500;
+    font-size: 14px;
+    color: #197123;
+  }
+
+  .error__close {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-left: auto;
+  }
+
+  .error__close path {
+    fill: #01271a;
+  }
+  .fade-out {
+              animation: fadeOut 0.5s forwards;
+          }
+
+          @keyframes fadeOut {
+              from {
+                  opacity: 1;
+                  transform: translateY(0);
+              }
+              to {
+                  opacity: 0;
+                  transform: translateY(-20px);
+              }
+          }
 
   </style>
   <body>
+    {% if messages %}
+    <div class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start" role="alert">
+        <div class="error__icon mr-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
+                <path fill-rule="evenodd" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z" clip-rule="evenodd"></path>
+            </svg>
+        </div>
+        <div class="error__title flex-grow">
+            <ul style="padding:0px 14px;" class="messages">
+              {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+        </div>
+        <div class="error__close ml-4 cursor-pointer">
+            <!-- Close Icon -->
+            <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-gray-700 hover:text-gray-900 transition-colors">
+                <path d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path>
+            </svg>
+        </div>
+    </div>
+    {% endif %}
     <!-- Login Model -->
     <section class="loginpagesection" id="loginSection">
       <div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
@@ -63,12 +143,12 @@
         <div class="leafy-sub-text">
           Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
         </div>
-        <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy" alt="Funny loading GIF" />
+        <img style="width: 100%; height:25vh;" src="{% static 'images/log.gif' %}" loading="lazy" alt="Funny loading GIF" />
 
-        <button class="leafy-auth-button google">
+        <a style="width: 94%;" href="{% provider_login_url 'google' %}?next={{request.path}}" class="leafy-auth-button google">
           <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
           Continue with Google
-        </button>
+        </a>
 
         <button class="leafy-auth-button github">
           <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" loading="lazy" alt="GitHub icon" />
@@ -116,10 +196,14 @@
               <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
             </form>
           </nav>
-
           <div class="co-header-actions">
-            <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
-          </div>
+              {% if user.is_authenticated %}
+              <div class="co-btn co-primary-btn">welcome {{user.first_name}} 👋</div>
+              <a href="{% url 'logout' %}">Logout</a>
+              {% else %}
+              <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
+              {% endif %}
+            </div>
         </div>
       </div>
     </header>
@@ -278,6 +362,28 @@
       loginSection.addEventListener('click', (e) => {
         if (e.target === loginSection) loginSection.classList.remove('active')
       })
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const errorDiv = document.querySelector('.error');
+            if (!errorDiv) {
+                return;
+            }
+            const closeButton = errorDiv.querySelector('.error__close');
+            const hideError = () => {
+                errorDiv.classList.add('fade-out');
+                const onAnimationEnd = () => {
+                    errorDiv.remove();
+                    errorDiv.removeEventListener('animationend', onAnimationEnd);
+                };
+                errorDiv.addEventListener('animationend', onAnimationEnd);
+            };
+            const timer = setTimeout(hideError, 3000);
+            closeButton.addEventListener('click', () => {
+                clearTimeout(timer);
+                hideError();
+            });
+        });
     </script>
   </body>
 </html>

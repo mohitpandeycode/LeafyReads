@@ -54,12 +54,17 @@
           </nav>
           <div class="header-actions">
             <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
+            {% if user.is_authenticated %}
+            <div class="btn primary-btn">Welcome {{ user.first_name }} 👋</div>
+            <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
             <div id="startlogin" class="btn primary-btn">Start Reading Now</div>
+            {%endif%}
           </div>
         </div>
       </div>
     </header>
-
+    
     {% block body %}
 
     {% endblock %}

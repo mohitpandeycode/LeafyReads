@@ -6,5 +6,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('book/', include('books.urls')),
     path('admin-dashboard/', include('LRAdmin.urls')),
+    path('logout/', views.customLogout, name='logout'),
 
 ]

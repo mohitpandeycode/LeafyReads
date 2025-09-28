@@ -45,6 +45,66 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease
 }
 
+.error {
+    width: 320px;
+    padding: 12px;
+    position: absolute;
+    top: 10%;
+    right: 1%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    background: #defcdb;
+    border-radius: 8px;
+    border: 1px solid #00ff37;
+    box-shadow: 0px 0px 5px -3px #111;
+}
+
+.error__icon {
+    width: 20px;
+    height: 20px;
+    transform: translateY(-2px);
+    margin-right: 8px;
+}
+
+.error__icon path {
+    fill: #2cc921;
+}
+
+.error__title {
+    font-weight: 500;
+    font-size: 14px;
+    color: #197123;
+}
+
+.error__close {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.error__close path {
+    fill: #01271a;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
 a {
     text-decoration: none;
     color: inherit

@@ -1,4 +1,6 @@
 {% load static %}
+{% load socialaccount %}
+
 <section class="loginpagesection" id="loginSection">
   <div class="leafy-auth-container" id="loginContainer">
     <button class="close-btn" id="closelogin">&times;</button>
@@ -10,12 +12,12 @@
     <div class="leafy-sub-text">
       Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
     </div>
-    <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy" alt="Funny loading GIF" />
+    <img style="width: 100%; height:25vh;" src="{% static 'images/log.gif' %}" loading="lazy" alt="Funny loading GIF" />
 
-    <button class="leafy-auth-button google">
+    <a href="{% provider_login_url 'google' %}?next={{request.path}}" class="leafy-auth-button google">
       <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
       Continue with Google
-    </button>
+    </a>
 
     <button class="leafy-auth-button github">
       <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" loading="lazy" alt="GitHub icon" />
