@@ -1,0 +1,167 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+{% block title %}
+LeafyReads - Login To Admin Account
+{% endblock %}
+
+{% block css %}
+<style>
+
+.loginpagesection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.leafy-auth-container {
+  background-color: #fff;
+  color: #0e0e1cfa;
+  font-family: 'Segoe UI', sans-serif;
+  width: 420px;
+  max-width: 90%;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  
+}
+
+
+ .leafy-auth-logo {
+   width: 100%;
+   max-width: 280px;
+   border-radius: 10px;
+   margin-bottom: 1.5rem;
+ }
+
+ .leafy-auth-container h1 {
+   font-size: 1.8rem;
+   margin-bottom: 0.5rem;
+ }
+
+ .leafy-sub-text {
+   margin-bottom: 1.5rem;
+   font-size: 0.75rem;
+ }
+
+
+ body.dark-mode .leafy-auth-container {
+   background-color: #00000070;
+   box-shadow:  2px 2px 7px rgb(34 34 34);
+   color: #ffffff;
+ }
+.login-form {
+    margin-top: 1.5rem;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.dark-mode .login-form input {
+    background-color: #2a2a2e; 
+    color: #ffffff;             
+    border: 1px solid #555;      
+}
+
+.dark-mode .login-form input::placeholder {
+    color: #888; 
+}
+
+
+.dark-mode .login-form input:focus {
+    border-color: #4e8ef7; 
+    outline: none; 
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #0049c4;
+    color: white;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.login-button:hover {
+    background-color: #003da8;
+}
+
+ .leafy-terms {
+   font-size: 0.75rem;
+   color: #716161;
+   margin-top: 1.5rem;
+   line-height: 1.4;
+ }
+
+ .leafy-terms a {
+   color: #4e8ef7;
+   text-decoration: none;
+ }
+
+ .leafy-terms a:hover {
+   text-decoration: underline;
+ }
+ .errors{
+    font-size: 13px;
+    text-align: start;
+    margin-top:-10px;
+    color: red;
+ }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<section style="padding: 3rem;" class="loginpagesection" id="loginSection">
+    <div class="leafy-auth-container" id="loginContainer">
+        <div
+            style="border-radius: 15px;background-color:white;align-items: center;justify-content: center;display: flex;">
+            <img style="width: 60px;border-radius: 15px;" src="{% static 'images/logo.png' %}" loading="lazy" alt="">
+            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" loading="lazy"
+                alt="">
+        </div>
+        <h3>Login To Your Account</h3>
+        <div class="leafy-sub-text">
+            Not an Admin? <a href="/" style="color:#4e8ef7;">Go Back</a>
+        </div>
+        <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy"
+            alt="Funny loading GIF" />
+
+        <div>
+             <form class="login-form" method="POST">
+                {% csrf_token %} 
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+            {% if messages %}
+                {% for message in messages %}
+                <p class="{{ message.tags }}s">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+                <button type="submit" class="login-button">Login</button>
+            </form>
+        </div>
+        
+        <div class="leafy-terms">
+            By clicking "Login" you agree to our <a href="{% url 'dashboard' %}">Terms of Service</a> & <a
+                href="#">Privacy Policy</a>.
+        </div>
+    </div>
+
+</section>
+
+
+{% endblock %}

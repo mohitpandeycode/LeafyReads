@@ -162,7 +162,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 CKEDITOR5_UPLOAD_PATH = "uploads/"
-CKEDITOR_5_FILE_UPLOAD_PERMISSION = None  # allow all users to upload temporarily
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = lambda user: user.is_staff
 CKEDITOR_5_IMAGE_BACKEND = "pillow"
 
 if ENVIRONMENT != 'development':

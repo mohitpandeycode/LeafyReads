@@ -14,7 +14,9 @@ LeafyReads - Your Digital Bookshelf
 {% block body %}
 
 <!-- loginpage-->
+{% if not user.is_authenticated %}
 {% include 'login.html' %}
+{% endif %}
 {% if messages %}
     <div class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start" role="alert">
         <div class="error__icon mr-3">

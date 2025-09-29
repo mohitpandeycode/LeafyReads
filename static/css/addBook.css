@@ -177,8 +177,9 @@ body.dark-mode h1 {
 
 body.dark-mode input,
 body.dark-mode select {
-  color: #e2e8f0;
-  background-color: #2d3748;
+   background-color: #232a35;
+    color: #ffffff;             
+    border: 1px solid #555; 
 }
 
 body.dark-mode .ck.ck-content.ck-editor__editable {

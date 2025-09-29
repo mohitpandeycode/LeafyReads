@@ -1,174 +1,240 @@
 <!DOCTYPE html>
 
 <html lang="en">
-  {% load static %}
+{% load static %}
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="LeafyReads is your personal reading sanctuary. Discover thousands of books, track your reading progress, and connect with a community of book lovers.">
-    <title>
-      {% block title %}
-
-      {% endblock %}
-    </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-    <style>
-      .desktop-nav a.active {
-        color: #60a5fa !important;
-      }
-    </style>
-
-    {% block css %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="LeafyReads is your personal reading sanctuary. Discover thousands of books, track your reading progress, and connect with a community of book lovers.">
+  <title>
+    {% block title %}
 
     {% endblock %}
-  </head>
+  </title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+  <style>
+    .desktop-nav a.active {
+      color: #60a5fa !important;
+    }
+  </style>
 
-  <body>
-    {% include 'loader.html' %}
-    <header class="header">
-      <div class="container">
-        <div class="header-content">
-          <a href="/" class="logo" style="background-color: white;border-radius: 15px;">
-            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
-            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
-          </a>
-          <nav class="desktop-nav">
-            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
-            <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
-            <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">My Books</a>
-            <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
-            <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
+  {% block css %}
 
-            <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
-                <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
-                <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-                <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
-            </form>
-          </nav>
-          <div class="header-actions">
-            <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
-            {% if user.is_authenticated %}
-            <div class="btn primary-btn">Welcome {{ user.first_name }} 👋</div>
-            <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-            <div id="startlogin" class="btn primary-btn">Start Reading Now</div>
-            {%endif%}
+  {% endblock %}
+</head>
+
+<body>
+  {% include 'loader.html' %}
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo" style="background-color: white;border-radius: 15px;">
+          <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
+          <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
+        </a>
+        <nav class="desktop-nav">
+          <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
+          <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
+          {% if user.is_authenticated %}
+          <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">My Books</a>
+          {% endif %}
+          <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
+          <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
+
+          <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
+            <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
+            <input type="text" name="search" id="navSearchInput" class="nav-search-input"
+              placeholder="Search for books, authors, or genres..." />
+            <button type="submit" id="sctive"
+              style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
+          </form>
+        </nav>
+        <div class="header-actions">
+          <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
+          {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button id="dropdown-button" class="btn">
+              Welcome {{user.first_name}} 👋
+            </button>
+
+            <ul id="dropdown-menu" class="dropdown-menu hidden">
+              <li class="dropdown-item">
+                <i data-lucide="plus"></i>
+                <span>Add Book</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="gem"></i>
+                <span>Go Pro</span>
+              </li>
+              <li class="separator"></li>
+              <li class="dropdown-item">
+                <i data-lucide="user-pen"></i>
+                <span>Profile</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="settings"></i>
+                <span>Edit Account</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="credit-card"></i>
+                <span>Billing & Plans</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="circle-question-mark"></i>
+                <span>Get Help</span>
+              </li>
+              <li class="separator"></li>
+              <a href="{% url 'logout' %}">
+              <li class="dropdown-item">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+              </li>
+            </a>
+            </ul>
+          </div>
+          {% else %}
+          <div id="startlogin" class="btn primary-btn">Start Reading Now</div>
+          {%endif%}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {% block body %}
+
+  {% endblock %}
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="logo" style="margin-bottom: 1rem;">
+            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="">
+            <span style="color: white">LeafyReads</span>
+          </div>
+          <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li>
+              <a href="#">Features</a>
+            </li>
+            <li>
+              <a href="#">Pricing</a>
+            </li>
+            <li>
+              <a href="#">Updates</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li>
+              <a href="#">About Us</a>
+            </li>
+            <li>
+              <a href="#">Careers</a>
+            </li>
+            <li>
+              <a href="#">Contact</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <ul>
+            <li>
+              <a href="#">Blog</a>
+            </li>
+            <li>
+              <a href="#">Help Center</a>
+            </li>
+            <li>
+              <a href="#">Privacy</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Follow Us</h4>
+          <div class="footer-socials">
+            <a href="#"><i data-lucide="twitter"></i></a>
+            <a href="#"><i data-lucide="instagram"></i></a>
+            <a href="#"><i data-lucide="facebook"></i></a>
           </div>
         </div>
       </div>
-    </header>
-    
-    {% block body %}
+      <div class="footer-copyright">&copy; 2025 LeafyReads. All Rights Reserved.</div>
+    </div>
+  </footer>
+  <script src="{% static 'js/home.js' %}"></script>
+  <script src="{% static 'js/navsearch.js' %}"></script>
+  <script>
+    const startlogin = document.getElementById('startlogin')
+    const loginSection = document.getElementById('loginSection')
+    const closelogin = document.getElementById('closelogin')
 
-    {% endblock %}
 
-    <footer class="footer">
-      <div class="container footer-content">
-        <div class="footer-grid">
-          <div class="footer-about">
-            <div class="logo" style="margin-bottom: 1rem;">
-              <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="">
-              <span style="color: white">LeafyReads</span>
-            </div>
-            <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
-          </div>
-          <div>
-            <h4>Product</h4>
-            <ul>
-              <li>
-                <a href="#">Features</a>
-              </li>
-              <li>
-                <a href="#">Pricing</a>
-              </li>
-              <li>
-                <a href="#">Updates</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4>Company</h4>
-            <ul>
-              <li>
-                <a href="#">About Us</a>
-              </li>
-              <li>
-                <a href="#">Careers</a>
-              </li>
-              <li>
-                <a href="#">Contact</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4>Resources</h4>
-            <ul>
-              <li>
-                <a href="#">Blog</a>
-              </li>
-              <li>
-                <a href="#">Help Center</a>
-              </li>
-              <li>
-                <a href="#">Privacy</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4>Follow Us</h4>
-            <div class="footer-socials">
-              <a href="#"><i data-lucide="twitter"></i></a>
-              <a href="#"><i data-lucide="instagram"></i></a>
-              <a href="#"><i data-lucide="facebook"></i></a>
-            </div>
-          </div>
-        </div>
-        <div class="footer-copyright">&copy; 2025 LeafyReads. All Rights Reserved.</div>
-      </div>
-    </footer>
-    <script src="{% static 'js/home.js' %}"></script>
-    <script src="{% static 'js/navsearch.js' %}"></script>
-    <script>
-      const startlogin = document.getElementById('startlogin')
-      const loginSection = document.getElementById('loginSection')
-      const closelogin = document.getElementById('closelogin')
-      
-      startlogin.addEventListener('click', () => {
-        loginSection.classList.add('active')
-      })
-      
-      closelogin.addEventListener('click', () => {
+    startlogin.addEventListener('click', () => {
+      loginSection.classList.add('active')
+    })
+
+    closelogin.addEventListener('click', () => {
+      loginSection.classList.remove('active')
+    })
+
+    // Close when clicking outside the login box
+    loginSection.addEventListener('click', (e) => {
+      if (e.target === loginSection) {
         loginSection.classList.remove('active')
-      })
-      
-      // Close when clicking outside the login box
-      loginSection.addEventListener('click', (e) => {
-        if (e.target === loginSection) {
-          loginSection.classList.remove('active')
+      }
+    })
+  </script>
+  <script>
+    // Wait for the page to fully load
+    window.addEventListener("load", function () {
+      // Hide the loader
+      const loader = document.getElementById("loader");
+      loader.style.display = "none";
+
+      // Show the main content
+      const content = document.getElementById("content");
+      content.style.display = "block";
+    });
+  </script>
+
+  <script>
+ document.addEventListener('DOMContentLoaded', () => {
+    const dropdownButton = document.getElementById('dropdown-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+
+    // 1. Toggle dropdown visibility
+    dropdownButton.addEventListener('click', (event) => {
+        // Stop the click from bubbling up to the window listener
+        event.stopPropagation(); 
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // 2. Close dropdown if clicked outside
+    window.addEventListener('click', (event) => {
+        if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
         }
-      })
-    </script>
-<script>
-// Wait for the page to fully load
-window.addEventListener("load", function() {
-    // Hide the loader
-    const loader = document.getElementById("loader");
-    loader.style.display = "none";
-
-    // Show the main content
-    const content = document.getElementById("content");
-    content.style.display = "block";
+    });
 });
-</script>
-    {% block script %}
+  </script>
+  {% block script %}
 
-    {% endblock %}
-  </body>
+  {% endblock %}
+</body>
+
 </html>

@@ -143,7 +143,7 @@
         <div class="leafy-sub-text">
           Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
         </div>
-        <img style="width: 100%; height:25vh;" src="{% static 'images/log.gif' %}" loading="lazy" alt="Funny loading GIF" />
+        <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy" alt="Funny loading GIF" />
 
         <a style="width: 94%;" href="{% provider_login_url 'google' %}?next={{request.path}}" class="leafy-auth-button google">
           <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
@@ -185,7 +185,9 @@
           <nav class="co-desktop-nav">
             <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
             <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
+            {% if user.is_authenticated %}
             <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">My Books</a>
+            {% endif %}
             <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
             <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
             <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
@@ -220,15 +222,19 @@
       <div>
         <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
         <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 130px; padding: 8px" title="Dark Mode">🌙</button>
-        <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;back" title="listen book"><i data-lucide="play"></i></button>
+        <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;" title="listen book"><i data-lucide="play"></i></button>
         <button id="highlightBtn" class="control-button fullscreen-button" style="top: 230px; padding: 8px" title="Highlighter">🖍️</button>
         <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
          <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
-        <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px" title="Like"><i data-lucide="thumbs-up"></i></button>
-        <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px" title="Save"><i data-lucide="bookmark"></i></button>
+         {% if user.is_authenticated %}
+         <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px" title="Like"><i data-lucide="thumbs-up"></i></button>
+         <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px" title="Save"><i data-lucide="bookmark"></i></button>
+         <button id="comment" class="control-button fullscreen-button" style="top: 630px; padding: 8px" title="community"><i data-lucide="messages-square"></i></button>
+         {% endif %}
       </div>
     </div>
 
+    <!-- Main Book-->
     <main id="container-wrapper">
       <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
 
@@ -252,12 +258,12 @@
         </div>
       </section>
 
-      <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span></button>
+      <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span>
+      </button> 
+        <div id="progress-bar-container" aria-label="Page Progress">
+            <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+        </div>
     </main>
-
-    <div id="progress-bar-container" aria-label="Page Progress">
-      <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-    </div>
 
     <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
     <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>

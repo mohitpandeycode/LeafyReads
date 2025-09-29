@@ -61,7 +61,7 @@ def categories(request, slug):
 
 
 # USER WISHLIST
-@login_required
+@login_required(login_url="/")
 def myBooks(request):
     books_list = ReadLater.objects.filter(user=request.user).select_related('book', 'book__genre').only(
         'id','book_id','book__title','book__genre_id','book__slug'

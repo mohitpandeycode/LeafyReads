@@ -1,9 +1,42 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from books.models import *
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib import messages
 from .forms import BookContentForm
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
+
+def loginAdmin(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            messages.error(request, f'An admin account with the username "{username}" was not found.')
+            return redirect('login_admin')
+
+        if not user.check_password(password):
+            messages.error(request, 'Incorrect password. Please try again.')
+            return redirect('login_admin')
+
+        if not user.is_staff:
+            messages.error(request, 'This account does not have admin privileges.')
+            return redirect('login_admin')
+        
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(request, user)
+        return redirect('dashboard')
+            
+    return render(request, 'loginAdmin.html')
+
+
+@login_required(login_url="login_admin")
 def dashboard(request):
     books = Book.objects.all().order_by("-uploaded_at")
     if request.method == "POST":
@@ -31,7 +64,7 @@ def dashboard(request):
     context = {"books": books}
     return render(request, 'dashboard.html', context)
 
-
+@login_required(login_url="login_admin")
 def updateBook(request, slug):
     book = get_object_or_404(Book, slug=slug)
     bookcontent, created = BookContent.objects.get_or_create(book=book)
@@ -78,7 +111,7 @@ def updateBook(request, slug):
         {"book": book, "form": form, "genres": genres}
     )
 
-
+@login_required(login_url="login_admin")
 def addBook(request):
     genres = Genre.objects.all()
 
@@ -116,7 +149,7 @@ def addBook(request):
 
     return render(request, "addbook.html", {"form": form, "genres": genres})
 
-
+@login_required(login_url="login_admin")
 def viewBookAdmin(request, slug):
     book = get_object_or_404(Book.objects.select_related('genre'), slug=slug)
     bookcontent = get_object_or_404(BookContent.objects.only('content'), book=book)
