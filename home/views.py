@@ -12,11 +12,21 @@ def home(request):
         'books': books,
         'category': category
     })
+    
+
+def aboutUs(request):
+    return render(request, 'aboutUs.html')
+
+def community(request):
+    return render(request, 'community.html')
+
 
 def customLogout(request):
     logout(request)
     messages.success(request, "You have been logged out successfully.")
     return redirect('home') 
+
+
 
 
 

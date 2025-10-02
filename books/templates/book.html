@@ -31,82 +31,7 @@
       background-size: cover;
       background-attachment: fixed;
     }
-    .like {
-      position: fixed;
-      top: -40px;
-      will-change: transform, opacity;
-      animation: fall linear forwards;
-      pointer-events: none;
-      z-index: 1000;
-    }
-    @keyframes fall {
-    to {
-      transform: translateY(100vh) rotate(360deg);
-      opacity: 0;
-    }
-  }
-    .co-desktop-nav a.active {
-    color: #60a5fa !important;
-  }
-  .error {
-    width: 300px;
-    padding: 0px 8px;
-    position: absolute;
-    top: 10%;
-    right: 1%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: start;
-    background: #defcdb;
-    border-radius: 8px;
-    border: 1px solid #00ff37;
-    box-shadow: 0px 0px 5px -3px #111;
-    z-index: 9999;
-  }
-
-  .error__icon {
-    width: 20px;
-    height: 20px;
-    transform: translateY(-2px);
-    margin-right: 8px;
-  }
-
-  .error__icon path {
-    fill: #2cc921;
-  }
-
-  .error__title {
-    font-weight: 500;
-    font-size: 14px;
-    color: #197123;
-  }
-
-  .error__close {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    margin-left: auto;
-  }
-
-  .error__close path {
-    fill: #01271a;
-  }
-  .fade-out {
-              animation: fadeOut 0.5s forwards;
-          }
-
-          @keyframes fadeOut {
-              from {
-                  opacity: 1;
-                  transform: translateY(0);
-              }
-              to {
-                  opacity: 0;
-                  transform: translateY(-20px);
-              }
-          }
-
+    
   </style>
   <body>
     {% if messages %}
@@ -200,8 +125,41 @@
           </nav>
           <div class="co-header-actions">
               {% if user.is_authenticated %}
-              <div class="co-btn co-primary-btn">welcome {{user.first_name}} 👋</div>
-              <a href="{% url 'logout' %}">Logout</a>
+              <div class="dropdown">
+            <button id="dropdown-button" class="btn">
+              Welcome {{user.first_name}} <i data-lucide="chevrons-down"></i>
+            </button>
+
+            <ul id="dropdown-menu" class="dropdown-menu hidden">
+              <li class="dropdown-item">
+                <i data-lucide="user-pen"></i>
+                <span>Profile</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="settings"></i>
+                <span>Edit Account</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="gem"></i>
+                <span>Go Pro</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="credit-card"></i>
+                <span>Billing & Plans</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="circle-question-mark"></i>
+                <span>Get Help</span>
+              </li>
+              <li class="separator"></li>
+              <a href="{% url 'logout' %}">
+              <li class="dropdown-item">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+              </li>
+            </a>
+            </ul>
+          </div>
               {% else %}
               <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
               {% endif %}
@@ -391,5 +349,25 @@
             });
         });
     </script>
+    <script>
+ document.addEventListener('DOMContentLoaded', () => {
+    const dropdownButton = document.getElementById('dropdown-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+
+    // 1. Toggle dropdown visibility
+    dropdownButton.addEventListener('click', (event) => {
+        // Stop the click from bubbling up to the window listener
+        event.stopPropagation(); 
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // 2. Close dropdown if clicked outside
+    window.addEventListener('click', (event) => {
+        if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+});
+  </script>
   </body>
 </html>

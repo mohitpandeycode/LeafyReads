@@ -55,18 +55,6 @@ CKEDITOR_5_CONFIGS = {
         },
         'mediaEmbed': {
             'previewsInData': True,
-            'extraProviders': [
-                {
-                    'name': 'youtube',
-                    'url': r'^https?://(www\.)?youtube\.com/watch\?v=.+',
-                    'html': '<div class="video-container"><iframe src="{url}" frameborder="0" allowfullscreen></iframe></div>'
-                },
-                {
-                    'name': 'vimeo',
-                    'url': r'^https?://(www\.)?vimeo\.com/.+',
-                    'html': '<div class="video-container"><iframe src="{url}" frameborder="0" allowfullscreen></iframe></div>'
-                }
-            ]
         },
 
         'image': {
