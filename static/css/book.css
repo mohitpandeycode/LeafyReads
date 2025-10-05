@@ -41,7 +41,7 @@ body {
 }
 
 :root {
-    --color-primary: #3B82F6;
+    --color-primary: #149546;
     --color-primary-hover: #2563EB;
     --color-bg: #F8F7F4;
     --color-text-dark: #1a1a1a;
@@ -54,7 +54,7 @@ body {
 }
 
 body.dark-mode {
-    --color-primary: #60A5FA;
+    --color-primary: #25b95f;
     --color-primary-hover: #3B82F6;
     --color-bg: #1A202C;
     --color-text-dark: #E2E8F0;
@@ -97,7 +97,7 @@ body.dark-mode {
 .btn {
     padding: 10px 18px;
     border-radius: 6px;
-    background-color: #0078d4;
+    background-color: #149546;
     color: white;
     border: none;
     cursor: pointer;
@@ -367,12 +367,13 @@ ul {
     background: #fff;
     overflow: hidden;
     align-items: center;
-    font-size: .84rem;
+    font-size: .82rem;
     box-sizing: border-box;
     border-radius: 20px;
     transition: background 0.5s, color 0.5s;
     border: 1px solid rgb(0 0 0 / .1);
-    box-shadow: none !important
+    box-shadow: none !important;
+    background-color: #fffdf8;
 }
 
 .fullscreen .flipbook .page {
@@ -513,13 +514,6 @@ body.dark-mode .page-number {
     background-color: #34495e
 }
 
-.control-button.like-active {
-    background-color: #007BFF
-}
-
-.control-button.save-active {
-    background-color: #ff6b00
-}
 
 html.dark-mode,
 body.dark-mode {
@@ -744,6 +738,29 @@ body.dark-mode #progress-bar {
 
 .co-desktop-nav a.active {
     color: #60a5fa !important;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2c3e50df;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0.5s, bottom 0.5s;
+    font-family: sans-serif;
+}
+
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+    bottom: 30px;
 }
 
 .error {

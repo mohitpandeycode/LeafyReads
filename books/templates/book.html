@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   {% load static %}
-{% load socialaccount %}
+  {% load socialaccount %}
 
   <!-- loginpage -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="LeafyReads - read, search, and explore books online with a fast and smooth experience.">
+    <meta name="description" content="LeafyReads - read, search, and explore books online with a fast and smooth experience." />
 
     <title>Book</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,11 +17,7 @@
     <link rel="stylesheet" href="{% static 'css/book.css' %}" />
     <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
     <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-    <script src="{% static 'js/loading.js' %}"></script>
-    <!-- Full version, works with turn.js -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
-  </head>
-
+    
   <style>
     body {
       background-image: url('{% static "images/backk.jpg" %}');
@@ -33,44 +29,49 @@
     }
     
   </style>
+    <script src="{% static 'js/loading.js' %}"></script>
+    <!-- Full version, works with turn.js -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+  </head>
+
   <body>
     {% if messages %}
-    <div class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start" role="alert">
+      <div class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start" role="alert">
         <div class="error__icon mr-3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
-                <path fill-rule="evenodd" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z" clip-rule="evenodd"></path>
-            </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
+            <path fill-rule="evenodd" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z" clip-rule="evenodd"></path>
+          </svg>
         </div>
         <div class="error__title flex-grow">
-            <ul style="padding:0px 14px;" class="messages">
-              {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
+          <ul style="padding:0px 14px;" class="messages">
+            {% for message in messages %}
+              <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
         </div>
         <div class="error__close ml-4 cursor-pointer">
-            <!-- Close Icon -->
-            <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-gray-700 hover:text-gray-900 transition-colors">
-                <path d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path>
-            </svg>
+          <!-- Close Icon -->
+          <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-gray-700 hover:text-gray-900 transition-colors">
+            <path d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path>
+          </svg>
         </div>
-    </div>
+      </div>
     {% endif %}
     <!-- Login Model -->
     <section class="loginpagesection" id="loginSection">
       <div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
         <button class="close-btn" id="closelogin">&times;</button>
-         <div style="border-radius: 15px;background-color:white;align-items: center;justify-content: center;display: flex;" >
-            <img loading="lazy" style="width: 60px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
-            <img loading="lazy" style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
-          </div>
+        <div style="border-radius: 15px;background-color:white;align-items: center;justify-content: center;display: flex;">
+          <img loading="lazy" style="width: 60px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="" />
+          <img loading="lazy" style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="" />
+        </div>
         <h3>Create Your Account</h3>
         <div class="leafy-sub-text">
           Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
         </div>
         <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy" alt="Funny loading GIF" />
 
-        <a style="width: 94%;" href="{% provider_login_url 'google' %}?next={{request.path}}" class="leafy-auth-button google">
+        <a style="width: 94%;" href="{% provider_login_url 'google' %}?next={{ request.path }}" class="leafy-auth-button google">
           <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
           Continue with Google
         </a>
@@ -102,16 +103,16 @@
     <header class="co-header">
       <div class="co-container">
         <div class="co-header-content">
-           <a href="/" class="co-logo" style="background-color: white;border-radius: 15px;">
-            <img style="width: 48px;border-radius: 15px;" loading="lazy" src="{% static 'images/logo.png' %}" alt="">
-            <img style="width: 140px;border-radius: 15px;" loading="lazy" src="{% static 'images/leafyreads.png' %}" alt="">
+          <a href="/" class="co-logo" style="background-color: white;border-radius: 15px;">
+            <img style="width: 48px;border-radius: 15px;" loading="lazy" src="{% static 'images/logo.png' %}" alt="" />
+            <img style="width: 140px;border-radius: 15px;" loading="lazy" src="{% static 'images/leafyreads.png' %}" alt="" />
           </a>
 
           <nav class="co-desktop-nav">
             <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
             <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
             {% if user.is_authenticated %}
-            <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">My Books</a>
+              <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">Saved Books</a>
             {% endif %}
             <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
             <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
@@ -120,50 +121,48 @@
                 <i data-lucide="search"></i>
               </div>
               <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-              <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
+              <button type="submit" id="sctive" style="display: none;border: none; background: #149546;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
             </form>
           </nav>
           <div class="co-header-actions">
-              {% if user.is_authenticated %}
+            {% if user.is_authenticated %}
               <div class="dropdown">
-            <button id="dropdown-button" class="btn">
-              Welcome {{user.first_name}} <i data-lucide="chevrons-down"></i>
-            </button>
+                <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i data-lucide="chevrons-down"></i></button>
 
-            <ul id="dropdown-menu" class="dropdown-menu hidden">
-              <li class="dropdown-item">
-                <i data-lucide="user-pen"></i>
-                <span>Profile</span>
-              </li>
-              <li class="dropdown-item">
-                <i data-lucide="settings"></i>
-                <span>Edit Account</span>
-              </li>
-              <li class="dropdown-item">
-                <i data-lucide="gem"></i>
-                <span>Go Pro</span>
-              </li>
-              <li class="dropdown-item">
-                <i data-lucide="credit-card"></i>
-                <span>Billing & Plans</span>
-              </li>
-              <li class="dropdown-item">
-                <i data-lucide="circle-question-mark"></i>
-                <span>Get Help</span>
-              </li>
-              <li class="separator"></li>
-              <a href="{% url 'logout' %}">
-              <li class="dropdown-item">
-                <i data-lucide="log-out"></i>
-                <span>Logout</span>
-              </li>
-            </a>
-            </ul>
-          </div>
-              {% else %}
+                <ul id="dropdown-menu" class="dropdown-menu hidden">
+                  <li class="dropdown-item">
+                    <i data-lucide="user-pen"></i>
+                    <span>Profile</span>
+                  </li>
+                  <li class="dropdown-item">
+                    <i data-lucide="settings"></i>
+                    <span>Edit Account</span>
+                  </li>
+                  <li class="dropdown-item">
+                    <i data-lucide="gem"></i>
+                    <span>Go Pro</span>
+                  </li>
+                  <li class="dropdown-item">
+                    <i data-lucide="credit-card"></i>
+                    <span>Billing & Plans</span>
+                  </li>
+                  <li class="dropdown-item">
+                    <i data-lucide="circle-question-mark"></i>
+                    <span>Get Help</span>
+                  </li>
+                  <li class="separator"></li>
+                  <a href="{% url 'logout' %}">
+                    <li class="dropdown-item">
+                      <i data-lucide="log-out"></i>
+                      <span>Logout</span>
+                    </li>
+                  </a>
+                </ul>
+              </div>
+            {% else %}
               <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
-              {% endif %}
-            </div>
+            {% endif %}
+          </div>
         </div>
       </div>
     </header>
@@ -183,16 +182,19 @@
         <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;" title="listen book"><i data-lucide="play"></i></button>
         <button id="highlightBtn" class="control-button fullscreen-button" style="top: 230px; padding: 8px" title="Highlighter">🖍️</button>
         <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
-         <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
-         {% if user.is_authenticated %}
-         <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px" title="Like"><i data-lucide="thumbs-up"></i></button>
-         <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px" title="Save"><i data-lucide="bookmark"></i></button>
-         <button id="comment" class="control-button fullscreen-button" style="top: 630px; padding: 8px" title="community"><i data-lucide="messages-square"></i></button>
-         {% endif %}
+        <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
+        {% if user.is_authenticated %}
+          <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px;{% if liked %}background-color:#007BFF;{% else %}background-color:#2c3e50;{% endif %}" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
+          <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px;{% if saved %}background-color:#ff6b00;{% else %}background-color:#2c3e50;{% endif %}" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
+          <a href="{% url 'community' %}" id="comment" class="control-button fullscreen-button" style="top: 630px; padding: 8px" title="community"><i data-lucide="messages-square"></i></a>
+        {% endif %}
+        <div id="toast-notification" class="toast">
+          <span id="toast-message"></span>
+        </div>
       </div>
     </div>
 
-    <!-- Main Book-->
+    <!-- Main Book -->
     <main id="container-wrapper">
       <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
 
@@ -201,26 +203,25 @@
 
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
-            <img src="{% static 'images/frontpage.png' %}" loading="lazy" class="cover-image" style="position: absolute;" alt="forntFrame">
+            <img src="{% static 'images/frontpage.png' %}" loading="lazy" class="cover-image" style="position: absolute;" alt="forntFrame" />
             <img src="{{ book.cover_front.url }}" loading="lazy" alt="Cover Image" class="cover-image" />
           </article>
 
           <article class="page">
             <div class="pagestyle">
               {{ bookcontent|safe }}
-            <!--{% for paragraph in bookcontent.splitlines %}
+              <!--  {% for paragraph in bookcontent.splitlines %}
                 <p>{{ paragraph|safe }}</p>
-              {% endfor %}-->
+              {% endfor %}  -->
             </div>
           </article>
         </div>
       </section>
 
-      <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span>
-      </button> 
-        <div id="progress-bar-container" aria-label="Page Progress">
-            <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-        </div>
+      <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span></button>
+      <div id="progress-bar-container" aria-label="Page Progress">
+        <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
     </main>
 
     <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
@@ -258,116 +259,189 @@
     <script src="{% static 'js/navsearch.js' %}"></script>
     {% if book.audio_file %}
     <script>
-    let audioFile = new Audio("{{ book.audio_file.url }}");
-          let playBtn = document.getElementById("play");
-          playBtn.addEventListener('click', () => {
-          if (audioFile.paused) {
-            audioFile.play();
-            playBtn.innerHTML = '<i data-lucide="pause"></i>';
-          } else {
-            audioFile.pause();
-            playBtn.innerHTML = '<i data-lucide="play"></i>';
-          }
+  // Audio Play/Pause Logic
+  let audioFile = new Audio('{{ book.audio_file.url }}');
+  const playBtn = document.getElementById('play');
 
-          // re-render icons
-          lucide.createIcons();
-        });
-    </script>
-    {% endif %}
-    <script>
-      const clicks = new Audio('/static/sounds/click.mp3')
-      document.addEventListener('DOMContentLoaded', () => {
-        const likeBtn = document.getElementById('likeBtn')
-        const saveBtn = document.getElementById('saveBtn')
-      
-        likeBtn.addEventListener('click', () => {
-          const isActive = likeBtn.classList.contains('like-active')
-          if (!isActive) burstLikes(30)
-          likeBtn.classList.toggle('like-active')
-          clicks.currentTime = 0
-          clicks.play()
-        })
-      
-        saveBtn.addEventListener('click', () => {
-          saveBtn.classList.toggle('save-active')
-          clicks.currentTime = 0
-          clicks.play()
-        })
-      })
-      
-      function burstLikes(count = 30) {
-        let i = 0
-        const interval = setInterval(() => {
-          if (i >= count) return clearInterval(interval)
-          requestAnimationFrame(() => {
-            const like = document.createElement('div')
-            like.classList.add('like')
-            like.textContent = '👍'
-            const size = Math.random() * 16 + 16
-            like.style.cssText = `
-                font-size: ${size}px;
-                left: ${Math.random() * window.innerWidth}px;
-                animation-duration: ${Math.random() * 2 + 2}s;
-              `
-            document.body.appendChild(like)
-            setTimeout(() => like.remove(), 4000)
-          })
-          i++
-        }, 20)
+  if (playBtn) {
+    playBtn.addEventListener('click', () => {
+      if (audioFile.paused) {
+        audioFile.play();
+        playBtn.innerHTML = '<i data-lucide="pause"></i>';
+      } else {
+        audioFile.pause();
+        playBtn.innerHTML = '<i data-lucide="play"></i>';
       }
-      
-      // Login Modal Toggle Logic
-      const startlogin = document.getElementById('startlogin')
-      const loginSection = document.getElementById('loginSection')
-      const closelogin = document.getElementById('closelogin')
-      
-      startlogin.addEventListener('click', () => loginSection.classList.add('active'))
-      closelogin.addEventListener('click', () => loginSection.classList.remove('active'))
-      loginSection.addEventListener('click', (e) => {
-        if (e.target === loginSection) loginSection.classList.remove('active')
-      })
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const errorDiv = document.querySelector('.error');
-            if (!errorDiv) {
-                return;
-            }
-            const closeButton = errorDiv.querySelector('.error__close');
-            const hideError = () => {
-                errorDiv.classList.add('fade-out');
-                const onAnimationEnd = () => {
-                    errorDiv.remove();
-                    errorDiv.removeEventListener('animationend', onAnimationEnd);
-                };
-                errorDiv.addEventListener('animationend', onAnimationEnd);
-            };
-            const timer = setTimeout(hideError, 3000);
-            closeButton.addEventListener('click', () => {
-                clearTimeout(timer);
-                hideError();
-            });
+      lucide.createIcons();
+    });
+  }
+</script>
+{% endif %}
+
+<script>
+
+  const clicks = new Audio('/static/sounds/click.mp3');
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const likeBtn = document.getElementById('likeBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const toast = document.getElementById('toast-notification');
+    const toastMessage = document.getElementById('toast-message');
+
+    function showToast(message) {
+      toastMessage.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Burst Likes Animation
+    function burstLikes(count = 30) {
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i >= count) return clearInterval(interval);
+        requestAnimationFrame(() => {
+          const like = document.createElement('div');
+          like.classList.add('like');
+          like.textContent = '👍';
+          const size = Math.random() * 16 + 16;
+          like.style.cssText = `
+            font-size: ${size}px;
+            left: ${Math.random() * window.innerWidth}px;
+            animation-duration: ${Math.random() * 2 + 2}s;
+          `;
+          document.body.appendChild(like);
+          setTimeout(() => like.remove(), 4000);
         });
-    </script>
-    <script>
- document.addEventListener('DOMContentLoaded', () => {
+        i++;
+      }, 20);
+    }
+
+    // AJAX for Save / Read Later
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        const url = this.dataset.url;
+        const csrfToken = '{{ csrf_token }}';
+
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'saved') {
+            showToast(data.message);
+            saveBtn.style.backgroundColor = "#ff6b00";
+          } else if (data.status === 'removed') {
+            showToast(data.message);
+            saveBtn.style.backgroundColor = "#2c3e50";
+          } else {
+            showToast(data.message || 'An unknown error occurred.');
+          }
+          clicks.currentTime = 0;
+          clicks.play();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showToast('Something went wrong. Please try again.');
+        });
+      });
+    }
+
+    // AJAX for Like Button
+    if (likeBtn) {
+      likeBtn.addEventListener('click', function() {
+        const url = this.dataset.url;
+        const csrfToken = '{{ csrf_token }}';
+
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'liked') {
+            showToast(data.message);
+            likeBtn.style.backgroundColor = "#007BFF";
+            likeBtn.classList.add('like-active');
+            burstLikes(30); // Only burst when liked
+          } else if (data.status === 'unliked') {
+            showToast(data.message);
+            likeBtn.style.backgroundColor = "#2c3e50";
+            likeBtn.classList.remove('like-active');
+          } else {
+            showToast(data.message || 'An unknown error occurred.');
+          }
+          clicks.currentTime = 0;
+          clicks.play();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showToast('Something went wrong. Please try again.');
+        });
+      });
+    }
+
+    // Login Modal Toggle
+    const startlogin = document.getElementById('startlogin');
+    const loginSection = document.getElementById('loginSection');
+    const closelogin = document.getElementById('closelogin');
+
+    if (startlogin && loginSection && closelogin) {
+      startlogin.addEventListener('click', () => loginSection.classList.add('active'));
+      closelogin.addEventListener('click', () => loginSection.classList.remove('active'));
+      loginSection.addEventListener('click', (e) => {
+        if (e.target === loginSection) loginSection.classList.remove('active');
+      });
+    }
+
+    // alert Fade-Out
+    const errorDiv = document.querySelector('.error');
+    if (errorDiv) {
+      const closeButton = errorDiv.querySelector('.error__close');
+      const hideError = () => {
+        errorDiv.classList.add('fade-out');
+        const onAnimationEnd = () => {
+          errorDiv.remove();
+          errorDiv.removeEventListener('animationend', onAnimationEnd);
+        };
+        errorDiv.addEventListener('animationend', onAnimationEnd);
+      };
+      const timer = setTimeout(hideError, 3000);
+      if (closeButton) closeButton.addEventListener('click', () => {
+        clearTimeout(timer);
+        hideError();
+      });
+    }
+
+    // User Dropdown Menu
     const dropdownButton = document.getElementById('dropdown-button');
     const dropdownMenu = document.getElementById('dropdown-menu');
 
-    // 1. Toggle dropdown visibility
-    dropdownButton.addEventListener('click', (event) => {
-        // Stop the click from bubbling up to the window listener
-        event.stopPropagation(); 
+    if (dropdownButton && dropdownMenu) {
+      dropdownButton.addEventListener('click', (event) => {
+        event.stopPropagation();
         dropdownMenu.classList.toggle('hidden');
-    });
+      });
 
-    // 2. Close dropdown if clicked outside
-    window.addEventListener('click', (event) => {
+      window.addEventListener('click', (event) => {
         if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
-            dropdownMenu.classList.add('hidden');
+          dropdownMenu.classList.add('hidden');
         }
-    });
-});
-  </script>
+      });
+    }
+
+    // Initialize Lucide Icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  });
+</script>
+
   </body>
 </html>

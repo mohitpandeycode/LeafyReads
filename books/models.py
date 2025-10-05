@@ -48,6 +48,9 @@ class Genre(models.Model):
         return self.name
 
 
+class BookQuerySet(models.QuerySet):
+    def with_related(self):
+        return self.select_related('genre', 'genre__category', 'content')
 
 # BOOK MODEL
 
@@ -64,6 +67,7 @@ class Book(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     audio_file = models.FileField(upload_to='sounds/', null=True, blank=True)
+    objects = BookQuerySet.as_manager()
 
     class Meta:
         ordering = ['-uploaded_at']
@@ -94,7 +98,6 @@ class BookContent(models.Model):
 
     def __str__(self):
         return f"Content for {self.book.title}"
-
 
 
 # REVIEW MODEL
@@ -129,8 +132,8 @@ class Like(models.Model):
     class Meta:
         unique_together = ('user', 'book')
         indexes = [
-            models.Index(fields=['user', 'book']),   # Existing composite index
-            models.Index(fields=['book']),           # Added index for queries by book
+            models.Index(fields=['user', 'book']), 
+            models.Index(fields=['book']),          
         ]
 
     def __str__(self):
@@ -154,3 +157,18 @@ class ReadLater(models.Model):
 
     def __str__(self):
         return f"{self.user.username} saved {self.book.title} for later"
+
+class ReadBy(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='readby')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name = 'readbooks')
+    readed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'book')
+        indexes = [
+            models.Index(fields=['user', 'book']),   
+            models.Index(fields=['book']),           
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} readed {self.book.title} "

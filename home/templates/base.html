@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="{% static 'css/login.css' %}" />
   <style>
     .desktop-nav a.active {
-      color: #60a5fa !important;
+      color: #149546 !important;
     }
     
   </style>
@@ -45,7 +45,7 @@
           <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
           <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
           {% if user.is_authenticated %}
-          <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">My Books</a>
+          <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">Saved Books</a>
           {% endif %}
           <a href="{% url 'community' %}" class="{% if request.path == '/ourcommunity/' %}active{% endif %}">Community</a>
           <a href="{% url 'aboutUs' %}" class="{% if request.path == '/aboutus/' %}active{% endif %}">About Us</a>
@@ -55,7 +55,7 @@
             <input type="text" name="search" id="navSearchInput" class="nav-search-input"
               placeholder="Search for books, authors, or genres..." />
             <button type="submit" id="sctive"
-              style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
+              style="display: none;border: none; background: #149546;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
           </form>
         </nav>
         <div class="header-actions">

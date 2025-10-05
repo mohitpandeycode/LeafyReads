@@ -1,5 +1,5 @@
 :root {
-    --color-primary: #3B82F6;
+    --color-primary: #149546;
     --color-primary-hover: #2563EB;
     --color-bg: #F8F7F4;
     --color-text-dark: #1a1a1a;
@@ -15,7 +15,7 @@
 }
 
 body.dark-mode {
-    --color-primary: #60A5FA;
+    --color-primary: #25b95f;
     --color-primary-hover: #3B82F6;
     --color-bg: #1A202C;
     --color-text-dark: #E2E8F0;
@@ -135,7 +135,7 @@ body.dark-mode {
 .btn {
     padding: 10px 18px;
     border-radius: 6px;
-    background-color: #0078d4;
+    background-color: var(--color-primary);
     color: white;
     border: none;
     cursor: pointer;
@@ -510,7 +510,27 @@ body.dark-mode .book-item img:hover {
     font-size: .875rem;
     color: var(--color-text-light);
     transition: color 0.3s ease;
-    padding-bottom: 5px;
+    padding-bottom: 2px;
+    width: 65%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.book-item div {
+    color: var(--color-text-light);
+    transition: color 0.3s ease;
+    padding-right: 2px;
+    padding-bottom: 2px;
+}
+
+.readby{
+    position: absolute;
+    background: #ffee50e3;
+    padding: 2px;
+    border-radius: 5px;
+    bottom: 23%;
+    font-size: 14px;
+    right: 1%;
+    color: black !important;
 }
 
 .features-grid {
@@ -610,8 +630,8 @@ body.dark-mode .feature-icon.bg-purple {
 
 .btn-donate {
     --clr-font-main: hsla(0 0% 20% / 100);
-    --btn-bg-1: hsla(194 100% 69% / 1);
-    --btn-bg-2: hsla(217 100% 56% / 1);
+    --btn-bg-1: rgb(40, 255, 97);
+    --btn-bg-2: rgb(0, 142, 45);
     --btn-bg-color: hsla(360 100% 100% / 1);
     --radii: 0.5em;
     cursor: pointer;

@@ -40,6 +40,7 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',
     'django.contrib.admin',
     'django.contrib.sites',
     'django.contrib.auth',
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'debug_toolbar',
     
 ]
 
@@ -69,11 +71,15 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {'access_type': 'online'},
     }
 }
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -180,7 +186,21 @@ if ENVIRONMENT != 'development':
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'  # where to redirect after login
 LOGOUT_REDIRECT_URL = '/'  # where to redirect after logout
+
+UNFOLD = {
+    "SITE_TITLE": "LeafyReads Admin Pannel",
+    "SITE_HEADER": "LeafyReads Admin",
+    "SITE_SUBHEADER": "Access of all the powers",
+    "THEME": "dark", 
+     "SIDEBAR": {
+        "show_search": True,  
+        
+     }
+     
+}
