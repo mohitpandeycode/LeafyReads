@@ -210,6 +210,20 @@ a {
 ul {
     list-style: none
 }
+/* Default: light theme */
+.logo-dark {
+  display: none;
+}
+
+/* Dark mode */
+body.dark-mode .logo-light {
+  display: none;
+}
+
+body.dark-mode .logo-dark {
+  display: inline-block;
+}
+
 
 .container {
     width: 95%;
@@ -233,14 +247,14 @@ ul {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 8px;
-    padding-bottom: 8px
+    padding-top: 5px;
+    padding-bottom: 5px
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: .5rem
+    justify-content: center;
 }
 
 .logo span {

@@ -115,6 +115,19 @@ LeafyReads - Login To Admin Account
  .leafy-terms a:hover {
    text-decoration: underline;
  }
+ /* Default: light theme */
+.login-leafy-dark {
+  display: none;
+}
+
+/* Dark mode */
+body.dark-mode .login-leafy-light {
+  display: none;
+}
+
+body.dark-mode .login-leafy-dark {
+  display: inline-block;
+}
  .errors{
     font-size: 13px;
     text-align: start;
@@ -129,10 +142,12 @@ LeafyReads - Login To Admin Account
 <section style="padding: 3rem;" class="loginpagesection" id="loginSection">
     <div class="leafy-auth-container" id="loginContainer">
         <div
-            style="border-radius: 15px;background-color:white;align-items: center;justify-content: center;display: flex;">
-            <img style="width: 60px;border-radius: 15px;" src="{% static 'images/logo.png' %}" loading="lazy" alt="">
-            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" loading="lazy"
-                alt="">
+            style="align-items: center;justify-content: center;display: flex;">
+             <img style="width: 60px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" loading="lazy" alt="">
+      <!-- light theme image -->
+      <img class="login-leafy-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" loading="lazy" alt="">
+      <!-- dark theme image -->
+      <img class="login-leafy-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafydark.png' %}" loading="lazy" alt="">
         </div>
         <h3>Login To Your Account</h3>
         <div class="leafy-sub-text">

@@ -37,9 +37,13 @@
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <a href="/" class="logo" style="background-color: white;border-radius: 15px;">
-          <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
-          <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
+        <a href="/" class="logo">
+          <!-- common logo part -->
+          <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="">
+          <!-- light theme image -->
+          <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" alt="">
+          <!-- dark theme image -->
+          <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafydark.png' %}" alt="">
         </a>
         <nav class="desktop-nav">
           <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>

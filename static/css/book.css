@@ -93,6 +93,25 @@ body.dark-mode {
     display: inline-block;
     
 }
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Default: light theme */
+.logo-dark {
+  display: none;
+}
+
+/* Dark mode */
+body.dark-mode .logo-light {
+  display: none;
+}
+
+body.dark-mode .logo-dark {
+  display: inline-block;
+}
+
 
 .btn {
     padding: 10px 18px;
@@ -196,8 +215,8 @@ ul {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 8px;
-    padding-bottom: 8px
+    padding-top: 5px;
+    padding-bottom: 5px
 }
 
 .co-logo {
@@ -515,8 +534,8 @@ body.dark-mode .page-number {
 }
 
 
-html.dark-mode,
-body.dark-mode {
+
+html.dark-mode{
     background: #1A202C !important;
     color: #f0f0f0
 }
@@ -527,7 +546,8 @@ body.dark-mode #container {
 }
 
 body.dark-mode .flipbook .page {
-    background: #2f2f2f;
+    /* background: #2f2f2f; */
+    background: #1d2125;
     color: #d7d7d7;
     border: 1px solid rgb(255 255 255 / .1);
     box-shadow: none !important

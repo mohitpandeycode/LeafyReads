@@ -40,6 +40,19 @@
   opacity: 1;
   transform: translate(0, 0) scale(1);
 }
+/* Default: light theme */
+.login-leafy-dark {
+  display: none;
+}
+
+/* Dark mode */
+body.dark-mode .login-leafy-light {
+  display: none;
+}
+
+body.dark-mode .login-leafy-dark {
+  display: inline-block;
+}
 
 /* Close Button */
 .close-btn {
