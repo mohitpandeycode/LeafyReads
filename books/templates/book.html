@@ -123,7 +123,10 @@
             <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
             <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
             {% if user.is_authenticated %}
-              <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">Saved Books</a>
+            <div style="position: relative;position: relative;display: flex;justify-content: center;align-items: center;">
+              <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">Read Later</a>
+              <p class="dot"></p>
+            </div>
             {% endif %}
             <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
             <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
@@ -138,40 +141,47 @@
           <div class="co-header-actions">
             {% if user.is_authenticated %}
               <div class="dropdown">
-                <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i data-lucide="chevrons-down"></i></button>
+                <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i data-lucide="arrow-big-down-dash"></i></button>
 
                 <ul id="dropdown-menu" class="dropdown-menu hidden">
-                  <li class="dropdown-item">
-                    <i data-lucide="user-pen"></i>
-                    <span>Profile</span>
-                  </li>
-                  <li class="dropdown-item">
-                    <i data-lucide="settings"></i>
-                    <span>Edit Account</span>
-                  </li>
-                  <li class="dropdown-item">
-                    <i data-lucide="gem"></i>
-                    <span>Go Pro</span>
-                  </li>
-                  <li class="dropdown-item">
-                    <i data-lucide="credit-card"></i>
-                    <span>Billing & Plans</span>
-                  </li>
-                  <li class="dropdown-item">
-                    <i data-lucide="circle-question-mark"></i>
-                    <span>Get Help</span>
-                  </li>
-                  <li class="separator"></li>
-                  <a href="{% url 'logout' %}">
+                   {% if user.is_staff %}                  
+                    <a href="/admin-dashboard/">
                     <li class="dropdown-item">
-                      <i data-lucide="log-out"></i>
-                      <span>Logout</span>
+                      <i data-lucide="shield-check"></i>
+                      <span>Admin Pannel</span>
                     </li>
-                  </a>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'profilepage' %}">
+                      <li class="dropdown-item">
+                        <i data-lucide="user-pen"></i>
+                        <span>Profile</span>
+                      </li>
+                    </a>
+                    <li class="dropdown-item">
+                      <i data-lucide="gem"></i>
+                      <span>Go Pro</span>
+                    </li>
+                    <li class="dropdown-item">
+                      <i data-lucide="credit-card"></i>
+                      <span>Billing & Plans</span>
+                    </li>
+                    <li class="dropdown-item">
+                      <i data-lucide="circle-question-mark"></i>
+                      <span>Get Help</span>
+                    </li>
+                  {% endif %}
+                    <li class="separator"></li>
+                    <a href="{% url 'logout' %}">
+                      <li class="dropdown-item">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                      </li>
+                    </a>
                 </ul>
               </div>
             {% else %}
-              <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
+              <div style="display: flex;align-items: center;justify-content: center;gap: 4px;" id="startlogin" class="btn primary-btn"><span>Start Reading Now </span><i style="width: 20px;" data-lucide="sparkles"></i></div>
             {% endif %}
           </div>
         </div>
@@ -296,6 +306,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     const likeBtn = document.getElementById('likeBtn');
     const saveBtn = document.getElementById('saveBtn');
+    const dot = document.querySelector('.dot');
     const toast = document.getElementById('toast-notification');
     const toastMessage = document.getElementById('toast-message');
 
@@ -345,9 +356,12 @@
           if (data.status === 'saved') {
             showToast(data.message);
             saveBtn.style.backgroundColor = "#ff6b00";
+            dot.style.display = "block";
+            
           } else if (data.status === 'removed') {
             showToast(data.message);
             saveBtn.style.backgroundColor = "#2c3e50";
+            dot.style.display = "none";
           } else {
             showToast(data.message || 'An unknown error occurred.');
           }

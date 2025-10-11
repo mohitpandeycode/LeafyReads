@@ -341,6 +341,17 @@ ul {
     }
 }
 
+.dot{
+    background-color: #00ff37;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    right: -9px;
+    bottom: -4px;
+    display: none;
+}
+
 #spine-illusion {
     position: absolute;
     top: 2%;
@@ -402,7 +413,7 @@ ul {
 }
 
 .page {
-    border: 1px solid #949494 !important
+    border: 1px solid #858585 !important;
 }
 
 .pagestyle {

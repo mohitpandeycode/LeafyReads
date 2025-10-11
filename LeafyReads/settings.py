@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'books.apps.BooksConfig',
     'LRAdmin.apps.LradminConfig',
+    'userSection.apps.UsersectionConfig',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

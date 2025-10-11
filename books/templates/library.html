@@ -54,16 +54,18 @@
             <div class="book-item" style="position: relative;">
               <a href="{% url 'book' book.slug %}">
                 <img src="{{ book.cover_front.url }}" alt="Book Cover 1" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-                <div class="readby">
-                  <strong>Read By:</strong> {{ book.readby_count }} user{{ book.readby_count|pluralize }}
-                </div>
                 <div style="box-shadow: 2px 2px 3px #3a3a3a38;border-radius: 0px 0px 5px 5px;">
-                  <h3 class="truncate">{{ book.title }}</h3>
-                   <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
-                    <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
-                    <div style="font-weight: 700;"><i style="height: 16px;fill: #007BFF;color: #0358ff;" data-lucide="thumbs-up"></i>{{ book.likes_count }}</div>
-                  </div>
+              <div class="readby">
+                <h3 class="truncate">{{ book.title }}</h3>
+                <div class="views">
+                  <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
                 </div>
+              </div>
+               <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
+                <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
+                <div style="font-weight: 700;"><i style="height: 16px;fill: #007BFF;color: #0358ff;" data-lucide="thumbs-up"></i>{{ book.likes_count }}</div>
+              </div>
+            </div>
               </a>
             </div>
           {% endfor %}

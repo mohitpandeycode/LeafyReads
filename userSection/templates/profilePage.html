@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+My Dashboard - LeafyReads
+{% endblock %}
+
+{% block css %}
+<style>
+
+    :root {
+        --color-danger: #ef4444;
+    }
+    body.dark-mode {
+        --color-danger: #f87171;
+    }
+
+    .profile-section {
+        padding: 3rem 0;
+        transition: padding 0.3s ease;
+    }
+
+    /* --- Profile Header --- */
+    .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 3rem;
+        gap: 1rem;
+    }
+
+    .profile-avatar {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--color-white);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .profile-info h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--color-logo-dark);
+        margin: 0;
+        transition: font-size 0.3s ease;
+    }
+
+    .profile-info .username {
+        font-size: 1rem;
+        color: var(--color-text-light);
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-actions {
+        margin-top: 1rem;
+    }
+
+    /* --- Profile Stats --- */
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-item {
+        background-color: var(--color-card-bg);
+        border: 1px solid var(--color-border);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-item .icon {
+        color: var(--color-primary);
+    }
+
+    .stat-item h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-logo-dark);
+        line-height: 1;
+        transition: font-size 0.3s ease;
+    }
+
+    .stat-item p {
+        color: var(--color-text-medium);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* For Tablets and smaller devices */
+    @media (max-width: 768px) {
+        .profile-info h1 {
+            font-size: 2rem;
+        }
+        .profile-stats {
+            /* On tablets, a 2-column layout often looks better */
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* For Mobile devices */
+    @media (max-width: 480px) {
+        .profile-section {
+            padding: 2rem 0;
+        }
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+        }
+        .profile-info h1 {
+            font-size: 1.75rem;
+        }
+        .stat-item h2 {
+            font-size: 1.75rem;
+        }
+        .stat-item {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<main>
+    <section class="profile-section">
+        <div class="container">
+
+            <!-- PROFILE HEADER -->
+            <div class="profile-header">
+                <!-- This will display the user's avatar or a default image -->
+                {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="User Avatar" class="profile-avatar">
+                {% else %}
+                <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" class="profile-avatar">
+                {% endif %}
+
+                <div class="profile-info">
+                    <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+                    <p class="username">@{{ user.username }}</p>
+                </div>
+
+                <!-- Hidden form for avatar upload -->
+                <form id="avatar-form" method="POST" action="" enctype="multipart/form-data" style="display: none;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_avatar">
+                    <input type="file" id="avatar-input" name="avatar" accept="image/*">
+                </form>
+
+                <div class="profile-actions">
+                    <!-- This button triggers the hidden file input via JavaScript -->
+                    <button id="edit-profile-btn" type="button" class="btn secondary-btn" style="display: inline-flex;">
+                        <i data-lucide="camera"></i><span>Change Picture</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- USER STATS -->
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="icon"><i data-lucide="book-open-check"></i></div>
+                    <h2>{{ books_read_count }}</h2>
+                    <p>Books Read</p>
+                </div>
+                <div class="stat-item">
+                    <div class="icon"><i data-lucide="book-up"></i></div>
+                    <h2>0</h2>
+                    <p>Published</p>
+                </div>
+                <div class="stat-item">
+                    <div class="icon"><i data-lucide="bookmark"></i></div>
+                    <h2>{{ read_later_count }}</h2>
+                    <p>Saved for Later</p>
+                </div>
+                <div class="stat-item">
+                    <div class="icon"><i data-lucide="message-square-text"></i></div>
+                    <h2>{{ reviews_count }}</h2>
+                    <p>Reviews Written</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const avatarInput = document.getElementById('avatar-input');
+        const avatarForm = document.getElementById('avatar-form');
+
+        // When the "Change Picture" button is clicked, it triggers the hidden file input.
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', function () {
+                avatarInput.click();
+            });
+        }
+
+        // When a file is selected, the hidden form is automatically submitted.
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function () {
+                if (this.files.length > 0) {
+                    avatarForm.submit();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+
