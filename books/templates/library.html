@@ -13,6 +13,45 @@
 
 <!-- loginpage-->
 {% include 'login.html' %}
+
+{% if user.is_authenticated %}
+{% if request.path == "/profile/book/library/" %}
+<section class="recent-books-section">
+    <div class="container">
+        <h2 class="section-title">Recently Read Books</h2>
+        {% if recently_read_books %}
+        <div class="book-list">
+            {% for read_item in recently_read_books %}
+            {% with book=read_item.book %}
+            <a href="{% url 'book' book.slug %}" class="book-card">
+                {% if book.cover_front %}
+                <div class="book-wrapper">
+                    <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover">
+                    <div class="book-info-overlay">
+                        <p class="book-title">{{ book.title }}</p>
+                        <p class="book-author">{{ book.author }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="book-wrapper">
+                    <img src="{% static 'images/default_cover.png' %}" alt="No Cover Available" class="book-cover">
+                    <div class="book-info-overlay">
+                        <p class="book-title">{{ book.title }}</p>
+                        <p class="book-author">{{ book.author }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </a>
+            {% endwith %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center">You haven't marked any books as read yet. Start reading and they'll appear here! 📚</p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+{% endif %}
   <section class="bg-white">
     <div class="container">
         {% if search and not books%}

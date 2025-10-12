@@ -226,6 +226,10 @@
           <article class="page hard cover" style="border: 1px double white;">
             <img src="{% static 'images/frontpage.png' %}" loading="lazy" class="cover-image" style="position: absolute;" alt="forntFrame" />
             <img src="{{ book.cover_front.url }}" loading="lazy" alt="Cover Image" class="cover-image" />
+            <div class="bookinfocover">
+              <h4 style="margin: 0;">{{book.title}}</h4>
+              <p style="font-size:16px;margin: 0;">By: {{book.author}}</p>
+            </div>
           </article>
 
           <article class="page">
