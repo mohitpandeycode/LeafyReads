@@ -11,39 +11,54 @@ My Dashboard - LeafyReads
 
 {% block body %}
 <main>
-    <section class="profile-section">
-        <div class="container">
+    <div class="container dashboard-header-container">
 
-            <!-- PROFILE HEADER -->
-            <div class="profile-header">
-                <!-- This will display the user's avatar or a default image -->
-                {% if profile.avatar %}
-                <img src="{{ profile.avatar.url }}" alt="User Avatar" class="profile-avatar">
-                {% else %}
-                <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" class="profile-avatar">
-                {% endif %}
+        <div class="user-greeting">
+            {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="User Avatar" class="profile-avatar-header">
+            {% else %}
+            <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" class="profile-avatar-header">
+            {% endif %}
 
-                <div class="profile-info">
-                    <h1>{{ user.first_name }} {{ user.last_name }}</h1>
-                    <p class="username">@{{ user.username }}</p>
-                </div>
-
-                <!-- Hidden form for avatar upload -->
-                <form id="avatar-form" method="POST" action="" enctype="multipart/form-data" style="display: none;">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="update_avatar">
-                    <input type="file" id="avatar-input" name="avatar" accept="image/*">
-                </form>
-
-                <div class="profile-actions">
-                    <!-- This button triggers the hidden file input via JavaScript -->
-                    <button id="edit-profile-btn" type="button" class="btn secondary-btn" style="display: inline-flex;">
-                        <i data-lucide="camera"></i><span>Change Picture</span>
-                    </button>
-                </div>
+            <div class="greeting-info">
+                <h1 class="welcome-header">Welcome back to Leafyreads</h1>
+                <p class="profile-name">{{ user.first_name }} {{ user.last_name }}
+                    <span class="username">@{{ user.username }}</span>
+                </p>
             </div>
 
-            <!-- USER STATS -->
+        </div>
+
+        <div class="quick-actions">
+            <a class="action-card primary-card">
+                <i data-lucide="book-up"></i>
+                <span>Start New Book</span>
+            </a>
+
+            <a class="action-card">
+                <i data-lucide="clipboard-list"></i>
+                <span>My Drafts</span>
+            </a>
+
+            <a class="action-card">
+                <i data-lucide="book-check"></i>
+                <span>Published Books</span>
+            </a>
+
+            <a class="action-card">
+                <i data-lucide="library"></i>
+                <span>My Library</span>
+            </a>
+
+            <a class="action-card">
+                <i data-lucide="bar-chart-3"></i>
+                <span>View Analytics</span>
+            </a>
+        </div>
+    </div>
+
+    <section class="profile-section">
+        <div class="container">
             <div class="profile-stats">
                 <div class="stat-item">
                     <div class="icon"><i data-lucide="book-open-check"></i></div>
@@ -68,9 +83,10 @@ My Dashboard - LeafyReads
             </div>
         </div>
     </section>
+
     <section class="recent-books-section">
         <div class="container">
-            <h2 class="section-title">Recently Read Books</h2>
+            <h2 class="section-title">Recently Published Books <i data-lucide="book-up"></i></h2>
             {% if recently_read_books %}
             <div class="book-list">
                 {% for read_item in recently_read_books %}
@@ -96,36 +112,54 @@ My Dashboard - LeafyReads
                 </a>
                 {% endwith %}
                 {% endfor %}
+                <a class="showall" href="">Show All <i data-lucide="chevron-right"></i></a>
+            </div>
+            {% else %}
+            <p class="text-center">You haven't published any books yet. Start publishing and they'll appear here! 📚
+            </p>
+            {% endif %}
+        </div>
+        <hr style="margin-top: 55px; border:1px solid #9999996e;">
+        <div class="container">
+            <h2 class="section-title">Recently Read Books <i data-lucide="book-open-check"></i></h2>
+            {% if recently_read_books %}
+            <div class="book-list">
+                {% for read_item in recently_read_books %}
+                {% with book=read_item.book %}
+                <a href="{% url 'book' book.slug %}" class="book-card">
+                    {% if book.cover_front %}
+                    <div class="book-wrapper">
+                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover">
+                        <div class="book-info-overlay">
+                            <p class="book-title">{{ book.title }}</p>
+                            <p class="book-author">{{ book.author }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="book-wrapper">
+                        <img src="{% static 'images/default_cover.png' %}" alt="No Cover Available" class="book-cover">
+                        <div class="book-info-overlay">
+                            <p class="book-title">{{ book.title }}</p>
+                            <p class="book-author">{{ book.author }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </a>
+                {% endwith %}
+                {% endfor %}
+                <a class="showall" href="">Show All <i data-lucide="chevron-right"></i></a>
             </div>
             {% else %}
             <p class="text-center">You haven't marked any books as read yet. Start reading and they'll appear here! 📚
             </p>
             {% endif %}
-        </div>
+        </div> 
     </section>
 </main>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const editProfileBtn = document.getElementById('edit-profile-btn');
-        const avatarInput = document.getElementById('avatar-input');
-        const avatarForm = document.getElementById('avatar-form');
-
-        // When the "Change Picture" button is clicked, it triggers the hidden file input.
-        if (editProfileBtn) {
-            editProfileBtn.addEventListener('click', function () {
-                avatarInput.click();
-            });
-        }
-
-        // When a file is selected, the hidden form is automatically submitted.
-        if (avatarInput) {
-            avatarInput.addEventListener('change', function () {
-                if (this.files.length > 0) {
-                    avatarForm.submit();
-                }
-            });
-        }
+        // ... Avatar JavaScript logic removed or commented out ...
     });
 </script>
 {% endblock %}

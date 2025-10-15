@@ -11,7 +11,7 @@ def profilepage(request):
     recently_read_books = (
         ReadBy.objects.filter(user=user)
         .select_related('book')
-        .order_by('-readed_at')[:8]
+        .order_by('-readed_at')[:4]
     )
 
     # Use aggregation to reduce duplicate queries

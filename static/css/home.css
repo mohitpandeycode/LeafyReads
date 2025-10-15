@@ -44,6 +44,26 @@ body {
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.3s ease, color 0.3s ease
 }
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.126); 
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(99,102,241,0.8), rgba(168,85,247,0.8)); /* indigo → violet */
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(139,92,246,0.9), rgba(79,70,229,0.9));
+}
+
 
 .error {
     width: 320px;
@@ -648,7 +668,7 @@ body.dark-mode .dark-image {
 }
 
 .book-item img {
-    width: 100%;
+    width: 95%;
     height: 230px;
     border-radius: .5rem .5rem 0 0;
     box-shadow: 4px 0 20px -1px rgb(0 0 0 / .64), 4px -4px 10px 0 rgb(0 0 0 / .64);
@@ -662,11 +682,12 @@ body.dark-mode .book-item img {
     box-shadow: 5px 0 8px -1px #171717, 4px -3px 8px 0 #000
 }
 
-.book-item img:hover {
-    border: 2px solid #3b82f6;
-    border-radius: .5rem;
+.book-item:hover img {
+  border-radius: .5rem;
+  transform: scale(1.05) translateY(-8px) rotateZ(1deg);
+}
+.imgbook:hover{
     transform: scale(1.05) translateY(-8px) rotateZ(1deg);
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / .15), 0 8px 10px -6px rgb(0 0 0 / .15)
 }
 
 body.dark-mode .book-item img:hover {
@@ -695,8 +716,6 @@ body.dark-mode .book-item img:hover {
 .book-item div {
     color: var(--color-text-light);
     transition: color 0.3s ease;
-    padding-right: 2px;
-    padding-bottom: 2px;
 }
 .readby{
     display: flex;

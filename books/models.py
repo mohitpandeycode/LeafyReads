@@ -56,7 +56,7 @@ class BookQuerySet(models.QuerySet):
 
 class Book(models.Model):
     title = models.CharField(max_length=200, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=255) 
     author = models.CharField(max_length=100)
     genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True, related_name='books')
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
@@ -80,8 +80,15 @@ class Book(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        if not self.pk: 
+            base_slug = f"{slugify(self.title)}-by-{slugify(self.author)}"
+        
+            unique_slug = base_slug
+            counter = 1
+            while Book.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = unique_slug
         super().save(*args, **kwargs)
 
     def __str__(self):

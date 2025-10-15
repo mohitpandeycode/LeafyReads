@@ -112,15 +112,15 @@ body.dark-mode .recent-books-section {
 
 .book-list {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1rem;
     justify-items: center;
 }
 
 .book-card {
     text-decoration: none;
-    width: 150px;
-    height: 200px;
+    width: 120px;
+    height: 150px;
     position: relative;
 }
 

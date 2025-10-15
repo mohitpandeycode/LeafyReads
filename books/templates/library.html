@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
- {{title}}- find all the varity of books here
+ {{title}}- Discover & Read Your Favorite Books
 {% endblock %}
 
 {% block css %}
@@ -15,7 +15,7 @@
 {% include 'login.html' %}
 
 {% if user.is_authenticated %}
-{% if request.path == "/profile/book/library/" %}
+{% if request.path == "/book/library/" %}
 <section class="recent-books-section">
     <div class="container">
         <h2 class="section-title">Recently Read Books</h2>
@@ -89,26 +89,30 @@
           {% endif %}
         </div>
         <div class="books-grid">
-          {% for book in books %}
-            <div class="book-item" style="position: relative;">
-              <a href="{% url 'book' book.slug %}">
-                <img src="{{ book.cover_front.url }}" alt="Book Cover 1" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-                <div style="box-shadow: 2px 2px 3px #3a3a3a38;border-radius: 0px 0px 5px 5px;">
+        {% for book in books %}
+        {% if book.is_published %}
+        <div class="book-item" style="position: relative;">
+          <a href="{% url 'book' book.slug %}">
+            <img class="imgbook" src="{{ book.cover_front.url }}" alt="Book Cover 1" loading="lazy"
+            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+            <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" src="{% static 'images/framebook1.png' %}" alt="frame">
+            <div style="box-shadow: 2px 2px 3px #3a3a3a38;border-radius: 0px 0px 5px 5px;">
               <div class="readby">
                 <h3 class="truncate">{{ book.title }}</h3>
-                <div class="views">
+                <div class="views" style="margin-right: 5px;">
                   <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
                 </div>
               </div>
                <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
                 <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
-                <div style="font-weight: 700;"><i style="height: 16px;fill: #007BFF;color: #0358ff;" data-lucide="thumbs-up"></i>{{ book.likes_count }}</div>
+                <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;"><i style="height: 16px;fill: #007BFF;color: #0358ff;" data-lucide="thumbs-up"></i>{{ book.likes_count }}</div>
               </div>
             </div>
-              </a>
-            </div>
-          {% endfor %}
+          </a>
         </div>
+        {% endif %}
+        {% endfor %}
+      </div>
         {% endif %}
       </div>
         {% if books.paginator.num_pages > 1 %}

@@ -62,7 +62,7 @@ def library(request):
             .filter(user=request.user)
             .select_related('book')
             .only('book__id', 'book__title', 'book__slug', 'book__author', 'book__cover_front')
-            .order_by('-readed_at')[:8]
+            .order_by('-readed_at')[:10]
         )
 
     return render(request, 'library.html', {
