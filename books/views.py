@@ -4,7 +4,7 @@ from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from books.models import Book, BookContent, Genre, ReadLater,Like,ReadBy
-from django.db.models import Count
+from django.db.models import Count, OuterRef, Subquery, IntegerField
 from django.db import transaction
 from django.db.models import Exists, OuterRef
 
@@ -41,63 +41,92 @@ def home(request, slug):
     })
     
     
+
 def library(request):
-    books_list = (
-        Book.objects
-        .only('id', 'title', 'slug', 'author', 'cover_front')
-        .annotate(
-            likes_count=Count('likes', distinct=True),
-            readby_count=Count('readbooks', distinct=True)
-        )
-        .order_by('-uploaded_at')
-    )
-
-    paginator = Paginator(books_list, 30)
-    books = paginator.get_page(request.GET.get('page'))
-
     recently_read_books = []
     if request.user.is_authenticated:
         recently_read_books = (
             ReadBy.objects
             .filter(user=request.user)
             .select_related('book')
-            .only('book__id', 'book__title', 'book__slug', 'book__author', 'book__cover_front')
+            .only('book__id', 'book__title', 'book__slug', 'book__author', 'book__cover_front', 'readed_at')
             .order_by('-readed_at')[:10]
         )
 
-    return render(request, 'library.html', {
-        'title': "Library",
-        'books': books,
-        'recently_read_books': recently_read_books,
-    })
-
-
-# -------------------- BOOKS BY CATEGORY --------------------
-def categories(request, slug):
-    genre = get_object_or_404(Genre.objects.only('id', 'name', 'slug'), slug=slug)
+    likes_subquery = Subquery(
+        Book.objects.filter(id=OuterRef('id'))
+        .annotate(count=Count('likes'))
+        .values('count')[:1],
+        output_field=IntegerField()
+    )
+    
+    readby_subquery = Subquery(
+        Book.objects.filter(id=OuterRef('id'))
+        .annotate(count=Count('readbooks'))
+        .values('count')[:1],
+        output_field=IntegerField()
+    )
 
     books_list = (
         Book.objects
-        .filter(genre=genre)
-        .only('id', 'title', 'slug', 'author', 'cover_front')
+        .defer('content') 
         .annotate(
-            likes_count=Count('likes', distinct=True),
-            readby_count=Count('readbooks', distinct=True)
+            likes_count=likes_subquery,
+            readby_count=readby_subquery
         )
         .order_by('-uploaded_at')
     )
 
     paginator = Paginator(books_list, 30)
     books = paginator.get_page(request.GET.get('page'))
+    categories = Genre.objects.all().order_by('name')
 
     return render(request, 'library.html', {
+        'title': "Library",
         'books': books,
-        'title': f"{genre.name} Books",
-        'category': f"of {genre.name} Books",
+        'recently_read_books': recently_read_books,
+        'categories': categories,
     })
 
 
-# -------------------- USER WISHLIST --------------------
+def categories(request, slug):
+    current_genre = get_object_or_404(Genre, slug=slug)
+
+    likes_subquery = Subquery(
+        Book.objects.filter(id=OuterRef('id'))
+        .annotate(count=Count('likes'))
+        .values('count')[:1],
+        output_field=IntegerField()
+    )
+    
+    readby_subquery = Subquery(
+        Book.objects.filter(id=OuterRef('id'))
+        .annotate(count=Count('readbooks'))
+        .values('count')[:1],
+        output_field=IntegerField()
+    )
+    books_list = (
+        Book.objects
+        .filter(genre=current_genre)
+        .annotate(
+            likes_count=likes_subquery,
+            readby_count=readby_subquery
+        )
+        .order_by('-uploaded_at')
+    )
+    
+    paginator = Paginator(books_list, 30)
+    books = paginator.get_page(request.GET.get('page'))
+
+    all_categories = Genre.objects.all().order_by('name')
+
+    return render(request, 'library.html', {
+        'books': books,
+        'title': f"{current_genre.name} Books",
+        'category': current_genre, 
+        'categories': all_categories,
+    })
+
 
 @login_required(login_url="/")
 def myBooks(request):
@@ -121,7 +150,7 @@ def myBooks(request):
     })
 
 
-# -------------------- SEARCH BOOKS --------------------
+
 def searchbooks(request):
     book_query = request.GET.get('search', '').strip()
 
@@ -156,7 +185,7 @@ def searchbooks(request):
         'title': f"Search results for '{book_query}'" if book_query else "All Books",
     })
 
-#  ADD / REMOVE FROM READ LATER
+
 @login_required
 def toggle_read_later(request, book_slug):
     if request.method != 'POST':

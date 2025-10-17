@@ -125,6 +125,17 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'LeafyReads',     
+#         'USER': 'postgres',      
+#         'PASSWORD': 'Mohit@123#',
+#         'HOST': 'localhost',      
+#         'PORT': '5433',            
+#     }
+# }
+
 
 
 # Password validation

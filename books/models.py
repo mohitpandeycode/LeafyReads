@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
 from django_ckeditor_5.fields import CKEditor5Field
-from django.contrib.postgres.indexes import GinIndex  # For PostgreSQL full-text search
 
 # Custom upload path for images and PDFs
 def book_media_upload_path(instance, filename):
@@ -76,7 +75,6 @@ class Book(models.Model):
             models.Index(fields=['title']),          # Existing index
             models.Index(fields=['genre']),          # Added index for genre filtering
             models.Index(fields=['-uploaded_at']),   # Added index for ordering by uploaded_at
-            GinIndex(fields=['title', 'author']),    # Added for PostgreSQL full-text search
         ]
 
     def save(self, *args, **kwargs):

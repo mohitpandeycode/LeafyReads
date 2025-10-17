@@ -37,7 +37,6 @@
     <div class="container">
       <div class="header-content">
         <a href="/" class="logo">
-          <!-- common logo part -->
           <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
             alt="" />
           <!-- light theme image -->
@@ -69,6 +68,7 @@
           </form>
         </nav>
         <div class="header-actions">
+          <button style="position: relative;" aria-label="notification" class="theme-toggle-btn"><i data-lucide="bell"></i><p class="notify-dot"></p></button>
           <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
           {% if user.is_authenticated %}
           <div class="dropdown">
