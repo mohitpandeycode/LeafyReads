@@ -23,9 +23,6 @@ def home(request):
 def aboutUs(request):
     return render(request, 'aboutUs.html')
 
-def community(request):
-    return render(request, 'community.html')
-
 
 def customLogout(request):
     logout(request)

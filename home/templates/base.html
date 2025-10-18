@@ -54,7 +54,7 @@
             Later</a>
           {% endif %}
           <a href="{% url 'community' %}"
-            class="{% if request.path == '/ourcommunity/' %}active{% endif %}">Community</a>
+            class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
           <a href="{% url 'aboutUs' %}" class="{% if request.path == '/aboutus/' %}active{% endif %}">About Us</a>
 
           <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">

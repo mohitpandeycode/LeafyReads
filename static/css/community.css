@@ -1,0 +1,427 @@
+.hidden {
+    display: none;
+}
+
+/* --- Hero Section --- */
+.community-hero {
+    text-align: center;
+    background-color: var(--color-bg);
+    background-image: radial-gradient(circle at 10% 20%, rgb(136 176 224 / .1), transparent 30%), radial-gradient(circle at 90% 80%, rgb(224 136 176 / .1), transparent 30%);
+    transition: background-color 0.3s ease;
+    animation: heroBgPulse 8s infinite alternate ease-in-out
+}
+
+.flex{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.community-hero h1 {
+    font-size: 3.25rem;
+    font-weight: 800;
+    color: var(--color-hero-heading);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.04em;
+}
+
+.community-hero p {
+    font-size: 1.25rem;
+    color: var(--color-text-medium);
+    max-width: 50rem;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+/* --- Main Community Layout with Sticky Sidebars --- */
+.community-layout {
+    padding: 4rem 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: flex-start;
+    /* Important for sticky positioning */
+}
+
+@media (min-width: 1024px) {
+    .community-layout {
+        grid-template-columns: 230px 1fr 230px;
+    }
+}
+
+/* --- Sidebar Styles --- */
+.sidebar {
+    position: sticky;
+    top: 2rem;
+}
+
+.sidebar .widget {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.sidebar .widget-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    color: var(--color-text-medium);
+    transition: color 0.3s ease;
+    font-size: 14px;
+}
+
+.sidebar ul li a:hover {
+    color: var(--color-primary);
+}
+
+.sidebar ul li a i {
+    margin-right: 0.75rem;
+    width: 20px;
+    height: 20px;
+}
+
+/* --- Center Feed Styles --- */
+.main-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* --- Interactive Create Post Widget --- */
+.create-post-widget {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.create-post-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.create-post-main img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.create-post-input {
+    flex-grow: 1;
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    padding: 0.75rem 1.25rem;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-post-input:hover {
+    background-color: var(--color-card-bg);
+}
+
+/* This is now the editable div */
+#post-editable {
+    display: none;
+    width: 100%;
+    min-height: 200px;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    margin-top: 1rem;
+}
+
+/* Placeholder style for the editable div */
+#post-editable:empty::before {
+    content: attr(data-placeholder);
+    color: var(--color-text-light);
+    pointer-events: none;
+    display: block;
+}
+
+.create-post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.create-post-actions {
+    display: flex;
+    justify-content: space-around;
+    flex-grow: 1;
+}
+
+.create-post-widget.is-expanded .create-post-actions {
+    flex-grow: 0;
+}
+
+.create-post-actions a,
+.create-post-actions label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-medium);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.create-post-actions a:hover,
+.create-post-actions label:hover {
+    background-color: var(--color-card-bg);
+    color: var(--color-primary);
+}
+
+.expanded-buttons {
+    display: none;
+    gap: 0.5rem;
+}
+
+.create-post-widget.is-expanded .create-post-input {
+    display: none;
+}
+
+.create-post-widget.is-expanded .create-post-main {
+    align-items: flex-start;
+}
+
+.create-post-widget.is-expanded #post-editable {
+    display: block;
+}
+
+.create-post-widget.is-expanded .expanded-buttons {
+    display: flex;
+}
+
+.secondary-btn {
+    background-color: var(--color-card-bg);
+    color: var(--color-text-medium);
+    border: 1px solid var(--color-border);
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+}
+
+.secondary-btn:hover {
+    background-color: var(--color-border);
+}
+
+/* --- Refined Post Card --- */
+.post-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.07);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+}
+.post-text-body {
+    max-height: 100px; 
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out; 
+    margin-bottom: 5px; 
+}
+
+.expanded-text {
+    max-height: 2000px !important; 
+}
+
+/* Ensure the image container is just a simple wrapper */
+.post-image-container {
+    margin-top: 1rem; /* Space below the content and link */
+}
+
+.post-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 1rem;
+}
+
+.post-author-info .name {
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+.post-author-info .timestamp {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+}
+
+.post-content {
+    padding: 1rem;
+    max-height: 550px;
+    overflow: auto;
+}
+.js-hidden {
+    display: none !important;
+}
+
+.post-text-body {
+    transition: max-height 0.3s ease-in-out; 
+    margin-bottom: 5px; 
+}
+
+.truncated-text {
+    max-height: 190px;
+    overflow: hidden;
+}
+
+
+.expanded-text {
+    max-height: 2000px !important; 
+}
+.see-more-link {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block; 
+}
+
+.post-content h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.post-content p {
+    color: var(--color-text-medium);
+    line-height: 1.6;
+}
+
+.post-content img {
+    display: block;
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    margin: 1rem auto;
+    border-radius: 0.5rem;
+    background-color: var(--color-card-bg);
+    border: 1px solid rgba(206, 206, 206, 0.459) !important;
+
+}
+
+body.dark-mode .post-content img{
+     border: 1px solid rgba(110, 110, 110, 0.56) !important;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.post-actions {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.post-actions a {
+    display: flex;
+    align-items: center;
+    color: var(--color-text-light);
+    transition: color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.post-actions a:hover {
+    color: red;
+    transform: scale(1.1);
+}
+
+.post-actions a i {
+    margin-right: 0.5rem;
+    width: 18px;
+    height: 18px;
+}
+
+/* --- Comment Section --- */
+.comment-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+    padding: 0 1.5rem;
+    background-color: var(--color-card-bg);
+}
+
+.comment-section.is-visible {
+    max-height: 1000px;
+    /* Large enough value */
+    padding: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.comment-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.comment-item img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.comment-body .name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.add-comment {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.add-comment img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.add-comment input {
+    flex-grow: 1;
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    padding: 0.5rem 1rem;
+    font-family: inherit;
+}

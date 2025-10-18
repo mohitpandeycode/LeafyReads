@@ -12,6 +12,7 @@ urlpatterns = [
     path('', include('home.urls')),
     path('profile/', include('userSection.urls')),
     path('book/', include('books.urls')),
+    path('community/', include('community.urls')),
     path("django_ckeditor_5/", include('django_ckeditor_5.urls')),
 
 ]
