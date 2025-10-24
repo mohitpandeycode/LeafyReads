@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from books.models import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -12,57 +12,61 @@ from django.contrib.auth.decorators import login_required
 
 def loginAdmin(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            messages.error(request, f'An admin account with the username "{username}" was not found.')
-            return redirect('login_admin')
+            messages.error(
+                request,
+                f'An admin account with the username "{username}" was not found.',
+            )
+            return redirect("login_admin")
 
         if not user.check_password(password):
-            messages.error(request, 'Incorrect password. Please try again.')
-            return redirect('login_admin')
+            messages.error(request, "Incorrect password. Please try again.")
+            return redirect("login_admin")
 
         if not user.is_staff:
-            messages.error(request, 'This account does not have admin privileges.')
-            return redirect('login_admin')
-        
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
+            messages.error(request, "This account does not have admin privileges.")
+            return redirect("login_admin")
+
+        user.backend = "django.contrib.auth.backends.ModelBackend"
         login(request, user)
-        return redirect('dashboard')
-            
-    return render(request, 'loginAdmin.html')
+        return redirect("dashboard")
+
+    return render(request, "loginAdmin.html")
 
 
 @login_required(login_url="login_admin")
 def dashboard(request):
     books = Book.objects.all().order_by("-uploaded_at")
     if request.method == "POST":
-        action = request.POST.get('action')
-        selected_books = request.POST.getlist('selected_books')
-        if action == 'delete' and selected_books:
+        action = request.POST.get("action")
+        selected_books = request.POST.getlist("selected_books")
+        if action == "delete" and selected_books:
             Book.objects.filter(id__in=selected_books).delete()
-        return redirect('dashboard')  # refresh page after action
+        return redirect("dashboard")  # refresh page after action
 
-    book_query = request.GET.get('search', '').strip()
-    books = Book.objects.select_related('genre').all().order_by('-uploaded_at')
+    book_query = request.GET.get("search", "").strip()
+    books = Book.objects.select_related("genre").all().order_by("-uploaded_at")
 
     if book_query:
         keywords = book_query.split()
         query = Q()
         for keyword in keywords:
             q = (
-                Q(title__icontains=keyword) |
-                Q(author__icontains=keyword) |
-                Q(genre__name__icontains=keyword) |
-                Q(slug__icontains=keyword)
+                Q(title__icontains=keyword)
+                | Q(author__icontains=keyword)
+                | Q(genre__name__icontains=keyword)
+                | Q(slug__icontains=keyword)
             )
             query |= q
         books = books.filter(query).distinct()
     context = {"books": books}
-    return render(request, 'dashboard.html', context)
+    return render(request, "dashboard.html", context)
+
 
 @login_required(login_url="login_admin")
 def updateBook(request, slug):
@@ -98,18 +102,17 @@ def updateBook(request, slug):
             # Check which button was pressed
             action = request.POST.get("action")
             if action == "save":
-                return redirect('dashboard')
+                return redirect("dashboard")
             elif action == "continue":
-                return redirect('updateBook', slug=book.slug)
+                return redirect("updateBook", slug=book.slug)
 
     else:
         form = BookContentForm(instance=bookcontent)
 
     return render(
-        request,
-        "updateBook.html",
-        {"book": book, "form": form, "genres": genres}
+        request, "updateBook.html", {"book": book, "form": form, "genres": genres}
     )
+
 
 @login_required(login_url="login_admin")
 def addBook(request):
@@ -126,7 +129,11 @@ def addBook(request):
                 price=request.POST.get("price") or None,
                 isbn=request.POST.get("isbn") or None,
                 is_published="is_published" in request.POST,
-                genre=Genre.objects.get(id=request.POST.get("genre")) if request.POST.get("genre") else None,
+                genre=(
+                    Genre.objects.get(id=request.POST.get("genre"))
+                    if request.POST.get("genre")
+                    else None
+                ),
                 cover_front=request.FILES.get("cover_front"),
                 audio_file=request.FILES.get("audio_file"),
             )
@@ -149,8 +156,11 @@ def addBook(request):
 
     return render(request, "addbook.html", {"form": form, "genres": genres})
 
+
 @login_required(login_url="login_admin")
 def viewBookAdmin(request, slug):
-    book = get_object_or_404(Book.objects.select_related('genre'), slug=slug)
-    bookcontent = get_object_or_404(BookContent.objects.only('content'), book=book)
-    return render(request, 'viewBook.html', {'book': book, 'bookcontent': bookcontent.content})
+    book = get_object_or_404(Book.objects.select_related("genre"), slug=slug)
+    bookcontent = get_object_or_404(BookContent.objects.only("content"), book=book)
+    return render(
+        request, "viewBook.html", {"book": book, "bookcontent": bookcontent.content}
+    )

@@ -2,356 +2,403 @@
 {% load static %}
 
 {% block title %}
-  Community - LeafyReads
+Community - LeafyReads
 {% endblock %}
 
 {% block css %}
-  <link rel="stylesheet" href="{% static 'css/community.css' %}" />
+<link rel="stylesheet" href="{% static 'css/community.css' %}" />
 {% endblock %}
 
 {% block body %}
-  <main>
-    <!-- Hero Section -->
-    <section class="community-hero">
-      <div class="container reveal">
-        <h1>Welcome to the Reading Room</h1>
-        <p>This is your space to connect with fellow book lovers, share your thoughts on the latest reads, join vibrant discussions, and discover your next favorite story together.</p>
-      </div>
-    </section>
+<main>
+  <section class="community-hero">
+    <div class="container reveal">
+      <h1>Welcome to the Reading Room</h1>
+      <p>This is your space to connect with fellow book lovers, share your thoughts on the latest reads, join vibrant
+        discussions, and discover your next favorite story together.</p>
+    </div>
+  </section>
 
-    <!-- Main Community Layout -->
-    <div class="container">
-      <div class="community-layout">
-        <!-- Left Sidebar -->
-        <aside class="sidebar reveal">
-          <div class="widget">
-            <h3 class="widget-title">Popular Book Clubs</h3>
-            <ul>
-              <li>
-                <a href="#"><i data-lucide="swords"></i> Fantasy & Sci-Fi Guild</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="heart-pulse"></i> Modern Romance Readers</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="scroll"></i> The Classics Corner</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="search"></i> Thriller & Mystery Fans</a>
-              </li>
-            </ul>
-          </div>
-          <div class="widget">
-            <h3 class="widget-title">Top Contributors</h3>
-            <ul>
-              <!-- This can be made dynamic later -->
-              <li>
-                <a href="#"><i data-lucide="user-check"></i> Sarah K.</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="user-check"></i> Michael B.</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="user-check"></i> David Chen</a>
-              </li>
-            </ul>
-          </div>
-        </aside>
+  <div class="container">
+    <div class="community-layout">
+      <aside class="sidebar reveal">
+        <div class="widget">
+          <h3 class="widget-title">Popular Book Clubs</h3>
+          <ul>
+            <li>
+              <a href="#"><i data-lucide="swords"></i> Fantasy & Sci-Fi Guild</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="heart-pulse"></i> Modern Romance Readers</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="scroll"></i> The Classics Corner</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="search"></i> Thriller & Mystery Fans</a>
+            </li>
+          </ul>
+        </div>
+        <div class="widget">
+          <h3 class="widget-title">Top Contributors</h3>
+          <ul>
+            <li>
+              <a href="#"><i data-lucide="user-check"></i> Sarah K.</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="user-check"></i> Michael B.</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="user-check"></i> David Chen</a>
+            </li>
+          </ul>
+        </div>
+      </aside>
 
-        <!-- Center Feed -->
-        <section style="padding: 0;" class="main-feed reveal">
-          <!-- Create Post Widget - Now a Form -->
-          <form id="create-post-form" method="POST" action="{% url 'community' %}">
-            {% csrf_token %}
-            <!-- Hidden input to store the rich text content for submission -->
-            <input type="hidden" name="content" id="hidden-content-input" />
+      <section style="padding: 0;" class="main-feed reveal">
+        <form id="create-post-form" method="POST" action="{% url 'community' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="content" id="hidden-content-input" />
 
-            <div id="create-post-widget" class="create-post-widget">
-              <div class="create-post-main">
-                <!-- Show current user's avatar with a fallback -->
-                {% if user.is_authenticated and user.profile.avatar %}
-                  <img src="{{ user.profile.avatar.url }}" alt="Your avatar" />
-                {% else %}
-                  <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" class="profile-avatar-header" />
-                {% endif %}
+          <div id="create-post-widget" class="create-post-widget">
+            <div class="create-post-main">
+              {% if user.is_authenticated and user.profile.avatar %}
+              <img class="profileimage" src="{{ user.profile.avatar.url }}" alt="Your avatar" />
+              {% else %}
+              <img class="profileimage" src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar"
+                class="profile-avatar-header" />
+              {% endif %}
 
-                <div id="create-post-input" class="create-post-input">Start a discussion, ask a question...</div>
+              <div id="create-post-input" class="create-post-input">Start a discussion, ask a question...</div>
 
-                <div id="post-editable" contenteditable="true" data-placeholder="What's on your mind? Use @ to mention a book or user."></div>
-              </div>
-              <div class="create-post-footer">
-                <div class="create-post-actions">
-                  <a href="#"><i data-lucide="book-plus"></i> Add a Book</a>
-                  <label for="photo-upload" class="upload-photo-label"><i data-lucide="image"></i> Upload Photo</label>
-                  <input type="file" id="photo-upload" accept="image/*" class="hidden" />
-                </div>
-                <div id="expanded-buttons" class="expanded-buttons">
-                  <button id="cancel-post-btn" type="button" class="btn secondary-btn">Cancel</button>
-                  <button type="submit" class="btn primary-btn">Post</button>
-                </div>
-              </div>
+              <div id="post-editable" contenteditable="true"
+                data-placeholder="What's on your mind? Use @ to mention a book or user."></div>
             </div>
-          </form>
+            <div class="create-post-footer">
+              <div class="create-post-actions">
+                <a id="openSearchBtn" style="cursor: pointer;"><i data-lucide="book-plus"></i> Mention Book</a>
+                <div class="mantion-book" id="searchModal">
+                  <div class="search-box">
+                    <div class="search-bar">
+                      <i class="lucide lucide-search"></i>
+                      <input type="text" placeholder="Search book..." />
+                      <i data-lucide="search" id="closeSearch"></i>
+                    </div>
 
-          <!-- Dynamic Post Loop -->
-          {% for post in posts %}
-            <div class="post-card">
-              <div class="post-header">
-                <div class="flex">
-                  {% if post.author.profile.avatar %}
-                    <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}'s avatar" />
-                  {% else %}
-                    <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" class="profile-avatar-header" />
-                  {% endif %}
-
-                  <div class="post-author-info">
-                    <span class="name">{{ post.author.get_full_name }}</span>
-                    <span class="timestamp">Posted {{ post.created_at|timesince }} ago</span>
+                    <div class="search-history">
+                      <div class="search-history-title">Recent Reads</div>
+                      {% for book in books %}
+                      <div class="history-item" data-title="{{ book.book.title }}" data-author="{{ book.book.author }}"
+                        data-image="{{ book.book.cover_front.url }}" data-slug="{{book.book.slug}}">
+                        <i data-lucide="history"></i>
+                        <img class="history-item-img" src="{{ book.book.cover_front.url }}" alt="{{ book.book.title }}">
+                        <div class="history-item-info">
+                          <span class="history-item-title">{{ book.book.title }}</span>
+                          <span class="history-item-author">by {{ book.book.author }}</span>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
                   </div>
                 </div>
-                <i style="cursor: pointer;" data-lucide="ellipsis-vertical"></i>
+                <label for="photo-upload" class="upload-photo-label"><i data-lucide="image"></i> Upload Photo</label>
+                <input type="file" id="photo-upload" accept="image/*" class="hidden" />
               </div>
-              <hr style="border: 1px solid #a7a7a729;" />
-              <div class="post-content">
-                {% if post.book %}
-                  <h3>Discussion about: <a href="#">{{ post.book.title }}</a></h3>
+              <div id="expanded-buttons" class="expanded-buttons">
+                <button id="cancel-post-btn" type="button" class="btn secondary-btn">Cancel</button>
+                <button type="submit" class="btn primary-btn">Post</button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        {% for post in posts %}
+        <div class="post-card">
+          <div class="post-header">
+            <div class="flex">
+              {% if post.author.profile.avatar %}
+              <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}'s avatar" />
+              {% else %}
+              <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar"
+                class="profile-avatar-header" />
+              {% endif %}
+
+              <div class="post-author-info">
+                <span class="name">{{ post.author.get_full_name }}</span>
+                <span class="timestamp">Posted {{ post.created_at|timesince }} ago</span>
+              </div>
+            </div>
+            <i style="cursor: pointer;" data-lucide="ellipsis-vertical"></i>
+          </div>
+          <hr style="border: 1px solid #a7a7a729;" />
+          <div class="post-content">
+            {% if post.book %}
+            <h3>Discussion about: <a href="#">{{ post.book.title }}</a></h3>
+            {% endif %}
+            <div class="post-text-body" id="post-text-{{ post.id }}">{{ post.content|safe }}</div>
+            <a href="#" class="see-more-link js-hidden" data-target-id="post-text-{{ post.id }}">See More...</a>
+            <div class="post-image-container" id="post-images-{{ post.id }}"></div>
+          </div>
+          <div class="post-footer">
+            <div class="post-actions">
+              <a class="like-btn">
+                {% if user in post.likes.all %}
+                <i data-lucide="heart" style="fill: red; color: white;"></i>
+                {% else %}
+                <i data-lucide="heart"></i>
                 {% endif %}
 
-                <div class="post-text-body" id="post-text-{{ post.id }}">{{ post.content|safe }}</div>
-
-                <a href="#" class="see-more-link js-hidden" data-target-id="post-text-{{ post.id }}">See More...</a>
-
-                <div class="post-image-container" id="post-images-{{ post.id }}"></div>
-              </div>
-              <div class="post-footer">
-                <div class="post-actions">
-                  <a class="like-btn">
-                    {% if user in post.likes.all %}
-                      <i data-lucide="heart" style="fill: red; color: white;"></i>
-                    {% else %}
-                      <i data-lucide="heart"></i>
-                    {% endif %}
-
-                    {{ post.number_of_likes }}
-                  </a>
-                  <a class="toggle-comments"><i data-lucide="message-square"></i> {{ post.number_of_comments }}</a>
-                </div>
-              </div>
-              <div class="comment-section">
-                <!-- Looping through comments will go here -->
-                <div class="add-comment">
-                  {% if user.is_authenticated and user.profile.avatar %}
-                    <img src="{{ user.profile.avatar.url }}" alt="Your avatar" />
-                  {% else %}
-                    <img src="{% static 'images/default_avatar.png' %}" alt="Your avatar" />
-                  {% endif %}
-                  <input type="text" placeholder="Write a comment..." />
-                </div>
-              </div>
+                {{ post.number_of_likes }}
+              </a>
+              <a class="toggle-comments"><i data-lucide="message-square"></i> {{ post.number_of_comments }}</a>
             </div>
-          {% empty %}
-            <div class="post-card">
-              <p style="text-align: center; padding: 2rem;">No posts yet. Be the first to start a discussion!</p>
+          </div>
+          <div class="comment-section">
+            <div class="add-comment">
+              {% if user.is_authenticated and user.profile.avatar %}
+              <img src="{{ user.profile.avatar.url }}" alt="Your avatar" />
+              {% else %}
+              <img src="{% static 'images/default_avatar.png' %}" alt="Your avatar" />
+              {% endif %}
+              <input type="text" placeholder="Write a comment..." />
             </div>
-          {% endfor %}
-        </section>
+          </div>
+        </div>
+        {% empty %}
+        <div class="post-card">
+          <p style="text-align: center; padding: 2rem;">No posts yet. Be the first to start a discussion!</p>
+        </div>
+        {% endfor %}
+      </section>
 
-        <!-- Right Sidebar -->
-        <aside class="sidebar reveal">
-          <div class="widget">
-            <h3 class="widget-title">Trending Books</h3>
-            <ul>
-              <li>
-                <a href="#"><i data-lucide="book"></i> The Midnight Library</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="book"></i> Dune</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="book"></i> Klara and the Sun</a>
-              </li>
-            </ul>
-          </div>
-          <div class="widget">
-            <h3 class="widget-title">Upcoming Events</h3>
-            <ul>
-              <li>
-                <a href="#"><i data-lucide="calendar"></i> Author Q&A: N.K. Jemisin</a>
-              </li>
-              <li>
-                <a href="#"><i data-lucide="calendar"></i> Sci-Fi Guild: "Dune" Discussion</a>
-              </li>
-            </ul>
-          </div>
-        </aside>
-      </div>
+      <aside class="sidebar reveal">
+        <div class="widget">
+          <h3 class="widget-title">Trending Books</h3>
+          <ul>
+            <li>
+              <a href="#"><i data-lucide="book"></i> The Midnight Library</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="book"></i> Dune</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="book"></i> Klara and the Sun</a>
+            </li>
+          </ul>
+        </div>
+        <div class="widget">
+          <h3 class="widget-title">Upcoming Events</h3>
+          <ul>
+            <li>
+              <a href="#"><i data-lucide="calendar"></i> Author Q&A: N.K. Jemisin</a>
+            </li>
+            <li>
+              <a href="#"><i data-lucide="calendar"></i> Sci-Fi Guild: "Dune" Discussion</a>
+            </li>
+          </ul>
+        </div>
+      </aside>
     </div>
-  </main>
+  </div>
+</main>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const postWidget = document.getElementById('create-post-widget');
+    const postEditable = document.getElementById('post-editable');
+    const openSearchBtn = document.getElementById('openSearchBtn');
+    const modal = document.getElementById('searchModal');
+    const expandPostCreator = () => {
+      if (postWidget && !postWidget.classList.contains('is-expanded')) {
+        postWidget.classList.add('is-expanded');
+        postEditable?.focus();
+      }
+    };
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // --- Script to handle form submission with contenteditable div ---
-      const postForm = document.getElementById('create-post-form')
-      if (postForm) {
-        const hiddenInput = document.getElementById('hidden-content-input')
-        const editableDiv = document.getElementById('post-editable')
-        postForm.addEventListener('submit', (event) => {
-          // Copy the content from the editable div to the hidden input
-          hiddenInput.value = editableDiv.innerHTML
-        })
-      }
-    
-      // --- Your existing script for UI interactions (animations, post widget, etc.) ---
-      const revealElements = document.querySelectorAll('.reveal')
-      if (revealElements.length) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('visible')
-                observer.unobserve(entry.target)
-              }
-            })
-          },
-          { threshold: 0.1 }
-        )
-    
-        revealElements.forEach((el) => observer.observe(el))
-      }
-    
-      const postWidget = document.getElementById('create-post-widget')
-      if (postWidget) {
-        const postInput = document.getElementById('create-post-input')
-        const postEditable = document.getElementById('post-editable')
-        const cancelBtn = document.getElementById('cancel-post-btn')
-        const photoUploadInput = document.getElementById('photo-upload')
-    
-        postInput.addEventListener('click', () => {
-          postWidget.classList.add('is-expanded')
-          postEditable.focus()
-        })
-    
-        cancelBtn.addEventListener('click', () => {
-          postWidget.classList.remove('is-expanded')
-          postEditable.innerHTML = ''
-          photoUploadInput.value = null
-        })
-    
-        photoUploadInput.addEventListener('change', (event) => {
-          const file = event.target.files[0]
-          if (!file) return
-    
-          const reader = new FileReader()
-          reader.onload = (e) => {
-            const imageContainer = document.createElement('div')
-            imageContainer.style.position = 'relative'
-            imageContainer.style.margin = '0.5rem 0'
-            imageContainer.contentEditable = false
-    
-            const img = document.createElement('img')
-            img.src = e.target.result
-            img.style.width = '100%'
-            img.style.height = 'auto'
-            img.style.borderRadius = '0.5rem'
-            img.style.border = '1px solid #e5e7eb'
-    
-            const removeBtn = document.createElement('button')
-            removeBtn.innerHTML = '&times;'
-            // --- FIX: Add a class to the remove button ---
-            // This class allows the backend to identify and remove it before saving.
-            removeBtn.classList.add('remove-image-btn-frontend')
-            removeBtn.style.position = 'absolute'
-            removeBtn.style.top = '0.5rem'
-            removeBtn.style.right = '0.5rem'
-            removeBtn.style.background = 'rgba(0,0,0,0.6)'
-            removeBtn.style.color = 'white'
-            removeBtn.style.border = 'none'
-            removeBtn.style.borderRadius = '50%'
-            removeBtn.style.width = '1.5rem'
-            removeBtn.style.height = '1.5rem'
-            removeBtn.style.cursor = 'pointer'
-            removeBtn.style.display = 'flex'
-            removeBtn.style.alignItems = 'center'
-            removeBtn.style.justifyContent = 'center'
-            removeBtn.style.lineHeight = '1'
-            removeBtn.style.fontSize = '1rem'
-    
-            removeBtn.onclick = () => {
-              if (imageContainer.nextSibling && imageContainer.nextSibling.nodeType === 3 && imageContainer.nextSibling.nodeValue === '\u200B') {
-                imageContainer.nextSibling.remove()
-              }
-              imageContainer.remove()
-              postEditable.focus()
-            }
-    
-            imageContainer.appendChild(img)
-            imageContainer.appendChild(removeBtn)
-    
-            postEditable.appendChild(imageContainer)
-            postEditable.appendChild(document.createTextNode('\u200B'))
-    
-            const range = document.createRange()
-            const sel = window.getSelection()
-            range.selectNodeContents(postEditable)
-            range.collapse(false)
-            sel.removeAllRanges()
-            sel.addRange(range)
-            postEditable.focus()
-          }
-          reader.readAsDataURL(file)
-        })
-      }
-    
-      const commentToggles = document.querySelectorAll('.toggle-comments')
-      commentToggles.forEach((toggle) => {
-        toggle.addEventListener('click', (event) => {
-          event.preventDefault()
-          const postCard = toggle.closest('.post-card')
-          const commentSection = postCard.querySelector('.comment-section')
-          commentSection.classList.toggle('is-visible')
-        })
-      })
-    })
-  </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const TRUNCATION_HEIGHT = 40
-      const postContainers = document.querySelectorAll('.post-content')
-    
-      postContainers.forEach((container) => {
-        const textBody = container.querySelector('.post-text-body')
-        const imageContainer = container.querySelector('.post-image-container')
-        const link = container.querySelector('.see-more-link')
-        if (textBody && imageContainer) {
-          const images = textBody.querySelectorAll('img')
-          images.forEach((img) => {
-            imageContainer.appendChild(img)
-          })
+    if (postWidget) {
+      const postForm = document.getElementById('create-post-form');
+      const hiddenInput = document.getElementById('hidden-content-input');
+      const postInput = document.getElementById('create-post-input');
+      const cancelBtn = document.getElementById('cancel-post-btn');
+      const photoUploadInput = document.getElementById('photo-upload');
+      const photoUploadLabel = document.querySelector('.upload-photo-label');
+
+      postInput?.addEventListener('click', expandPostCreator);
+      photoUploadLabel?.addEventListener('click', expandPostCreator);
+
+      photoUploadInput?.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file || !postEditable) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageContainer = document.createElement('div');
+          imageContainer.className = 'image-preview-container';
+          imageContainer.contentEditable = false;
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'preview-image';
+          const removeBtn = document.createElement('button');
+          removeBtn.innerHTML = '&times;';
+          removeBtn.className = 'remove-image-btn';
+          removeBtn.type = 'button';
+          removeBtn.onclick = () => imageContainer.remove();
+          imageContainer.append(img, removeBtn);
+          postEditable.appendChild(imageContainer);
+          postEditable.append(document.createTextNode('\u200B'));
+          const range = document.createRange();
+          const sel = window.getSelection();
+          range.selectNodeContents(postEditable);
+          range.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      postForm?.addEventListener('submit', () => {
+        if (hiddenInput && postEditable) {
+          // Create a temporary, invisible copy of the editor's content.
+          const tempContainer = document.createElement('div');
+          tempContainer.innerHTML = postEditable.innerHTML;
+
+          // Find and remove all cancel buttons from the temporary copy.
+          const buttonsToRemove = tempContainer.querySelectorAll('.remove-image-btn');
+          buttonsToRemove.forEach(button => button.remove());
+          
+          // Also remove any book mention cancel buttons
+          const bookButtonsToRemove = tempContainer.querySelectorAll('.remove-book-btn');
+          bookButtonsToRemove.forEach(button => button.remove());
+
+          // Assign the CLEANED HTML to the hidden input for submission.
+          hiddenInput.value = tempContainer.innerHTML;
         }
-        if (link && textBody) {
-          const actualHeight = textBody.scrollHeight
-    
-          if (actualHeight > TRUNCATION_HEIGHT) {
-            textBody.classList.add('truncated-text')
-    
-            link.classList.remove('js-hidden')
-    
-            link.addEventListener('click', function (event) {
-              event.preventDefault()
-    
-              // Toggle the classes
-              textBody.classList.toggle('truncated-text') // Remove truncation
-              textBody.classList.toggle('expanded-text') // Add expansion
-    
-              if (textBody.classList.contains('expanded-text')) {
-                this.textContent = 'See Less'
-              } else {
-                this.textContent = 'See More...'
-              }
-            })
-          }
+      });
+
+      cancelBtn?.addEventListener('click', () => {
+        postWidget.classList.remove('is-expanded');
+        if (postEditable) postEditable.innerHTML = '';
+        if (photoUploadInput) photoUploadInput.value = null;
+        if (openSearchBtn) openSearchBtn.style.display = 'inline-flex';
+      });
+    }
+
+    if (modal) {
+      const closeSearchBtn = document.getElementById('closeSearch');
+      const searchHistory = modal.querySelector('.search-history');
+
+      const openSearchBox = () => {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      };
+      const closeSearchBox = () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      };
+
+      openSearchBtn?.addEventListener('click', () => {
+        expandPostCreator();
+        openSearchBox();
+      });
+
+      closeSearchBtn?.addEventListener('click', closeSearchBox);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeSearchBox();
+      });
+
+      searchHistory?.addEventListener('click', (event) => {
+        const historyItem = event.target.closest('.history-item');
+        if (!historyItem || !postEditable) return;
+        const title = historyItem.dataset.title;
+        const author = historyItem.dataset.author;
+        const imageUrl = historyItem.dataset.image;
+        const slug = historyItem.dataset.slug;
+
+        const bookCard = document.createElement('div');
+        bookCard.className = 'book-mention-card';
+        bookCard.contentEditable = false;
+
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = title;
+
+        const textContainer = document.createElement('a');
+        textContainer.className = 'book-mention-text';
+        textContainer.href = `/book/library/open/${slug}`;
+        const titleEl = document.createElement('span');
+        titleEl.className = 'book-mention-title';
+        titleEl.textContent = title;
+        const authorEl = document.createElement('span');
+        authorEl.className = 'book-mention-author';
+        if (author) {
+          authorEl.textContent = ` by ${author}`;
         }
-      })
-    })
-  </script>
+        textContainer.append(titleEl, authorEl);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '&times;';
+        // Note: Using the same class 'remove-image-btn' for simplicity in cleanup
+        removeBtn.className = 'remove-image-btn'; 
+        removeBtn.type = 'button';
+        removeBtn.onclick = () => {
+          bookCard.remove();
+          if (openSearchBtn) openSearchBtn.style.display = 'inline-flex';
+        };
+
+        bookCard.append(img, textContainer, removeBtn);
+        postEditable.appendChild(bookCard);
+        postEditable.append(document.createTextNode('\u200B'));
+        
+        if (openSearchBtn) openSearchBtn.style.display = 'none';
+
+        closeSearchBox();
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(postEditable);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        postEditable.focus();
+      });
+    }
+
+    const revealElements = document.querySelectorAll('.reveal');
+    if (revealElements.length > 0) {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      revealElements.forEach(el => observer.observe(el));
+    }
+
+    document.body.addEventListener('click', (event) => {
+      if (event.target.matches('.see-more-link')) {
+        event.preventDefault();
+        const textBody = event.target.previousElementSibling;
+        if (textBody) {
+          const isTruncated = textBody.classList.toggle('truncated-text');
+          event.target.textContent = isTruncated ? 'See More...' : 'See Less';
+        }
+      }
+      if (event.target.matches('.toggle-comments')) {
+        event.preventDefault();
+        const commentSection = event.target.closest('.post-card')?.querySelector('.comment-section');
+        commentSection?.classList.toggle('is-visible');
+      }
+    });
+
+    document.querySelectorAll('.post-content').forEach(container => {
+      const textBody = container.querySelector('.post-text-body');
+      const link = container.querySelector('.see-more-link');
+      const imageContainer = container.querySelector('.post-image-container');
+      textBody?.querySelectorAll('img').forEach(img => imageContainer?.appendChild(img));
+      if (textBody && link && textBody.scrollHeight > 48) {
+        textBody.classList.add('truncated-text');
+        link.classList.remove('js-hidden');
+      }
+    });
+  });
+</script>
 {% endblock %}
