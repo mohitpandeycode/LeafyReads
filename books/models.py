@@ -2,7 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
+from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
+
+def book_folder(instance):
+    """Return a Cloudinary folder path for each book based on its title."""
+    return f"books/{slugify(instance.title)}"
+
 
 
 # Custom upload path for images and PDFs
@@ -60,6 +66,7 @@ class BookQuerySet(models.QuerySet):
 # BOOK MODEL
 
 
+
 class Book(models.Model):
     title = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(unique=True, max_length=255)
@@ -69,29 +76,56 @@ class Book(models.Model):
     )
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     isbn = models.CharField(max_length=20, blank=True, null=True)
-    cover_front = models.ImageField(upload_to=book_media_upload_path)
-    pdf_file = models.FileField(upload_to=book_media_upload_path, blank=True, null=True)
+
+    # Cloudinary fields with per-book folders
+    cover_front = CloudinaryField(
+        "image",
+        resource_type="image",
+        folder=book_folder,
+        transformation=[
+        {
+            "width": 1200,
+            "height": 1200,
+            "crop": "limit",   
+            "quality": "auto:low",
+            "fetch_format": "auto"
+        }
+    ]
+        
+    )
+    pdf_file = CloudinaryField(
+        "file",
+        resource_type="raw",
+        folder=book_folder,
+        blank=True,
+        null=True
+    )
+    audio_file = CloudinaryField(
+        "audio",
+        resource_type="video",  # Cloudinary treats audio as video
+        folder=book_folder,
+        blank=True,
+        null=True
+    )
+
     is_published = models.BooleanField(default=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    audio_file = models.FileField(upload_to="sounds/", null=True, blank=True)
+
     objects = BookQuerySet.as_manager()
 
     class Meta:
         ordering = ["-uploaded_at"]
         indexes = [
-            models.Index(fields=["slug"]),  # Existing index
-            models.Index(fields=["title"]),  # Existing index
-            models.Index(fields=["genre"]),  # Added index for genre filtering
-            models.Index(
-                fields=["-uploaded_at"]
-            ),  # Added index for ordering by uploaded_at
+            models.Index(fields=["slug"]),
+            models.Index(fields=["title"]),
+            models.Index(fields=["genre"]),
+            models.Index(fields=["-uploaded_at"]),
         ]
 
     def save(self, *args, **kwargs):
         if not self.pk:
             base_slug = f"{slugify(self.title)}-by-{slugify(self.author)}"
-
             unique_slug = base_slug
             counter = 1
             while Book.objects.filter(slug=unique_slug).exists():
@@ -102,6 +136,7 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
 
 
 # BOOK CONTENT MODEL

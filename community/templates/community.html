@@ -56,6 +56,9 @@ Community - LeafyReads
       </aside>
 
       <section style="padding: 0;" class="main-feed reveal">
+        
+        {% if user.is_authenticated %}
+
         <form id="create-post-form" method="POST" action="{% url 'community' %}" enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="content" id="hidden-content-input" />
@@ -110,7 +113,8 @@ Community - LeafyReads
               </div>
             </div>
           </div>
-        </form>
+        </form>                 
+        {% endif %}
 
         {% for post in posts %}
         <div class="post-card">

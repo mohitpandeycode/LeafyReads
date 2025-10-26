@@ -24,7 +24,8 @@ class CategoryAdmin(ModelAdmin):
 
 @admin.register(Genre)
 class GenreAdmin(ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
 
 class BookContentInline(admin.StackedInline):
     model = BookContent

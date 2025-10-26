@@ -31,70 +31,94 @@ customColorPalette = [
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': {
-            'items': ['heading', '|', 'bold', 'italic', 'link',
-                      'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', ],
-                    }
-
+            'items': [
+                'heading', '|',
+                'bold', 'italic', 'underline', 'strikethrough', '|',
+                'link', 'blockQuote', 'code', 'codeBlock', '|',
+                'bulletedList', 'numberedList', 'todoList', '|',
+                'outdent', 'indent', '|',
+                'imageUpload', 'insertImage', 'insertTable', 'mediaEmbed', '|',
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                'alignment', 'horizontalLine', 'pageBreak', 'specialCharacters', '|',
+                'removeFormat', 'undo', 'redo'
+            ],
+            'shouldNotGroupWhenFull': True,
+        },
+        'height': 400,
+        'width': '100%',
     },
+
     'extends': {
         'blockToolbar': [
             'paragraph', 'heading1', 'heading2', 'heading3',
             '|',
-            'bulletedList', 'numberedList',
+            'bulletedList', 'numberedList', 'todoList',
             '|',
             'blockQuote',
         ],
+
         'toolbar': {
-            'items': ['heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
-                      'code','subscript', 'superscript', 'highlight', '|', 'codeBlock', 'sourceEditing', 'insertImage',
-                    'bulletedList', 'numberedList', 'todoList', '|',  'blockQuote', 'imageUpload', '|',
-                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'mediaEmbed', 'removeFormat',
-                    'insertTable',
-                    ],
-            'shouldNotGroupWhenFull': 'true'
+            'items': [
+                'heading', '|',
+                'bold', 'italic', 'underline', 'strikethrough',
+                'subscript', 'superscript', 'highlight', '|',
+                'code', 'codeBlock', 'sourceEditing', '|',
+                'link', 'blockQuote', '|',
+                'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent', '|',
+                'insertImage', 'imageUpload', 'insertTable', 'mediaEmbed', '|',
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                'alignment', 'horizontalLine', 'pageBreak', 'specialCharacters', '|',
+                'selectAll', 'removeFormat', 'undo', 'redo'
+            ],
+            'shouldNotGroupWhenFull': True,
         },
+
         'mediaEmbed': {
             'previewsInData': True,
         },
 
         'image': {
-            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft',
-                        'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  '|'],
+            'toolbar': [
+                'imageTextAlternative', '|',
+                'imageStyle:alignLeft', 'imageStyle:alignCenter',
+                'imageStyle:alignRight', 'imageStyle:side'
+            ],
             'styles': [
-                'full',
-                'side',
-                'alignLeft',
-                'alignRight',
-                'alignCenter',
-            ]
-
+                'full', 'side', 'alignLeft', 'alignRight', 'alignCenter'
+            ],
         },
+
         'table': {
-            'contentToolbar': [ 'tableColumn', 'tableRow', 'mergeTableCells',
-            'tableProperties', 'tableCellProperties' ],
+            'contentToolbar': [
+                'tableColumn', 'tableRow', 'mergeTableCells',
+                'tableProperties', 'tableCellProperties'
+            ],
             'tableProperties': {
-                'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
+                'borderColors': customColorPalette,      # your palette used directly
+                'backgroundColors': customColorPalette,
             },
             'tableCellProperties': {
                 'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
-            }
+                'backgroundColors': customColorPalette,
+            },
         },
-        'heading' : {
+
+        'heading': {
             'options': [
-                { 'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph' },
-                { 'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1' },
-                { 'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2' },
-                { 'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3' }
-            ]
-        }
+                {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},
+                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1'},
+                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
+                {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'},
+                {'model': 'heading4', 'view': 'h4', 'title': 'Heading 4', 'class': 'ck-heading_heading4'},
+            ],
+        },
     },
+
     'list': {
         'properties': {
-            'styles': 'true',
-            'startIndex': 'true',
-            'reversed': 'true',
+            'styles': True,
+            'startIndex': True,
+            'reversed': True,
         }
     }
 }

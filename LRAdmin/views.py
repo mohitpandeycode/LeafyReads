@@ -145,11 +145,11 @@ def addBook(request):
 
             action = request.POST.get("action")
             if action == "save":
-                return redirect("dashboard")  # back to list
+                return redirect("dashboard") 
             elif action == "add_another":
-                return redirect("addBook")  # clear form for another
+                return redirect("addBook")
             elif action == "continue":
-                return redirect("updateBook", slug=book.slug)  # go into editing mode
+                return redirect("updateBook", slug=book.slug) 
 
     else:
         form = BookContentForm()

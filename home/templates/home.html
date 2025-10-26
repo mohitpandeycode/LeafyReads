@@ -8,7 +8,57 @@ LeafyReads - Your Digital Bookshelf
 {% endblock %}
 
 {% block css %}
+<style>
+.search-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
 
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  background: transparent;
+}
+
+
+.static-placeholder {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  pointer-events: none;
+  font-size: 16px;
+}
+
+
+.dynamic-placeholder {
+  position: absolute;
+  left: 100px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 16px;
+  color: #aaa;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.dynamic-placeholder.hide {
+  transform: translateY(-150%);
+  opacity: 0;
+}
+
+
+.search-input:not(:placeholder-shown) + .static-placeholder,
+.search-input:not(:placeholder-shown) + .static-placeholder + .dynamic-placeholder {
+  display: none;
+}
+</style>
 {% endblock %}
 
 {% block body %}
@@ -25,8 +75,7 @@ LeafyReads - Your Digital Bookshelf
                 <path fill-rule="evenodd" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z" clip-rule="evenodd"></path>
             </svg>
         </div>
-        <div class="error__title flex-grow">
-            <!-- This will loop through and display messages from Django -->
+        <div class="error__title grow">
             <ul class="messages">
               {% for message in messages %}
                 <li class="{{ message.tags }}">{{ message }}</li>
@@ -55,7 +104,11 @@ LeafyReads - Your Digital Bookshelf
 </p>
 
       <form class="hero-search-form animate-fade-in delay-2" action="{% url 'searchbooks' %}" method="get">
-        <input type="text" name="search" placeholder="Search for books, authors, or genres..." />
+        <div class="search-wrapper">
+          <input type="text" class="search-input" placeholder=" " />
+          <span class="static-placeholder">Search for </span>
+          <span class="dynamic-placeholder">"books"</span>
+        </div>
         <button type="submit" class="btn primary-btn">
           <i data-lucide="search" style="width:1rem; height:1rem;"></i>
           <span>Search</span>
@@ -89,21 +142,24 @@ LeafyReads - Your Digital Bookshelf
         <p>Explore books by your favorite genres and topics.</p>
       </div>
       <div class="books-category-grid"
-        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(181px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(121px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
         {% for cat in category %}
-        <a href="{% url 'category' cat.slug %}" class="category-card"
-          style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;">
-          <i data-lucide="{{ cat.lucidicon }}"
-            style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-          <div>{{ cat.name }}</div>
-        </a>
-        {% endfor %}
-        <a href="" class="category-card"
-          style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;">
-          <i data-lucide="circle-chevron-right"
-            style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-          <div>Other</div>
-        </a>
+          <a href="{% url 'category' cat.slug %}" class="category-card"
+            style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;"
+            data-index="{{ forloop.counter }}">
+            <i data-lucide="{{ cat.lucidicon }}"
+              style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>{{ cat.name }}</div>
+          </a>
+          {% endfor %}
+
+          <!-- "Other" button -->
+          <a href="javascript:void(0);" id="toggle-other" class="category-card"
+            style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;">
+            <i data-lucide="circle-chevron-right"
+              style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+            <div>Other</div>
+          </a>
       </div>
     </div>
   </section>
@@ -212,47 +268,31 @@ LeafyReads - Your Digital Bookshelf
   </section>
 </main>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const errorDiv = document.querySelector('.error');
-    if (!errorDiv) {
-      return;
-    }
+document.addEventListener('DOMContentLoaded', () => {
+  // ---------- ERROR MESSAGE HANDLER ----------
+  const errorDiv = document.querySelector('.error');
+  if (errorDiv) {
     const closeButton = errorDiv.querySelector('.error__close');
     const hideError = () => {
       errorDiv.classList.add('fade-out');
-      const onAnimationEnd = () => {
-        errorDiv.remove();
-        errorDiv.removeEventListener('animationend', onAnimationEnd);
-      };
-      errorDiv.addEventListener('animationend', onAnimationEnd);
+      errorDiv.addEventListener('animationend', () => errorDiv.remove(), { once: true });
     };
     const timer = setTimeout(hideError, 3000);
     closeButton.addEventListener('click', () => {
       clearTimeout(timer);
       hideError();
     });
-  });
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const box = document.querySelector(".glass-box");
+  }
 
-    function getActiveImage() {
-      const imgs = box.querySelectorAll(".book-image");
-      for (const img of imgs) {
-        const style = window.getComputedStyle(img);
-        if (style.display !== "none") return img;
-      }
-      return null;
-    }
+  // ---------- GLASS BOX TILT EFFECT ----------
+  const box = document.querySelector(".glass-box");
+  if (box) {
+    const getActiveImage = () => [...box.querySelectorAll(".book-image")].find(img => getComputedStyle(img).display !== "none");
 
-    box.addEventListener("mousemove", (e) => {
+    box.addEventListener("mousemove", e => {
       const rect = box.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const rotateX = ((y / rect.height) - 0.5) * 10;
-      const rotateY = ((x / rect.width) - 0.5) * -10;
-
+      const rotateX = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
+      const rotateY = ((e.clientX - rect.left) / rect.width - 0.5) * -10;
       const activeImg = getActiveImage();
       if (activeImg) {
         activeImg.style.transition = "transform 0.2s ease-out";
@@ -265,47 +305,60 @@ LeafyReads - Your Digital Bookshelf
       const activeImg = getActiveImage();
       if (activeImg) {
         activeImg.style.transition = "transform 0.4s ease-in-out";
-        activeImg.style.setProperty("--tilt-x", `0deg`);
-        activeImg.style.setProperty("--tilt-y", `0deg`);
+        activeImg.style.setProperty("--tilt-x", "0deg");
+        activeImg.style.setProperty("--tilt-y", "0deg");
       }
     });
 
-    const observer = new MutationObserver(() => {
+    new MutationObserver(() => {
       const activeImg = getActiveImage();
       if (activeImg) {
-        activeImg.style.setProperty("--tilt-x", `0deg`);
-        activeImg.style.setProperty("--tilt-y", `0deg`);
+        activeImg.style.setProperty("--tilt-x", "0deg");
+        activeImg.style.setProperty("--tilt-y", "0deg");
       }
-    });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-  });
-</script>
+    }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  }
 
-<script>
-  const canvas = document.getElementById('animated-bg');
+  // ---------- CATEGORY CARDS TOGGLE ----------
+  const cards = document.querySelectorAll(".category-card:not(#toggle-other)");
+  const toggleBtn = document.getElementById("toggle-other");
+  if (cards.length && toggleBtn) {
+    let showingAll = false;
+    const updateView = () => {
+      cards.forEach((card, i) => card.style.display = (showingAll || i < 17) ? "inline-block" : "none");
+      toggleBtn.querySelector("div").textContent = showingAll ? "Show Less" : "Other";
+      toggleBtn.querySelector("i").setAttribute("data-lucide", showingAll ? "circle-chevron-up" : "circle-chevron-right");
+      lucide.createIcons();
+    };
+    toggleBtn.addEventListener("click", () => {
+      showingAll = !showingAll;
+      updateView();
+    });
+    updateView();
+  }
+});
+
+// ---------- CANVAS BACKGROUND ----------
+const canvas = document.getElementById('animated-bg');
+if (canvas) {
   const ctx = canvas.getContext('2d');
   let width = canvas.width = window.innerWidth;
   let height = canvas.height = window.innerHeight;
 
-  // Particle class
   class Particle {
-    constructor() {
-      this.reset();
-    }
+    constructor() { this.reset(); }
     reset() {
       this.x = Math.random() * width;
       this.y = Math.random() * height;
       this.radius = Math.random() * 3 + 1;
       this.speedX = (Math.random() - 0.5) * 0.4;
       this.speedY = (Math.random() - 0.5) * 0.4;
-      this.color = `hsla(${Math.random() * 360}, 70%, 60%, 0.3)`; // gradient-like hue
+      this.color = `hsla(${Math.random() * 360}, 70%, 60%, 0.3)`;
     }
     update() {
       this.x += this.speedX;
       this.y += this.speedY;
-      if (this.x < -50 || this.x > width + 50 || this.y < -50 || this.y > height + 50) {
-        this.reset();
-      }
+      if (this.x < -50 || this.x > width + 50 || this.y < -50 || this.y > height + 50) this.reset();
     }
     draw() {
       ctx.beginPath();
@@ -317,28 +370,41 @@ LeafyReads - Your Digital Bookshelf
     }
   }
 
-  // Create particles
-  const particles = [];
-  for (let i = 0; i < 120; i++) {
-    particles.push(new Particle());
-  }
+  const particles = Array.from({ length: 120 }, () => new Particle());
 
-  // Animation loop
-  function animate() {
+  const animate = () => {
     ctx.clearRect(0, 0, width, height);
-    particles.forEach(p => {
-      p.update();
-      p.draw();
-    });
+    particles.forEach(p => { p.update(); p.draw(); });
     requestAnimationFrame(animate);
-  }
+  };
   animate();
 
-  // Responsive
   window.addEventListener('resize', () => {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
   });
+}
 
+// ---------- Search bar animation ----------
+
+const words = ['"books"', '"authors"', '"genres"',  '"categories"', '"stories"', '"novels"', '"music"'];
+const dynamicSpan = document.querySelector(".dynamic-placeholder");
+const input = document.querySelector(".search-input");
+let idx = 0;
+
+
+function changeWord() {
+  if (input.value.trim() === "") {
+    dynamicSpan.classList.add("hide");
+    setTimeout(() => {
+      idx = (idx + 1) % words.length;
+      dynamicSpan.textContent = words[idx];
+      dynamicSpan.classList.remove("hide");
+    }, 500);
+  }
+}
+
+setInterval(changeWord, 3000);
 </script>
+
 {% endblock %}

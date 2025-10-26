@@ -10,5 +10,6 @@ urlpatterns = [
     path('search-results-of/', views.searchbooks, name='searchbooks'),
     path('toggle-read-later/<slug:book_slug>/', views.toggle_read_later, name='toggle_read_later'),
     path('toggle-like/<slug:book_slug>/', views.toggle_like, name='toggle_like'),
+    
 
 ]

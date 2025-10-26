@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from .models import Post, PostImage, Comment
 import base64
@@ -8,7 +7,7 @@ from bs4 import BeautifulSoup
 from books.models import ReadBy
 
 
-@login_required
+
 def community(request):
 
     if request.method == "POST":
@@ -55,11 +54,14 @@ def community(request):
         .prefetch_related("likes", "comments", "images")
         .all()
     )
-    books = (
-        ReadBy.objects.filter(user=request.user)
-        .select_related("book")
-        .order_by("-readed_at")[:5]
-    )
+    if request.user.is_authenticated:
+        books = (
+            ReadBy.objects.filter(user=request.user)
+            .select_related("book")
+            .order_by("-readed_at")[:5]
+        )
+    else:
+        books = {"no books": "no books"}
 
     context = {"posts": posts, "books": books}
 
