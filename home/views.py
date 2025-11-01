@@ -3,8 +3,11 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from books.models import *
 from django.db.models import Count
+from django.views.decorators.cache import cache_page
+from django.db import connection
+import time
 
-
+@cache_page(60 * 10)
 def home(request):
     categories = Genre.objects.only("id", "name", "slug", "lucidicon").order_by("pk")
     books = (

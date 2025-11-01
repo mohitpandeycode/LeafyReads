@@ -7,6 +7,9 @@ from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy
 from django.db.models import Count, OuterRef, Subquery, IntegerField
 from django.db import transaction
 from django.db.models import Exists, OuterRef
+from django.views.decorators.cache import cache_page
+
+
 
 
 def home(request, slug):
@@ -42,7 +45,7 @@ def home(request, slug):
         },
     )
 
-
+@cache_page(60 * 10)
 def library(request):
     recently_read_books = []
     if request.user.is_authenticated:

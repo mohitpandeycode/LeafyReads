@@ -5,9 +5,11 @@ import base64
 import uuid
 from bs4 import BeautifulSoup
 from books.models import ReadBy
+from django.views.decorators.cache import cache_page
 
 
 
+@cache_page(60 * 10)
 def community(request):
 
     if request.method == "POST":

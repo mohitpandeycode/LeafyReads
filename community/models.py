@@ -4,6 +4,12 @@ from django.utils import timezone
 from books.models import Book
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from cloudinary.models import CloudinaryField
+from django.utils.text import slugify
+
+
+def post_folder(instance):
+    return f"community/{slugify(instance.title)}"
 
 # Helper function to define a clean upload path for post images
 def post_image_upload_path(instance, filename):
@@ -42,7 +48,20 @@ class Post(models.Model):
 # NEW MODEL to handle multiple images per post
 class PostImage(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to=post_image_upload_path)
+    image = CloudinaryField(
+        "image",
+        resource_type="image",
+        folder=post_folder,
+        transformation=[
+        {
+            "width": 1200,
+            "height": 1200,
+            "crop": "limit",   
+            "quality": "auto:low",
+            "fetch_format": "auto"
+        }
+    ]     
+    )
 
     def __str__(self):
         return f'Image for post {self.post.id}'

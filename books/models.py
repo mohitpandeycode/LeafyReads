@@ -6,10 +6,7 @@ from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
 
 def book_folder(instance):
-    """Return a Cloudinary folder path for each book based on its title."""
     return f"books/{slugify(instance.title)}"
-
-
 
 # Custom upload path for images and PDFs
 def book_media_upload_path(instance, filename):
@@ -18,8 +15,6 @@ def book_media_upload_path(instance, filename):
 
 
 # CATEGORY MODEL
-
-
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
@@ -35,7 +30,6 @@ class Category(models.Model):
 
 
 # GENRE MODEL
-
 
 class Genre(models.Model):
     category = models.ForeignKey(
@@ -64,8 +58,6 @@ class BookQuerySet(models.QuerySet):
 
 
 # BOOK MODEL
-
-
 
 class Book(models.Model):
     title = models.CharField(max_length=200, unique=True)

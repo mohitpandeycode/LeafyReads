@@ -46,8 +46,10 @@ def dashboard(request):
         action = request.POST.get("action")
         selected_books = request.POST.getlist("selected_books")
         if action == "delete" and selected_books:
-            Book.objects.filter(id__in=selected_books).delete()
-        return redirect("dashboard")  # refresh page after action
+            for book in Book.objects.filter(id__in=selected_books):
+                book._updated_by = request.user
+                book.delete()
+            return redirect("dashboard")
 
     book_query = request.GET.get("search", "").strip()
     books = Book.objects.select_related("genre").all().order_by("-uploaded_at")
@@ -67,20 +69,23 @@ def dashboard(request):
     context = {"books": books}
     return render(request, "dashboard.html", context)
 
-
 @login_required(login_url="login_admin")
 def updateBook(request, slug):
     book = get_object_or_404(Book, slug=slug)
     bookcontent, created = BookContent.objects.get_or_create(book=book)
-
     genres = Genre.objects.all()
 
     if request.method == "POST":
         form = BookContentForm(request.POST, request.FILES, instance=bookcontent)
         if form.is_valid():
+            # Attach user to both book and bookcontent before saving
+            book._updated_by = request.user
+            bookcontent._updated_by = request.user
+
+            # Save book content (triggers content_update signal)
             form.save()
 
-            # Update Book fields
+            # Update book fields
             book.title = request.POST.get("title")
             book.slug = request.POST.get("slug")
             book.author = request.POST.get("author")
@@ -91,27 +96,28 @@ def updateBook(request, slug):
             genre_id = request.POST.get("genre")
             book.genre = Genre.objects.get(id=genre_id) if genre_id else None
 
-            # Files
             if "cover_front" in request.FILES:
                 book.cover_front = request.FILES["cover_front"]
             if "audio_file" in request.FILES:
                 book.audio_file = request.FILES["audio_file"]
 
+            # Save book (triggers update signal)
             book.save()
 
-            # Check which button was pressed
             action = request.POST.get("action")
             if action == "save":
                 return redirect("dashboard")
             elif action == "continue":
                 return redirect("updateBook", slug=book.slug)
-
     else:
         form = BookContentForm(instance=bookcontent)
 
     return render(
-        request, "updateBook.html", {"book": book, "form": form, "genres": genres}
+        request,
+        "updateBook.html",
+        {"book": book, "form": form, "genres": genres},
     )
+
 
 
 @login_required(login_url="login_admin")
@@ -121,27 +127,25 @@ def addBook(request):
     if request.method == "POST":
         form = BookContentForm(request.POST, request.FILES)
         if form.is_valid():
-            # create Book first
-            book = Book.objects.create(
+            book = Book(
                 title=request.POST.get("title"),
                 slug=request.POST.get("slug"),
                 author=request.POST.get("author"),
                 price=request.POST.get("price") or None,
                 isbn=request.POST.get("isbn") or None,
                 is_published="is_published" in request.POST,
-                genre=(
-                    Genre.objects.get(id=request.POST.get("genre"))
-                    if request.POST.get("genre")
-                    else None
-                ),
+                genre=Genre.objects.get(id=request.POST.get("genre")) if request.POST.get("genre") else None,
                 cover_front=request.FILES.get("cover_front"),
                 audio_file=request.FILES.get("audio_file"),
             )
+            book._updated_by = request.user  # <-- attach user
+            book.save()  # triggers Book "create" log
 
-            # save book content
+            # Save book content
             bookcontent = form.save(commit=False)
             bookcontent.book = book
-            bookcontent.save()
+            bookcontent.book._updated_by = request.user  # attach for content log
+            bookcontent.save()  # triggers BookContent "create" log
 
             action = request.POST.get("action")
             if action == "save":
@@ -149,8 +153,7 @@ def addBook(request):
             elif action == "add_another":
                 return redirect("addBook")
             elif action == "continue":
-                return redirect("updateBook", slug=book.slug) 
-
+                return redirect("updateBook", slug=book.slug)
     else:
         form = BookContentForm()
 

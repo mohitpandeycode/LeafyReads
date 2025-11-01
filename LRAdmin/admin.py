@@ -1,3 +1,8 @@
 from django.contrib import admin
+from LRAdmin.models import BookLog
 
-# Register your models here.
+@admin.register(BookLog)
+class BookLogAdmin(admin.ModelAdmin):
+    list_display = ("book", "user", "action", "timestamp")
+    list_filter = ("action", "timestamp", "user")
+    search_fields = ("book__title", "message", "user__username")
