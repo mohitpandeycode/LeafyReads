@@ -6,7 +6,7 @@ const navSearchInput = document.getElementById("navSearchInput");
 const expandedStyles = {
   background: "rgba(255, 255, 255, 0.3)",
   backdropFilter: "blur(8px)",
-  borderRadius: "30px",
+  borderRadius: "15px",
   padding: "6px 12px",
   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)"
 };

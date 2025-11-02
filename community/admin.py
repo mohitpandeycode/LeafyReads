@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from unfold.admin import ModelAdmin
 from .models import Post, PostImage, Comment, Notification
 
 class PostImageInline(admin.TabularInline):

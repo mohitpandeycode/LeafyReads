@@ -2,409 +2,490 @@
 {% load static %}
 {% load socialaccount %}
 
-
 {% block title %}
-LeafyReads - Your Digital Bookshelf
+  LeafyReads - Your Digital Bookshelf
 {% endblock %}
 
 {% block css %}
-<style>
-.search-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  background: transparent;
-}
-
-
-.static-placeholder {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
-  pointer-events: none;
-  font-size: 16px;
-}
-
-
-.dynamic-placeholder {
-  position: absolute;
-  left: 100px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  font-size: 16px;
-  color: #aaa;
-  transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-.dynamic-placeholder.hide {
-  transform: translateY(-150%);
-  opacity: 0;
-}
-
-
-.search-input:not(:placeholder-shown) + .static-placeholder,
-.search-input:not(:placeholder-shown) + .static-placeholder + .dynamic-placeholder {
-  display: none;
-}
-</style>
+ 
 {% endblock %}
 
 {% block body %}
+  {% if not user.is_authenticated %}
+    {% include 'login.html' %}
+  {% endif %}
 
-<!-- loginpage-->
-{% if not user.is_authenticated %}
-{% include 'login.html' %}
-{% endif %}
-{% if messages %}
+  {% if messages %}
     <div class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start" role="alert">
-        <div class="error__icon mr-3">
-            <!-- Using the success icon you provided -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
-                <path fill-rule="evenodd" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z" clip-rule="evenodd"></path>
-            </svg>
-        </div>
-        <div class="error__title grow">
-            <ul class="messages">
-              {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
-        </div>
-        <div class="error__close ml-4 cursor-pointer">
-            <!-- Close Icon -->
-            <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-gray-700 hover:text-gray-900 transition-colors">
-                <path d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path>
-            </svg>
-        </div>
-    </div>
-    {% endif %}
-<main>
-<section class="hero-bg">
-  <!-- Separate aesthetic background canvas -->
-  <canvas id="animated-bg"></canvas>
-
-  <div class="container hero-container">
-    <div class="hero-content">
-     <h1 class="animate-fade-in">Dive Into Worlds Beyond Imagination</h1>
-<p class="animate-fade-in delay-1">
-  LeafyReads brings galaxies of stories to your fingertips. Explore, track, and share your adventures with 
-  fellow readers who love to dream big.
-</p>
-
-      <form class="hero-search-form animate-fade-in delay-2" action="{% url 'searchbooks' %}" method="get">
-        <div class="search-wrapper">
-          <input type="text" class="search-input" placeholder=" " />
-          <span class="static-placeholder">Search for </span>
-          <span class="dynamic-placeholder">"books"</span>
-        </div>
-        <button type="submit" class="btn primary-btn">
-          <i data-lucide="search" style="width:1rem; height:1rem;"></i>
-          <span>Search</span>
-        </button>
-      </form>
-    </div>
-
-    <div class="hero-visual animate-float">
-      <div class="glass-box">
-        <img src="{% static 'images/landing.png' %}" 
-            alt="An open book with illustrations" 
-            class="book-image light-image">
-            
-        <img src="{% static 'images/darklanding.png' %}" 
-            alt="An open book with illustrations (dark mode)" 
-            class="book-image dark-image">
-            
-        <div class="hero-light"></div>
+      <div class="error__icon mr-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
+          <path fill-rule="evenodd" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z" clip-rule="evenodd"></path>
+        </svg>
+      </div>
+      <div class="error__title grow">
+        <ul class="messages">
+          {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="error__close ml-4 cursor-pointer">
+        <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-gray-700 hover:text-gray-900 transition-colors">
+          <path d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path>
+        </svg>
       </div>
     </div>
+  {% endif %}
+  <main>
+    <section class="hero-bg">
+      <canvas id="animated-bg"></canvas>
 
-  </div>
-</section>
+      <div class="container hero-container">
+        <div class="hero-content">
+          <h1 class="animate-fade-in">Dive Into Worlds Beyond Imagination</h1>
+          <p class="animate-fade-in delay-1">LeafyReads brings galaxies of stories to your fingertips. Explore, track, and share your adventures with fellow readers who love to dream big.</p>
 
+          <form class="hero-search-form animate-fade-in delay-2" action="{% url 'searchbooks' %}" method="get">
+            <div class="search-wrapper">
+              <input type="text" class="search-input" placeholder=" " name="q" />
+              <span class="static-placeholder">Search for</span>
+              <span class="dynamic-placeholder">"books"</span>
+            </div>
+            <button type="submit" class="btn primary-btn">
+              <i data-lucide="search" style="width:1rem; height:1rem;"></i>
+              <span>Search</span>
+            </button>
+          </form>
+          <div class="results" style="border-top: 1px solid rgb(138, 138, 138, 0.4);">
+            <div class="search-history">
+              <div class="search-history-title">Search results</div>
+            </div>
+          </div>
+        </div>
 
-  <!-- category page div -->
-  <section>
-    <div class="container">
-      <div class="section-header">
-        <h2>Browse by Category</h2>
-        <p>Explore books by your favorite genres and topics.</p>
+        <div class="hero-visual animate-float">
+          <div class="glass-box">
+            <img src="{% static 'images/landing.png' %}" alt="An open book with illustrations" class="book-image light-image" />
+
+            <img src="{% static 'images/darklanding.png' %}" alt="An open book with illustrations (dark mode)" class="book-image dark-image" />
+
+            <div class="hero-light"></div>
+          </div>
+        </div>
       </div>
-      <div class="books-category-grid"
-        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(121px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-        {% for cat in category %}
-          <a href="{% url 'category' cat.slug %}" class="category-card"
-            style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;"
-            data-index="{{ forloop.counter }}">
-            <i data-lucide="{{ cat.lucidicon }}"
-              style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
-            <div>{{ cat.name }}</div>
-          </a>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-header">
+          <h2>Browse by Category</h2>
+          <p>Explore books by your favorite genres and topics.</p>
+        </div>
+        <div class="books-category-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(121px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          {% for cat in category %}
+            <a href="{% url 'category' cat.slug %}" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;" data-index="{{ forloop.counter }}">
+              <i data-lucide="{{ cat.lucidicon }}" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+              <div>{{ cat.name }}</div>
+            </a>
           {% endfor %}
 
-          <!-- "Other" button -->
-          <a href="javascript:void(0);" id="toggle-other" class="category-card"
-            style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;">
-            <i data-lucide="circle-chevron-right"
-              style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+          <a href="javascript:void(0);" id="toggle-other" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;">
+            <i data-lucide="circle-chevron-right" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
             <div>Other</div>
           </a>
+        </div>
       </div>
-    </div>
-  </section>
-  <!-- Featured books page -->
-  <section class="bg-white">
-    <div class="container">
-      <div class="section-header">
-        <h2>New & Trending Reads</h2>
-        <p>Handpicked selections just for you.</p>
-      </div>
-      <div class="books-grid">
-        {% for book in books %}
-        {% if book.is_published %}
-        <div class="book-item" style="position: relative;">
-          <a href="{% url 'book' book.slug %}">
-            <img class="imgbook" src="{{ book.cover_front.url }}" alt="Book Cover 1" loading="lazy"
-            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
-            <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" src="{% static 'images/framebook1.png' %}" alt="frame">
-            <div style="box-shadow: 2px 2px 3px #3a3a3a38;border-radius: 0px 0px 5px 5px;">
-              <div class="readby">
-                <h3 class="truncate">{{ book.title }}</h3>
-                <div class="views" style="margin-right: 5px;">
-                  <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
-                </div>
+    </section>
+
+    <section class="bg-white">
+      <div class="container">
+        <div class="section-header">
+          <h2>New & Trending Reads</h2>
+          <p>Handpicked selections just for you.</p>
+        </div>
+        <div class="books-grid">
+          {% for book in books %}
+            {% if book.is_published %}
+              <div class="book-item" style="position: relative;">
+                <a href="{% url 'book' book.slug %}">
+                  <img class="imgbook" src="{{ book.cover_front.url }}?q_auto,f_auto" alt="Book Cover 1" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+                  <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" src="{% static 'images/framebook1.png' %}" alt="frame" />
+                  <div style="box-shadow: 1px 1px 1px #61616138;border-radius: 0px 0px 5px 5px;">
+                    <div class="readby">
+                      <h3 class="truncate">{{ book.title }}</h3>
+                      <div class="views" style="margin-right: 5px;">
+                        <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
+                      </div>
+                    </div>
+                    <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
+                      <p>
+                        <span style="font-weight: 700;">by:</span> {{ book.author }}
+                      </p>
+                      <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
+                        <i style="height: 16px;fill: #007BFF;color: #0358ff;" data-lucide="thumbs-up"></i>{{ book.likes_count }}
+                      </div>
+                    </div>
+                  </div>
+                </a>
               </div>
-               <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
-                <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
-                <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;"><i style="height: 16px;fill: #007BFF;color: #0358ff;" data-lucide="thumbs-up"></i>{{ book.likes_count }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="btn-donate">
+          <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Explore More...</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-header">
+          <h2>Everything You Need to Read More</h2>
+          <p>All the tools to enhance your reading experience.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon bg-blue">
+              <i data-lucide="library"></i>
+            </div>
+            <h3>Vast Digital Library</h3>
+            <p>Access thousands of titles from every genre imaginable, from timeless classics to modern bestsellers.</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon bg-green">
+              <i data-lucide="bar-chart-3"></i>
+            </div>
+            <h3>Track Your Progress</h3>
+            <p>Set reading goals, log your reading sessions, and watch your virtual bookshelf grow over time.</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon bg-purple">
+              <i data-lucide="highlighter"></i>
+            </div>
+            <h3>Notes & Highlights</h3>
+            <p>Capture your thoughts and favorite passages directly in the book. Never lose a great idea again.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bg-white">
+      <div class="container">
+        <div class="section-header">
+          <h2>Loved by Readers Everywhere</h2>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <p>"LeafyReads has completely changed how I read. I've discovered so many new authors and the progress tracking keeps me motivated. It's a must-have for any book lover!"</p>
+            <div class="testimonial-author">
+              <img src="https://i.pravatar.cc/150?img=1" loading="lazy" alt="Avatar of Sarah K." />
+              <div>
+                <p class="author-name">Sarah K.</p>
+                <p class="author-title">Avid Reader</p>
               </div>
             </div>
-          </a>
-        </div>
-        {% endif %}
-        {% endfor %}
-      </div>
-
-      <div class="btn-donate">
-        <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Explore
-          More...</a>
-      </div>
-
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="section-header">
-        <h2>Everything You Need to Read More</h2>
-        <p>All the tools to enhance your reading experience.</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-item">
-          <div class="feature-icon bg-blue">
-            <i data-lucide="library"></i>
           </div>
-          <h3>Vast Digital Library</h3>
-          <p>Access thousands of titles from every genre imaginable, from timeless classics to modern bestsellers.</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon bg-green">
-            <i data-lucide="bar-chart-3"></i>
-          </div>
-          <h3>Track Your Progress</h3>
-          <p>Set reading goals, log your reading sessions, and watch your virtual bookshelf grow over time.</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon bg-purple">
-            <i data-lucide="highlighter"></i>
-          </div>
-          <h3>Notes & Highlights</h3>
-          <p>Capture your thoughts and favorite passages directly in the book. Never lose a great idea again.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="bg-white">
-    <div class="container">
-      <div class="section-header">
-        <h2>Loved by Readers Everywhere</h2>
-      </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <p>"LeafyReads has completely changed how I read. I've discovered so many new authors and the progress
-            tracking keeps me motivated. It's a must-have for any book lover!"</p>
-          <div class="testimonial-author">
-            <img src="https://i.pravatar.cc/150?img=1" loading="lazy" alt="Avatar of Sarah K." />
-            <div>
-              <p class="author-name">Sarah K.</p>
-              <p class="author-title">Avid Reader</p>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card">
-          <p>"Finally, a beautiful and functional app for my reading life. Joining the book club discussions has been
-            amazing. It feels like a real community."</p>
-          <div class="testimonial-author">
-            <img src="https://i.pravatar.cc/150?img=2" loading="lazy" alt="Avatar of Michael B." />
-            <div>
-              <p class="author-name">Michael B.</p>
-              <p class="author-title">Book Club Organizer</p>
+          <div class="testimonial-card">
+            <p>"Finally, a beautiful and functional app for my reading life. Joining the book club discussions has been amazing. It feels like a real community."</p>
+            <div class="testimonial-author">
+              <img src="https://i.pravatar.cc/150?img=2" loading="lazy" alt="Avatar of Michael B." />
+              <div>
+                <p class="author-name">Michael B.</p>
+                <p class="author-title">Book Club Organizer</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-</main>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // ---------- ERROR MESSAGE HANDLER ----------
-  const errorDiv = document.querySelector('.error');
-  if (errorDiv) {
-    const closeButton = errorDiv.querySelector('.error__close');
-    const hideError = () => {
-      errorDiv.classList.add('fade-out');
-      errorDiv.addEventListener('animationend', () => errorDiv.remove(), { once: true });
-    };
-    const timer = setTimeout(hideError, 3000);
-    closeButton.addEventListener('click', () => {
-      clearTimeout(timer);
-      hideError();
-    });
-  }
+    </section>
+  </main>
 
-  // ---------- GLASS BOX TILT EFFECT ----------
-  const box = document.querySelector(".glass-box");
-  if (box) {
-    const getActiveImage = () => [...box.querySelectorAll(".book-image")].find(img => getComputedStyle(img).display !== "none");
-
-    box.addEventListener("mousemove", e => {
-      const rect = box.getBoundingClientRect();
-      const rotateX = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
-      const rotateY = ((e.clientX - rect.left) / rect.width - 0.5) * -10;
-      const activeImg = getActiveImage();
-      if (activeImg) {
-        activeImg.style.transition = "transform 0.2s ease-out";
-        activeImg.style.setProperty("--tilt-x", `${rotateY}deg`);
-        activeImg.style.setProperty("--tilt-y", `${rotateX}deg`);
+  <script>
+    ;(function () {
+      'use strict'
+    
+      // Particle class definition (can live outside DOMContentLoaded)
+      class Particle {
+        constructor(width, height, ctx) {
+          this.width = width
+          this.height = height
+          this.ctx = ctx
+          this.reset()
+        }
+        reset() {
+          this.x = Math.random() * this.width
+          this.y = Math.random() * this.height
+          this.radius = Math.random() * 3 + 1
+          this.speedX = (Math.random() - 0.5) * 0.4
+          this.speedY = (Math.random() - 0.5) * 0.4
+          this.color = `hsla(${Math.random() * 360}, 70%, 60%, 0.3)`
+        }
+        update() {
+          this.x += this.speedX
+          this.y += this.speedY
+          if (this.x < -50 || this.x > this.width + 50 || this.y < -50 || this.y > this.height + 50) {
+            this.reset()
+          }
+        }
+        draw() {
+          this.ctx.beginPath()
+          this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+          this.ctx.fillStyle = this.color
+          this.ctx.shadowColor = this.color
+          this.ctx.shadowBlur = 15
+          this.ctx.fill()
+        }
       }
-    });
-
-    box.addEventListener("mouseleave", () => {
-      const activeImg = getActiveImage();
-      if (activeImg) {
-        activeImg.style.transition = "transform 0.4s ease-in-out";
-        activeImg.style.setProperty("--tilt-x", "0deg");
-        activeImg.style.setProperty("--tilt-y", "0deg");
-      }
-    });
-
-    new MutationObserver(() => {
-      const activeImg = getActiveImage();
-      if (activeImg) {
-        activeImg.style.setProperty("--tilt-x", "0deg");
-        activeImg.style.setProperty("--tilt-y", "0deg");
-      }
-    }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
-  }
-
-  // ---------- CATEGORY CARDS TOGGLE ----------
-  const cards = document.querySelectorAll(".category-card:not(#toggle-other)");
-  const toggleBtn = document.getElementById("toggle-other");
-  if (cards.length && toggleBtn) {
-    let showingAll = false;
-    const updateView = () => {
-      cards.forEach((card, i) => card.style.display = (showingAll || i < 17) ? "inline-block" : "none");
-      toggleBtn.querySelector("div").textContent = showingAll ? "Show Less" : "Other";
-      toggleBtn.querySelector("i").setAttribute("data-lucide", showingAll ? "circle-chevron-up" : "circle-chevron-right");
-      lucide.createIcons();
-    };
-    toggleBtn.addEventListener("click", () => {
-      showingAll = !showingAll;
-      updateView();
-    });
-    updateView();
-  }
-});
-
-// ---------- CANVAS BACKGROUND ----------
-const canvas = document.getElementById('animated-bg');
-if (canvas) {
-  const ctx = canvas.getContext('2d');
-  let width = canvas.width = window.innerWidth;
-  let height = canvas.height = window.innerHeight;
-
-  class Particle {
-    constructor() { this.reset(); }
-    reset() {
-      this.x = Math.random() * width;
-      this.y = Math.random() * height;
-      this.radius = Math.random() * 3 + 1;
-      this.speedX = (Math.random() - 0.5) * 0.4;
-      this.speedY = (Math.random() - 0.5) * 0.4;
-      this.color = `hsla(${Math.random() * 360}, 70%, 60%, 0.3)`;
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      if (this.x < -50 || this.x > width + 50 || this.y < -50 || this.y > height + 50) this.reset();
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = this.color;
-      ctx.shadowColor = this.color;
-      ctx.shadowBlur = 15;
-      ctx.fill();
-    }
-  }
-
-  const particles = Array.from({ length: 120 }, () => new Particle());
-
-  const animate = () => {
-    ctx.clearRect(0, 0, width, height);
-    particles.forEach(p => { p.update(); p.draw(); });
-    requestAnimationFrame(animate);
-  };
-  animate();
-
-  window.addEventListener('resize', () => {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  });
-}
-
-// ---------- Search bar animation ----------
-
-const words = ['"books"', '"authors"', '"genres"',  '"categories"', '"stories"', '"novels"', '"music"'];
-const dynamicSpan = document.querySelector(".dynamic-placeholder");
-const input = document.querySelector(".search-input");
-let idx = 0;
-
-
-function changeWord() {
-  if (input.value.trim() === "") {
-    dynamicSpan.classList.add("hide");
-    setTimeout(() => {
-      idx = (idx + 1) % words.length;
-      dynamicSpan.textContent = words[idx];
-      dynamicSpan.classList.remove("hide");
-    }, 500);
-  }
-}
-
-setInterval(changeWord, 3000);
-</script>
-
+    
+      // Wait for the DOM to be fully loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- Cache DOM elements ---
+        const errorDiv = document.querySelector('.error')
+        const glassBox = document.querySelector('.glass-box')
+        const categoryCards = document.querySelectorAll('.category-card:not(#toggle-other)')
+        const categoryToggleBtn = document.getElementById('toggle-other')
+        const canvas = document.getElementById('animated-bg')
+        const searchInput = document.querySelector('.search-input')
+        const resultsBox = document.querySelector('.results')
+        const searchForm = document.querySelector('.hero-search-form')
+        const dynamicSpan = document.querySelector('.dynamic-placeholder')
+        const historyContainer = resultsBox ? resultsBox.querySelector('.search-history') : null
+    
+        // --- Error Message Handler ---
+        if (errorDiv) {
+          const closeButton = errorDiv.querySelector('.error__close')
+          if (closeButton) {
+            const hideError = () => {
+              errorDiv.classList.add('fade-out')
+              errorDiv.addEventListener('animationend', () => errorDiv.remove(), { once: true })
+            }
+            const timer = setTimeout(hideError, 3000)
+            closeButton.addEventListener('click', () => {
+              clearTimeout(timer)
+              hideError()
+            })
+          }
+        }
+    
+        // --- Glass Box Tilt Effect ---
+        if (glassBox) {
+          const getActiveImage = () => [...glassBox.querySelectorAll('.book-image')].find((img) => getComputedStyle(img).display !== 'none')
+    
+          glassBox.addEventListener('mousemove', (e) => {
+            const rect = glassBox.getBoundingClientRect()
+            const rotateX = ((e.clientY - rect.top) / rect.height - 0.5) * 10
+            const rotateY = ((e.clientX - rect.left) / rect.width - 0.5) * -10
+            const activeImg = getActiveImage()
+            if (activeImg) {
+              activeImg.style.transition = 'transform 0.2s ease-out'
+              activeImg.style.setProperty('--tilt-x', `${rotateY}deg`)
+              activeImg.style.setProperty('--tilt-y', `${rotateX}deg`)
+            }
+          })
+    
+          glassBox.addEventListener('mouseleave', () => {
+            const activeImg = getActiveImage()
+            if (activeImg) {
+              activeImg.style.transition = 'transform 0.4s ease-in-out'
+              activeImg.style.setProperty('--tilt-x', '0deg')
+              activeImg.style.setProperty('--tilt-y', '0deg')
+            }
+          })
+    
+          new MutationObserver(() => {
+            const activeImg = getActiveImage()
+            if (activeImg) {
+              activeImg.style.setProperty('--tilt-x', '0deg')
+              activeImg.style.setProperty('--tilt-y', '0deg')
+            }
+          }).observe(document.body, { attributes: true, attributeFilter: ['class'] })
+        }
+    
+        // --- Category Cards Toggle ---
+        if (categoryCards.length && categoryToggleBtn) {
+          let showingAll = false
+          const btnText = categoryToggleBtn.querySelector('div')
+          const btnIcon = categoryToggleBtn.querySelector('i')
+    
+          const updateView = () => {
+            categoryCards.forEach((card, i) => (card.style.display = showingAll || i < 17 ? 'inline-block' : 'none'))
+            if (btnText) btnText.textContent = showingAll ? 'Show Less' : 'Other'
+            if (btnIcon) btnIcon.setAttribute('data-lucide', showingAll ? 'circle-chevron-up' : 'circle-chevron-right')
+            if (window.lucide) {
+              lucide.createIcons()
+            }
+          }
+    
+          categoryToggleBtn.addEventListener('click', () => {
+            showingAll = !showingAll
+            updateView()
+          })
+          updateView() // Initial call
+        }
+    
+        // --- Animated Canvas Background ---
+        if (canvas) {
+          const ctx = canvas.getContext('2d')
+          let width = (canvas.width = window.innerWidth)
+          let height = (canvas.height = window.innerHeight)
+          const particles = Array.from({ length: 120 }, () => new Particle(width, height, ctx))
+    
+          let animationFrameId = null
+          const animate = () => {
+            ctx.clearRect(0, 0, width, height)
+            particles.forEach((p) => {
+              p.update()
+              p.draw()
+            })
+            animationFrameId = requestAnimationFrame(animate)
+          }
+          animate()
+    
+          // Debounced resize handler
+          let resizeTimer
+          window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer)
+            resizeTimer = setTimeout(() => {
+              // Stop animation loop
+              if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId)
+              }
+    
+              width = canvas.width = window.innerWidth
+              height = canvas.height = window.innerHeight
+    
+              // Reset particle positions
+              particles.forEach((p) => {
+                p.width = width
+                p.height = height
+                p.reset()
+              })
+    
+              // Restart animation
+              animate()
+            }, 100)
+          })
+        }
+    
+        // --- Search Bar (Animation & AJAX Fetch) ---
+        if (searchInput && resultsBox && searchForm && dynamicSpan && historyContainer) {
+          // Placeholder text animation
+          const words = ['"Books"', '"Authors"', '"Genres"', '"Categories"', '"Stories"', '"Novels"', '"Music"']
+          let wordIdx = 0
+    
+          const changeWord = () => {
+            if (document.activeElement !== searchInput && searchInput.value.trim() === '') {
+              dynamicSpan.classList.add('hide')
+              setTimeout(() => {
+                wordIdx = (wordIdx + 1) % words.length
+                dynamicSpan.textContent = words[wordIdx]
+                dynamicSpan.classList.remove('hide')
+              }, 500)
+            }
+          }
+          setInterval(changeWord, 3000)
+    
+          // AJAX search fetch (XSS Safe)
+          const fetchResults = async (query) => {
+            try {
+              const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`)
+              if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+              const data = await response.json()
+              const results = data.results
+    
+              historyContainer.innerHTML = '' // Clear previous results
+              const fragment = document.createDocumentFragment()
+    
+              const titleEl = document.createElement('div')
+              titleEl.className = 'search-history-title'
+              titleEl.textContent = 'Search results'
+              fragment.appendChild(titleEl)
+    
+              if (!results.length) {
+                const noResultEl = document.createElement('div')
+                noResultEl.className = 'history-item'
+                noResultEl.innerHTML = `<i data-lucide="search"></i>
+                      <div class="history-item-info">
+                        <span class="history-item-title">No results found</span>
+                      </div>`
+                fragment.appendChild(noResultEl)
+              } else {
+                results.forEach((book) => {
+                  const link = document.createElement('a')
+                  link.href = `book/library/open/${book.slug}`
+                  link.className = 'history-item'
+                  if (book.title) link.dataset.title = book.title
+                  if (book.author) link.dataset.author = book.author
+                  if (book.cover_front) link.dataset.image = book.cover_front
+                  if (book.slug) link.dataset.slug = book.slug
+    
+                  const icon = document.createElement('i')
+    
+                  icon.setAttribute('data-lucide', 'search')
+    
+                  const infoDiv = document.createElement('div')
+                  infoDiv.className = 'history-item-info'
+    
+                  const titleSpan = document.createElement('span')
+                  titleSpan.className = 'history-item-title'
+                  titleSpan.textContent = book.title || 'Untitled' // SAFE from XSS
+    
+                  const authorSpan = document.createElement('span')
+                  authorSpan.className = 'history-item-author'
+                  authorSpan.textContent = ` by ${book.author || 'Unknown Author'}` // SAFE from XSS
+    
+                  infoDiv.appendChild(titleSpan)
+                  infoDiv.appendChild(authorSpan)
+                  link.appendChild(icon)
+                  link.appendChild(infoDiv)
+                  fragment.appendChild(link)
+                })
+              }
+              historyContainer.appendChild(fragment) // Append all results at once
+              resultsBox.style.display = 'block'
+              if (window.lucide) lucide.createIcons()
+            } catch (err) {
+              console.error('Search error:', err)
+              historyContainer.innerHTML = `<div class="search-history-title">Search results</div><div class="history-item"><div class="history-item-info"><span class="history-item-title">Error fetching results</span></div></div>`
+              resultsBox.style.display = 'block'
+            }
+          }
+    
+          // Input listener with debounce
+          let typingTimer
+          const debounceDelay = 300
+          searchInput.addEventListener('input', () => {
+            clearTimeout(typingTimer)
+            const query = searchInput.value.trim()
+    
+            if (query.length > 1) {
+              resultsBox.style.display = 'block' // Show immediately
+              searchForm.style.borderRadius = '0.875rem 0.875rem 0 0'
+              typingTimer = setTimeout(() => fetchResults(query), debounceDelay)
+            } else {
+              resultsBox.style.display = 'none'
+              searchForm.style.borderRadius = '0.875rem'
+            }
+          })
+    
+          // Hide results on outside click
+          document.addEventListener('click', (e) => {
+            if (!searchForm.contains(e.target)) {
+              resultsBox.style.display = 'none'
+              searchForm.style.borderRadius = '0.875rem'
+            }
+          })
+    
+          // Show results on focus
+          searchInput.addEventListener('focus', () => {
+            const query = searchInput.value.trim()
+            if (query.length > 1) {
+              resultsBox.style.display = 'block'
+              searchForm.style.borderRadius = '0.875rem 0.875rem 0 0'
+            }
+          })
+        }
+      })
+    })()
+  </script>
 {% endblock %}

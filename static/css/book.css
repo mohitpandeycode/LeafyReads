@@ -574,6 +574,21 @@ body.dark-mode .page-number {
     background-color: #34495e
 }
 
+.control-button#likeBtn {
+  background-color: #2c3e50;
+  transition: background-color 0.2s ease;
+}
+.control-button#likeBtn.like-active {
+  background-color: #007BFF;
+}
+
+.control-button#saveBtn {
+  background-color: #2c3e50;
+  transition: background-color 0.2s ease;
+}
+.control-button#saveBtn.save-active {
+  background-color: #ff6b00;
+}
 
 
 html.dark-mode {

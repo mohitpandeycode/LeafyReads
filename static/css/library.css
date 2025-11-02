@@ -8,6 +8,7 @@
       justify-content: center;
       background-color: rgb(255 255 255 / 94%);
       width: 100%;
+      z-index: 9;
       overflow: hidden;
   }
 

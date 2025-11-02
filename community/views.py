@@ -9,7 +9,7 @@ from django.views.decorators.cache import cache_page
 
 
 
-@cache_page(60 * 10)
+
 def community(request):
 
     if request.method == "POST":

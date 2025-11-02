@@ -45,7 +45,6 @@ def home(request, slug):
         },
     )
 
-@cache_page(60 * 10)
 def library(request):
     recently_read_books = []
     if request.user.is_authenticated:
@@ -164,7 +163,7 @@ def myBooks(request):
 
 
 def searchbooks(request):
-    book_query = request.GET.get("search", "").strip()
+    book_query = request.GET.get("q", "").strip()
 
     books_list = (
         Book.objects.only("id", "title", "slug", "author", "cover_front")
@@ -201,6 +200,39 @@ def searchbooks(request):
             ),
         },
     )
+
+
+
+def ajax_search(request):
+    query = request.GET.get("q", "").strip()
+    results = []
+
+    if query:
+        keywords = query.split()
+        q_obj = Q()
+        for kw in keywords:
+            q_obj |= (
+                Q(title__icontains=kw)
+                | Q(author__icontains=kw)
+                | Q(genre__name__icontains=kw)
+                | Q(slug__icontains=kw)
+            )
+
+        books = (
+            Book.objects.filter(q_obj)
+            .only("id", "title", "slug", "author")[:8]
+        )
+
+        # Updated loop to return only the requested fields
+        for b in books:
+            results.append({
+                "id": b.id,
+                "title": b.title,
+                "author": b.author,
+                "slug": b.slug,
+            })
+
+    return JsonResponse({"results": results})
 
 
 @login_required

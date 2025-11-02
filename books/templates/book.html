@@ -33,6 +33,39 @@
     body.dark-mode {
   background-image: url('{% static "images/backdark1.png" %}');
 }
+
+    .nav-history-item{
+      display: flex;
+      align-items: center;
+      color: inherit !important;
+      margin-bottom: 8px;
+      gap: 10px;
+      padding-left: 10px;
+      font-size: 13px;
+    }
+    .nav-history-item:hover{
+      background-color: #7c7c7c18;
+      border-radius: 5px;
+    }
+    .nav-search-history-title{
+      margin-bottom: 8px;
+      padding: 5px 0 5px 8px;
+      color: inherit;
+      font-size: 12px;
+    }
+    .nav-results{
+      position: absolute;
+      right: 0;
+      width: 274px;
+      background: rgb(255 255 255 / 81%);
+      top: 39px;
+      border-radius: 0 0 15px 15px;
+      display:none;
+    }
+    body.dark-mode .nav-results{
+      background: rgb(59 59 59 / 85%);
+    }
+
     
   </style>
     <script src="{% static 'js/loading.js' %}"></script>
@@ -122,7 +155,7 @@
             <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}" alt="">
           </a>
 
-          <nav class="co-desktop-nav">
+          <nav class="co-desktop-nav" style="position: relative;">
             <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
             <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
             {% if user.is_authenticated %}
@@ -137,9 +170,12 @@
               <div id="navSearchBtn" class="nav-search-button" aria-label="Search">
                 <i data-lucide="search"></i>
               </div>
-              <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
+              <input type="text" name="q" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
               <button type="submit" id="sctive" style="display: none;border: none; background: #149546;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
             </form>
+            <div class="nav-results">
+              <div class="nav-search-history"></div>
+            </div>
           </nav>
           <div class="co-header-actions">
             {% if user.is_authenticated %}
@@ -208,8 +244,8 @@
         <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
         <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
         {% if user.is_authenticated %}
-          <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px;{% if liked %}background-color:#007BFF;{% else %}background-color:#2c3e50;{% endif %}" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
-          <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px;{% if saved %}background-color:#ff6b00;{% else %}background-color:#2c3e50;{% endif %}" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
+          <button id="likeBtn" class="control-button fullscreen-button {% if liked %}like-active{% endif %}" style="top: 530px; padding: 8px;" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
+          <button id="saveBtn" class="control-button fullscreen-button {% if saved %}save-active{% endif %}" style="top: 580px; padding: 8px;" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
           <a href="{% url 'community' %}" id="comment" class="control-button fullscreen-button" style="top: 630px; padding: 8px" title="community"><i data-lucide="messages-square"></i></a>
         {% endif %}
         <div id="toast-notification" class="toast">
@@ -228,7 +264,7 @@
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
             <img src="{% static 'images/framebook1.png' %}" loading="lazy" class="cover-image" style="position: absolute;    left: -2px;width: 101%;top: -2px;height: 101%;" alt="forntFrame" />
-            <img src="{{ book.cover_front.url }}" loading="lazy" alt="Cover Image" class="cover-image" />
+            <img src="{{ book.cover_front.url }}?q_auto,f_auto" loading="lazy" alt="Cover Image" class="cover-image" />
             <div class="bookinfocover">
               <h4 style="margin: 0;">{{book.title}}</h4>
               <p style="font-size:16px;margin: 0;">By: {{book.author}}</p>
@@ -307,7 +343,6 @@
 {% endif %}
 
 <script>
-
   const clicks = new Audio('/static/sounds/click.mp3');
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -345,76 +380,93 @@
       }, 20);
     }
 
-    // AJAX for Save / Read Later
+    // AJAX for Save / Read Later (Optimistic)
     if (saveBtn) {
       saveBtn.addEventListener('click', function() {
         const url = this.dataset.url;
         const csrfToken = '{{ csrf_token }}';
 
+        // --- Optimistic UI Update ---
+        const isSaving = !this.classList.contains('save-active');
+        this.classList.toggle('save-active'); // Toggle UI immediately
+        clicks.currentTime = 0;
+        clicks.play();
+
+        if (isSaving) {
+          showToast('Added to Read Later');
+          if(dot) dot.style.display = "block";
+        } else {
+          showToast('Removed from Read Later');
+          if(dot) dot.style.display = "none";
+        }
+        // --- End Optimistic UI ---
+
         fetch(url, {
           method: 'POST',
-          headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
         })
         .then(response => response.json())
         .then(data => {
-          if (data.status === 'saved') {
-            showToast(data.message);
-            saveBtn.style.backgroundColor = "#ff6b00";
-            dot.style.display = "block";
-            
-          } else if (data.status === 'removed') {
-            showToast(data.message);
-            saveBtn.style.backgroundColor = "#2c3e50";
-            dot.style.display = "none";
+          if (data.status !== 'saved' && data.status !== 'removed') {
+            // ERROR: Revert UI
+            showToast(data.message || 'An error occurred.');
+            this.classList.toggle('save-active'); // Revert toggle
+            if(dot) dot.style.display = isSaving ? "none" : "block"; // Revert dot
           } else {
-            showToast(data.message || 'An unknown error occurred.');
+            // Server confirmed, just update the message
+            showToast(data.message);
           }
-          clicks.currentTime = 0;
-          clicks.play();
         })
         .catch(error => {
+          // NETWORK ERROR: Revert UI
           console.error('Error:', error);
           showToast('Something went wrong. Please try again.');
+          this.classList.toggle('save-active'); // Revert toggle
+          if(dot) dot.style.display = isSaving ? "none" : "block"; // Revert dot
         });
       });
     }
 
-    // AJAX for Like Button
+    // AJAX for Like Button (Optimistic)
     if (likeBtn) {
       likeBtn.addEventListener('click', function() {
         const url = this.dataset.url;
         const csrfToken = '{{ csrf_token }}';
 
+        // --- Optimistic UI Update ---
+        const isLiking = !this.classList.contains('like-active');
+        this.classList.toggle('like-active'); // Toggle UI immediately
+        clicks.currentTime = 0;
+        clicks.play();
+        
+        if (isLiking) {
+          showToast('Liked!');
+          burstLikes(30); // Only burst when liking
+        } else {
+          showToast('Unliked');
+        }
+        // --- End Optimistic UI ---
+
         fetch(url, {
           method: 'POST',
-          headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
         })
         .then(response => response.json())
         .then(data => {
-          if (data.status === 'liked') {
-            showToast(data.message);
-            likeBtn.style.backgroundColor = "#007BFF";
-            likeBtn.classList.add('like-active');
-            burstLikes(30); // Only burst when liked
-          } else if (data.status === 'unliked') {
-            showToast(data.message);
-            likeBtn.style.backgroundColor = "#2c3e50";
-            likeBtn.classList.remove('like-active');
+          if (data.status !== 'liked' && data.status !== 'unliked') {
+            // ERROR: Revert UI
+            showToast(data.message || 'An error occurred.');
+            this.classList.toggle('like-active'); // Revert toggle
           } else {
-            showToast(data.message || 'An unknown error occurred.');
+            // Server confirmed, just update the message
+            showToast(data.message);
           }
-          clicks.currentTime = 0;
-          clicks.play();
         })
         .catch(error => {
+          // NETWORK ERROR: Revert UI
           console.error('Error:', error);
           showToast('Something went wrong. Please try again.');
+          this.classList.toggle('like-active'); // Revert toggle
         });
       });
     }
@@ -474,6 +526,120 @@
     }
   });
 </script>
+
+<!-- searchbar -->
+     <script>
+      ;(function () {
+        'use strict'
+      
+        document.addEventListener('DOMContentLoaded', () => {
+          // --- Nav Search Bar AJAX ---
+          const navSearchForm = document.getElementById('navSearch')
+          const navSearchInput = document.getElementById('navSearchInput')
+          const navResultsBox = document.querySelector('.nav-results')
+          const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null
+      
+          if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
+            const fetchNavResults = async (query) => {
+              try {
+                // Using the same AJAX endpoint
+                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`)
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+                const data = await response.json()
+                const results = data.results
+      
+                navHistoryContainer.innerHTML = '' // Clear previous results
+                const fragment = document.createDocumentFragment()
+      
+                const titleEl = document.createElement('div')
+                titleEl.className = 'nav-search-history-title' // Use nav-specific class
+                titleEl.textContent = 'Search results'
+                fragment.appendChild(titleEl)
+      
+                if (!results.length) {
+                  const noResultEl = document.createElement('div')
+                  noResultEl.className = 'nav-history-item' // Use nav-specific class
+                  noResultEl.innerHTML = `<i data-lucide="search"></i>
+                          <div class="nav-history-item-info">
+                            <span class="nav-history-item-title">No results found</span>
+                          </div>`
+                  fragment.appendChild(noResultEl)
+                } else {
+                  results.forEach((book) => {
+                    const link = document.createElement('a')
+                    link.href = `/book/library/open/${book.slug}`
+                    link.className = 'nav-history-item' // Use nav-specific class
+      
+                    const icon = document.createElement('i')
+                    icon.setAttribute('data-lucide', 'search')
+      
+                    const infoDiv = document.createElement('div')
+                    infoDiv.className = 'nav-history-item-info'
+      
+                    const titleSpan = document.createElement('span')
+                    titleSpan.className = 'nav-history-item-title'
+                    titleSpan.textContent = book.title || 'Untitled'
+      
+                    const authorSpan = document.createElement('span')
+                    authorSpan.className = 'nav-history-item-author'
+                    authorSpan.textContent = ` by ${book.author || 'Unknown Author'}`
+      
+                    infoDiv.appendChild(titleSpan)
+                    infoDiv.appendChild(authorSpan)
+                    link.appendChild(icon)
+                    link.appendChild(infoDiv)
+                    fragment.appendChild(link)
+                  })
+                }
+                navHistoryContainer.appendChild(fragment)
+                navResultsBox.style.display = 'block'
+                navSearchForm.classList.add('results-open') // Class to fix border radius
+                if (window.lucide) lucide.createIcons()
+              } catch (err) {
+                console.error('Nav search error:', err)
+                navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Search results</div><div class="nav-history-item"><div class="nav-history-item-info"><span class="nav-history-item-title">Error fetching results</span></div></div>`
+                navResultsBox.style.display = 'block'
+                navSearchForm.classList.add('results-open')
+              }
+            }
+      
+            // Input listener with debounce
+            let navTypingTimer
+            const navDebounceDelay = 300
+      
+            navSearchInput.addEventListener('input', () => {
+              clearTimeout(navTypingTimer)
+              const query = navSearchInput.value.trim()
+      
+              if (query.length > 1) {
+                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay)
+                navSearch.style.borderRadius = '15px 15px 0 0'
+              } else {
+                navResultsBox.style.display = 'none'
+                navSearchForm.classList.remove('results-open')
+                navSearch.style.borderRadius = '15px'
+              }
+            })
+      
+            // Hide results on outside click
+            document.addEventListener('click', (e) => {
+              if (!navSearchForm.contains(e.target)) {
+                navResultsBox.style.display = 'none'
+                navSearchForm.classList.remove('results-open')
+              }
+            })
+      
+            // Show results on focus
+            navSearchInput.addEventListener('focus', () => {
+              const query = navSearchInput.value.trim()
+              if (query.length > 1) {
+                fetchNavResults(query) // Fetch results on focus if text exists
+              }
+            })
+          }
+        })
+      })()
+    </script>
 
   </body>
 </html>
