@@ -6,6 +6,8 @@ from django.contrib import messages
 from .forms import BookContentForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from books.models import Book
 
 # Create your views here.
 
@@ -41,20 +43,27 @@ def loginAdmin(request):
 
 @login_required(login_url="login_admin")
 def dashboard(request):
-    books = Book.objects.all().order_by("-uploaded_at")
+
     if request.method == "POST":
         action = request.POST.get("action")
         selected_books = request.POST.getlist("selected_books")
+        
         if action == "delete" and selected_books:
+            # Perform delete operation
             for book in Book.objects.filter(id__in=selected_books):
                 book._updated_by = request.user
                 book.delete()
             return redirect("dashboard")
 
+
+    
+    # Start with all books, fetch genre relationship efficiently
+    books_list = Book.objects.select_related("genre").all().order_by("-uploaded_at")
+
     book_query = request.GET.get("search", "").strip()
-    books = Book.objects.select_related("genre").all().order_by("-uploaded_at")
 
     if book_query:
+        
         keywords = book_query.split()
         query = Q()
         for keyword in keywords:
@@ -65,8 +74,20 @@ def dashboard(request):
                 | Q(slug__icontains=keyword)
             )
             query |= q
-        books = books.filter(query).distinct()
-    context = {"books": books}
+            
+        books_list = books_list.filter(query).distinct()
+        
+    #Apply Pagination 
+
+    PAGESIZE = 50
+    paginator = Paginator(books_list, PAGESIZE)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        "books": page_obj,
+        "search": book_query,
+    }
     return render(request, "dashboard.html", context)
 
 @login_required(login_url="login_admin")

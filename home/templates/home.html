@@ -83,14 +83,14 @@
         </div>
         <div class="books-category-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(121px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
           {% for cat in category %}
-            <a href="{% url 'category' cat.slug %}" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;" data-index="{{ forloop.counter }}">
+            <a href="{% url 'category' cat.slug %}" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: 0.3s;" data-index="{{ forloop.counter }}">
               <i data-lucide="{{ cat.lucidicon }}" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
               <div>{{ cat.name }}</div>
             </a>
           {% endfor %}
 
-          <a href="javascript:void(0);" id="toggle-other" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: box-shadow 1s;">
-            <i data-lucide="circle-chevron-right" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
+          <a href="javascript:void(0);" id="toggle-other" class="category-card" style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark);">
+            <i data-lucide="circle-chevron-down" style="width:2rem;height:2rem;color:var(--color-primary);margin-bottom:0.5rem;"></i>
             <div>Other</div>
           </a>
         </div>
@@ -108,7 +108,7 @@
             {% if book.is_published %}
               <div class="book-item" style="position: relative;">
                 <a href="{% url 'book' book.slug %}">
-                  <img class="imgbook" src="{{ book.cover_front.url }}?q_auto,f_auto" alt="Book Cover 1" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
+                  <img class="imgbook" src="{{ book.cover_front.url }}?q_auto,f_auto" alt="Book Cover 1" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" style="object-fit: cover;" />
                   <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" src="{% static 'images/framebook1.png' %}" alt="frame" />
                   <div style="box-shadow: 1px 1px 1px #61616138;border-radius: 0px 0px 5px 5px;">
                     <div class="readby">
@@ -310,7 +310,7 @@
           const updateView = () => {
             categoryCards.forEach((card, i) => (card.style.display = showingAll || i < 17 ? 'inline-block' : 'none'))
             if (btnText) btnText.textContent = showingAll ? 'Show Less' : 'Other'
-            if (btnIcon) btnIcon.setAttribute('data-lucide', showingAll ? 'circle-chevron-up' : 'circle-chevron-right')
+            if (btnIcon) btnIcon.setAttribute('data-lucide', showingAll ? 'circle-chevron-up' : 'circle-chevron-down')
             if (window.lucide) {
               lucide.createIcons()
             }

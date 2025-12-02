@@ -4,6 +4,7 @@ from django.utils.text import slugify
 import os
 from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
+from django.contrib.postgres.indexes import GinIndex
 
 def book_folder(instance):
     return f"books/{slugify(instance.title)}"
@@ -111,9 +112,15 @@ class Book(models.Model):
         indexes = [
             models.Index(fields=["slug"]),
             models.Index(fields=["title"]),
-            models.Index(fields=["genre"]),
             models.Index(fields=["-uploaded_at"]),
+            
+            GinIndex(
+                name='book_trgm_idx',
+                fields=['title', 'author', 'slug'],
+                opclasses=['gin_trgm_ops', 'gin_trgm_ops', 'gin_trgm_ops'],
+            ),
         ]
+        
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -181,7 +188,6 @@ class Like(models.Model):
         unique_together = ("user", "book")
         indexes = [
             models.Index(fields=["user", "book"]),
-            models.Index(fields=["book"]),
         ]
 
     def __str__(self):
@@ -200,7 +206,6 @@ class ReadLater(models.Model):
         unique_together = ("user", "book")
         indexes = [
             models.Index(fields=["user", "book"]),  # Existing composite index
-            models.Index(fields=["book"]),  # Added index for queries by book
         ]
 
     def __str__(self):
@@ -216,7 +221,6 @@ class ReadBy(models.Model):
         unique_together = ("user", "book")
         indexes = [
             models.Index(fields=["user", "book"]),
-            models.Index(fields=["book"]),
         ]
 
     def __str__(self):

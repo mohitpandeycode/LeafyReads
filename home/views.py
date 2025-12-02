@@ -3,20 +3,32 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from books.models import *
 from django.db.models import Count
-from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from django.db import connection
 import time
 
-
 def home(request):
-    categories = Genre.objects.only("id", "name", "slug", "lucidicon").order_by("pk")
-    books = (
-        Book.objects.select_related("genre")
-        .annotate(likes_count=Count("likes"))
-        .annotate(readby_count=Count("readbooks"))
-        .defer("pdf_file", "audio_file", "price", "isbn", "updated_at")
-        .order_by("-uploaded_at")[:12]
-    )
+    categories = cache.get("home_categories") 
+    if categories is None:
+        # Wrap in list() to force evaluation immediately so we cache the DATA, not the lazy query
+        categories = list(
+            Genre.objects.only("id", "name", "slug", "lucidicon").order_by("pk")
+        )
+        cache.set("home_categories", categories, timeout=60 * 60 * 24)
+
+    # Fetch Books (Cache for 15 minutes) ---
+    books = cache.get("home_books")
+    
+    if books is None:
+        books = list(
+            Book.objects.select_related("genre")
+            .annotate(likes_count=Count("likes"))
+            .annotate(readby_count=Count("readbooks"))
+            .defer("pdf_file", "audio_file", "price", "isbn", "updated_at")
+            .order_by("-uploaded_at")[:12]
+        )
+        cache.set("home_books", books, timeout=60 * 15)
+
     return render(request, "home.html", {"books": books, "category": categories})
 
 

@@ -5,3 +5,5 @@ from django.contrib import messages
 @receiver(user_logged_in)
 def show_login_message(sender, request, user, **kwargs):
     messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+
+

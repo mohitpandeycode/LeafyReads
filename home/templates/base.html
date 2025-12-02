@@ -1,290 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
-  {% load static %}
+{% load static %}
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="LeafyReads is your personal reading sanctuary. Discover thousands of books, track your reading progress, and connect with a community of book lovers." />
-    <title>
-      {% block title %}
-
-      {% endblock %}
-    </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-    <style>
-      .desktop-nav a.active {
-        color: #149546 !important;
-      }
-      .nav-history-item {
-        display: flex;
-        align-items: center;
-        color: inherit !important;
-        margin-bottom: 8px;
-        gap: 10px;
-        padding-left: 10px;
-        font-size: 13px;
-      }
-      .nav-history-item:hover {
-        background-color: #7c7c7c18;
-        border-radius: 5px;
-      }
-      .nav-search-history-title {
-        margin-bottom: 8px;
-        padding: 5px 0 5px 8px;
-        color: inherit;
-        font-size: 12px;
-      }
-      .nav-results {
-        position: absolute;
-        right: 0;
-        width: 250px;
-        background: rgb(255 255 255 / 81%);
-        top: 39px;
-        border-radius: 0 0 15px 15px;
-        display: none;
-      }
-      body.dark-mode .nav-results {
-        background: rgb(59 59 59 / 85%);
-      }
-    </style>
-
-    {% block css %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="LeafyReads is your personal reading sanctuary. Discover thousands of books, track your reading progress, and connect with a community of book lovers." />
+  <title>
+    {% block title %}
 
     {% endblock %}
-  </head>
+  </title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+  <style>
+    .desktop-nav a.active {
+      color: #149546 !important;
+    }
 
-  <body>
-    {% include 'loader.html' %}
-    <header class="header">
-      <div class="container">
-        <div class="header-content">
-          <a href="/" class="logo">
-            <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="" />
-            <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" alt="" />
-            <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}" alt="" />
-          </a>
-          <nav class="desktop-nav" style="position: relative;">
-            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
-            <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
-            {% if user.is_authenticated %}
-              <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">Read Later</a>
-            {% endif %}
-            <a href="{% url 'community' %}" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
-            <a href="{% url 'aboutUs' %}" class="{% if request.path == '/aboutus/' %}active{% endif %}">About Us</a>
+    .nav-history-item {
+      display: flex;
+      align-items: center;
+      color: inherit !important;
+      margin-bottom: 8px;
+      gap: 10px;
+      padding-left: 10px;
+      font-size: 13px;
+    }
 
-            <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
-              <div id="navSearchBtn" class="nav-search-button" aria-label="Search">
-                <i data-lucide="search"></i>
-              </div>
-              <input type="text" name="q" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-              <button type="submit" id="sctive" style="display: none;border: none; background: #149546;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
-            </form>
+    .nav-history-item:hover {
+      background-color: #7c7c7c18;
+      border-radius: 5px;
+    }
 
-            <div class="nav-results">
-              <div class="nav-search-history"></div>
+    .nav-search-history-title {
+      margin-bottom: 8px;
+      padding: 5px 0 5px 8px;
+      color: inherit;
+      font-size: 12px;
+    }
+
+    .nav-results {
+      position: absolute;
+      right: 0;
+      width: 250px;
+      background: rgb(255, 255, 255);
+      top: 39px;
+      border-radius: 0 0 15px 15px;
+      display: none;
+    }
+
+    body.dark-mode .nav-results {
+      background: rgb(59, 59, 59);
+    }
+  </style>
+
+  {% block css %}
+
+  {% endblock %}
+</head>
+
+<body>
+  {% include 'loader.html' %}
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
+            alt="" />
+          <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
+            alt="" />
+          <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}"
+            alt="" />
+        </a>
+        <nav class="desktop-nav" style="position: relative;">
+          <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
+          <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
+          {% if user.is_authenticated %}
+          <a href="{% url 'myBooks' %}" class="{% if request.path == '/book/my-books/' %}active{% endif %}">Read
+            Later</a>
+          {% endif %}
+          <a href="{% url 'community' %}" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
+          <a href="{% url 'aboutUs' %}" class="{% if request.path == '/aboutus/' %}active{% endif %}">About Us</a>
+
+          <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
+            <div id="navSearchBtn" class="nav-search-button" aria-label="Search">
+              <i data-lucide="search"></i>
             </div>
-          </nav>
-          <div class="header-actions">
-            <button style="position: relative;" aria-label="notification" class="theme-toggle-btn"><i data-lucide="bell"></i><p class="notify-dot"></p></button>
-            <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
-            {% if user.is_authenticated %}
-              <div class="dropdown">
-                <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i data-lucide="arrow-big-down-dash"></i></button>
+            <input type="text" name="q" id="navSearchInput" class="nav-search-input"
+              placeholder="Search for books, authors, or genres..." />
+            <button type="submit" id="sctive"
+              style="display: none;border: none; background: #149546;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
+          </form>
 
-                <ul id="dropdown-menu" class="dropdown-menu hidden">
-                  {% if user.is_staff %}
-                    <a href="/admin-dashboard/">
-                      <li class="dropdown-item">
-                        <i data-lucide="shield-check"></i>
-                        <span>Admin Pannel</span>
-                      </li>
-                    </a>
-                  {% else %}
-                    <a href="{% url 'profilepage' %}">
-                      <li class="dropdown-item">
-                        <i data-lucide="user-pen"></i>
-                        <span>Profile</span>
-                      </li>
-                    </a>
-                    <li class="dropdown-item">
-                      <i data-lucide="gem"></i>
-                      <span>Go Pro</span>
-                    </li>
-                    <li class="dropdown-item">
-                      <i data-lucide="credit-card"></i>
-                      <span>Billing & Plans</span>
-                    </li>
-                    <li class="dropdown-item">
-                      <i data-lucide="circle-question-mark"></i>
-                      <span>Get Help</span>
-                    </li>
-                  {% endif %}
-                  <li class="separator"></li>
-                  <a href="{% url 'logout' %}">
-                    <li class="dropdown-item">
-                      <i data-lucide="log-out"></i>
-                      <span>Logout</span>
-                    </li>
-                  </a>
-                </ul>
-              </div>
-            {% else %}
-              <div style="display: flex;align-items: center;justify-content: center;gap: 4px;" id="startlogin" class="btn primary-btn">
-                <span>Start Reading Now</span><i style="width: 20px;" data-lucide="sparkles"></i>
-              </div>
-            {% endif %}
+          <div class="nav-results">
+            <div class="nav-search-history"></div>
+          </div>
+        </nav>
+        <div class="header-actions">
+          <button style="position: relative;" aria-label="notification" class="theme-toggle-btn"><i
+              data-lucide="bell"></i>
+            <p class="notify-dot"></p>
+          </button>
+          <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
+          {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i
+                data-lucide="arrow-big-down-dash"></i></button>
+
+            <ul id="dropdown-menu" class="dropdown-menu hidden">
+              {% if user.is_staff %}
+              <a href="/admin-dashboard/">
+                <li class="dropdown-item">
+                  <i data-lucide="shield-check"></i>
+                  <span>Admin Pannel</span>
+                </li>
+              </a>
+              {% else %}
+              <a href="{% url 'profilepage' %}">
+                <li class="dropdown-item">
+                  <i data-lucide="user-pen"></i>
+                  <span>Profile</span>
+                </li>
+              </a>
+              <li class="dropdown-item">
+                <i data-lucide="gem"></i>
+                <span>Go Pro</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="credit-card"></i>
+                <span>Billing & Plans</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="circle-question-mark"></i>
+                <span>Get Help</span>
+              </li>
+              {% endif %}
+              <li class="separator"></li>
+              <a href="{% url 'logout' %}">
+                <li class="dropdown-item">
+                  <i data-lucide="log-out"></i>
+                  <span>Logout</span>
+                </li>
+              </a>
+            </ul>
+          </div>
+          {% else %}
+          <div style="display: flex;align-items: center;justify-content: center;gap: 4px;" id="startlogin"
+            class="btn primary-btn">
+            <span>Start Reading Now</span><i style="width: 20px;" data-lucide="sparkles"></i>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {% block body %}
+
+  {% endblock %}
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="logo" style="margin-bottom: 1rem;">
+            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="" />
+            <span style="color: white">LeafyReads</span>
+          </div>
+          <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li>
+              <a href="#">Features</a>
+            </li>
+            <li>
+              <a href="#">Pricing</a>
+            </li>
+            <li>
+              <a href="#">Updates</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li>
+              <a href="{% url 'aboutUs' %}">About Us</a>
+            </li>
+            <li>
+              <a href="#">Careers</a>
+            </li>
+            <li>
+              <a href="#">Contact</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <ul>
+            <li>
+              <a href="#">Blog</a>
+            </li>
+            <li>
+              <a href="#">Help Center</a>
+            </li>
+            <li>
+              <a href="#">Privacy</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Follow Us</h4>
+          <div class="footer-socials">
+            <a href="#"><i data-lucide="twitter"></i></a>
+            <a href="#"><i data-lucide="instagram"></i></a>
+            <a href="#"><i data-lucide="facebook"></i></a>
           </div>
         </div>
       </div>
-    </header>
+      <div class="footer-copyright">&copy; 2025 LeafyReads. All Rights Reserved.</div>
+    </div>
+  </footer>
+  <script src="{% static 'js/home.js' %}"></script>
+  <script src="{% static 'js/navsearch.js' %}"></script>
+  <script>
+    const startlogin = document.getElementById('startlogin')
+    const loginSection = document.getElementById('loginSection')
+    const closelogin = document.getElementById('closelogin')
 
-    {% block body %}
+    // Check if elements exist before adding listeners (robustness)
+    if (startlogin && loginSection && closelogin) {
+      startlogin.addEventListener('click', () => {
+        loginSection.classList.add('active')
+      })
 
-    {% endblock %}
+      closelogin.addEventListener('click', () => {
+        loginSection.classList.remove('active')
+      })
 
-    <footer class="footer">
-      <div class="container footer-content">
-        <div class="footer-grid">
-          <div class="footer-about">
-            <div class="logo" style="margin-bottom: 1rem;">
-              <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="" />
-              <span style="color: white">LeafyReads</span>
-            </div>
-            <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
-          </div>
-          <div>
-            <h4>Product</h4>
-            <ul>
-              <li>
-                <a href="#">Features</a>
-              </li>
-              <li>
-                <a href="#">Pricing</a>
-              </li>
-              <li>
-                <a href="#">Updates</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4>Company</h4>
-            <ul>
-              <li>
-                <a href="#">About Us</a>
-              </li>
-              <li>
-                <a href="#">Careers</a>
-              </li>
-              <li>
-                <a href="#">Contact</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4>Resources</h4>
-            <ul>
-              <li>
-                <a href="#">Blog</a>
-              </li>
-              <li>
-                <a href="#">Help Center</a>
-              </li>
-              <li>
-                <a href="#">Privacy</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4>Follow Us</h4>
-            <div class="footer-socials">
-              <a href="#"><i data-lucide="twitter"></i></a>
-              <a href="#"><i data-lucide="instagram"></i></a>
-              <a href="#"><i data-lucide="facebook"></i></a>
-            </div>
-          </div>
-        </div>
-        <div class="footer-copyright">&copy; 2025 LeafyReads. All Rights Reserved.</div>
-      </div>
-    </footer>
-    <script src="{% static 'js/home.js' %}"></script>
-    <script src="{% static 'js/navsearch.js' %}"></script>
-    <script>
-      const startlogin = document.getElementById('startlogin')
-      const loginSection = document.getElementById('loginSection')
-      const closelogin = document.getElementById('closelogin')
-      
-      // Check if elements exist before adding listeners (robustness)
-      if (startlogin && loginSection && closelogin) {
-        startlogin.addEventListener('click', () => {
-          loginSection.classList.add('active')
-        })
-      
-        closelogin.addEventListener('click', () => {
+      // Close when clicking outside the login box
+      loginSection.addEventListener('click', (e) => {
+        if (e.target === loginSection) {
           loginSection.classList.remove('active')
+        }
+      })
+    }
+  </script>
+  <script>
+    // Wait for the page to fully load
+    window.addEventListener('load', function () {
+      // Hide the loader
+      const loader = document.getElementById('loader')
+      if (loader) {
+        loader.style.display = 'none'
+      }
+
+      // Show the main content
+      const content = document.getElementById('content')
+      if (content) {
+        // Added check in case #content doesn't exist
+        content.style.display = 'block'
+      }
+    })
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropdownButton = document.getElementById('dropdown-button')
+      const dropdownMenu = document.getElementById('dropdown-menu')
+
+      if (dropdownButton && dropdownMenu) {
+        // 1. Toggle dropdown visibility
+        dropdownButton.addEventListener('click', (event) => {
+          // Stop the click from bubbling up to the window listener
+          event.stopPropagation()
+          dropdownMenu.classList.toggle('hidden')
         })
-      
-        // Close when clicking outside the login box
-        loginSection.addEventListener('click', (e) => {
-          if (e.target === loginSection) {
-            loginSection.classList.remove('active')
+
+        // 2. Close dropdown if clicked outside
+        window.addEventListener('click', (event) => {
+          if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
+            dropdownMenu.classList.add('hidden')
           }
         })
       }
-    </script>
-    <script>
-      // Wait for the page to fully load
-      window.addEventListener('load', function () {
-        // Hide the loader
-        const loader = document.getElementById('loader')
-        if (loader) {
-          loader.style.display = 'none'
-        }
-      
-        // Show the main content
-        const content = document.getElementById('content')
-        if (content) {
-          // Added check in case #content doesn't exist
-          content.style.display = 'block'
-        }
-      })
-    </script>
+    })
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const MIN_WIDTH = 900 // breakpoint for desktop view
+      const isMobileSize = window.innerWidth < MIN_WIDTH
 
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const dropdownButton = document.getElementById('dropdown-button')
-        const dropdownMenu = document.getElementById('dropdown-menu')
-      
-        if (dropdownButton && dropdownMenu) {
-          // 1. Toggle dropdown visibility
-          dropdownButton.addEventListener('click', (event) => {
-            // Stop the click from bubbling up to the window listener
-            event.stopPropagation()
-            dropdownMenu.classList.toggle('hidden')
-          })
-      
-          // 2. Close dropdown if clicked outside
-          window.addEventListener('click', (event) => {
-            if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
-              dropdownMenu.classList.add('hidden')
-            }
-          })
-        }
-      })
-    </script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const MIN_WIDTH = 900 // breakpoint for desktop view
-        const isMobileSize = window.innerWidth < MIN_WIDTH
-      
-        if (isMobileSize) {
-          document.body.innerHTML = `
+      if (isMobileSize) {
+        document.body.innerHTML = `
               <div style="
                 display:flex;
                 align-items:center;
@@ -324,132 +341,164 @@
                 }
               </style>
             `
-          return // prevents loading your site after replacing body
-        }
-      
-        // Optional: handle resize for live width changes (without infinite reload)
-        let lastWidth = window.innerWidth
-        window.addEventListener('resize', () => {
-          if ((lastWidth >= MIN_WIDTH && window.innerWidth < MIN_WIDTH) || (lastWidth < MIN_WIDTH && window.innerWidth >= MIN_WIDTH)) {
-            location.reload()
-          }
-          lastWidth = window.innerWidth
-        })
-      })
-    </script>
+        return // prevents loading your site after replacing body
+      }
 
-    <script>
-      ;(function () {
+      // Optional: handle resize for live width changes (without infinite reload)
+      let lastWidth = window.innerWidth
+      window.addEventListener('resize', () => {
+        if ((lastWidth >= MIN_WIDTH && window.innerWidth < MIN_WIDTH) || (lastWidth < MIN_WIDTH && window.innerWidth >= MIN_WIDTH)) {
+          location.reload()
+        }
+        lastWidth = window.innerWidth
+      })
+    })
+  </script>
+
+  <script>
+      ; (function () {
         'use strict'
-      
+
+        // Tracks the current active request for cancellation (prevents race conditions)
+        let currentController = null;
+
         document.addEventListener('DOMContentLoaded', () => {
           // --- Nav Search Bar AJAX ---
           const navSearchForm = document.getElementById('navSearch')
           const navSearchInput = document.getElementById('navSearchInput')
           const navResultsBox = document.querySelector('.nav-results')
           const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null
-      
+
           if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
+
             const fetchNavResults = async (query) => {
+
+              // Cancel the previous running request
+              if (currentController) currentController.abort();
+              currentController = new AbortController();
+
+              // Show immediate Loading State
+              navHistoryContainer.innerHTML = `
+                    <div class="nav-search-history-title">Search results</div>
+                    <div class="nav-history-item loading-state">
+                        <i data-lucide="loader" class="animate-spin"></i>
+                        <div class="nav-history-item-info">
+                            <span class="nav-history-item-title">Searching...</span>
+                        </div>
+                    </div>
+                `;
+              navResultsBox.style.display = 'block';
+              navSearchForm.classList.add('results-open');
+              navSearchForm.style.borderRadius = '15px 15px 0 0';
+
+
               try {
-                // Using the same AJAX endpoint
-                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`)
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-                const data = await response.json()
-                const results = data.results
-      
-                navHistoryContainer.innerHTML = '' // Clear previous results
-                const fragment = document.createDocumentFragment()
-      
-                const titleEl = document.createElement('div')
-                titleEl.className = 'nav-search-history-title' // Use nav-specific class
-                titleEl.textContent = 'Search results'
-                fragment.appendChild(titleEl)
-      
+                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+                  signal: currentController.signal
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                const results = data.results;
+
+                // Render results
+                navHistoryContainer.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'nav-search-history-title';
+                titleEl.textContent = 'Search results';
+                fragment.appendChild(titleEl);
+
                 if (!results.length) {
-                  const noResultEl = document.createElement('div')
-                  noResultEl.className = 'nav-history-item' // Use nav-specific class
+                  const noResultEl = document.createElement('div');
+                  noResultEl.className = 'nav-history-item';
                   noResultEl.innerHTML = `<i data-lucide="search"></i>
-                          <div class="nav-history-item-info">
-                            <span class="nav-history-item-title">No results found</span>
-                          </div>`
-                  fragment.appendChild(noResultEl)
+                            <div class="nav-history-item-info">
+                                <span class="nav-history-item-title">No results found</span>
+                            </div>`;
+                  fragment.appendChild(noResultEl);
                 } else {
                   results.forEach((book) => {
-                    const link = document.createElement('a')
-                    // ✅ FIXED: Path is now absolute for use on all pages
-                    link.href = `/book/library/open/${book.slug}`
-                    link.className = 'nav-history-item' // Use nav-specific class
-      
+                    const link = document.createElement('a');
+                    link.href = `/book/library/open/${book.slug}`;
+                    link.className = 'nav-history-item';
+
                     const icon = document.createElement('i')
                     icon.setAttribute('data-lucide', 'search')
-      
+
                     const infoDiv = document.createElement('div')
                     infoDiv.className = 'nav-history-item-info'
-      
+
                     const titleSpan = document.createElement('span')
                     titleSpan.className = 'nav-history-item-title'
                     titleSpan.textContent = book.title || 'Untitled'
-      
+
                     const authorSpan = document.createElement('span')
                     authorSpan.className = 'nav-history-item-author'
                     authorSpan.textContent = ` by ${book.author || 'Unknown Author'}`
-      
+
                     infoDiv.appendChild(titleSpan)
                     infoDiv.appendChild(authorSpan)
                     link.appendChild(icon)
                     link.appendChild(infoDiv)
                     fragment.appendChild(link)
-                  })
+                  });
                 }
-                navHistoryContainer.appendChild(fragment)
-                navResultsBox.style.display = 'block'
-                navSearchForm.classList.add('results-open') // Class to fix border radius
-                if (window.lucide) lucide.createIcons()
+                navHistoryContainer.appendChild(fragment);
+                if (window.lucide) lucide.createIcons();
+
               } catch (err) {
-                console.error('Nav search error:', err)
-                navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Search results</div><div class="nav-history-item"><div class="nav-history-item-info"><span class="nav-history-item-title">Error fetching results</span></div></div>`
-                navResultsBox.style.display = 'block'
-                navSearchForm.classList.add('results-open')
+                // Ignore AbortError: request was cancelled by user typing faster
+                if (err.name === 'AbortError') return;
+
+                console.error('Nav search error:', err);
+                navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Search results</div><div class="nav-history-item"><div class="nav-history-item-info"><span class="nav-history-item-title">Error fetching results</span></div></div>`;
+                if (window.lucide) lucide.createIcons();
               }
             }
-      
-            // Input listener with debounce
-            let navTypingTimer
-            const navDebounceDelay = 300
-      
+
+            // --- DEBOUNCE & INPUT LISTENER ---
+            let navTypingTimer;
+            const navDebounceDelay = 300;
+
             navSearchInput.addEventListener('input', () => {
-              clearTimeout(navTypingTimer)
-              const query = navSearchInput.value.trim()
-      
+              clearTimeout(navTypingTimer);
+              const query = navSearchInput.value.trim();
+
               if (query.length > 2) {
-                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay)
-                navSearch.style.borderRadius = '15px 15px 0 0'
+                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
+
               } else {
-                navResultsBox.style.display = 'none'
-                navSearchForm.classList.remove('results-open')
-                navSearch.style.borderRadius = '15px'
+                // Hide the box if the query is too short
+                navResultsBox.style.display = 'none';
+                navSearchForm.classList.remove('results-open');
+                navSearchForm.style.borderRadius = '15px';
+                // Cancel any pending fetch when search bar is cleared
+                if (currentController) currentController.abort();
               }
-            })
-      
-            // Hide results on outside click
+            });
+
+            // --- OUTSIDE CLICK & FOCUS LISTENERS ---
             document.addEventListener('click', (e) => {
               if (!navSearchForm.contains(e.target)) {
-                navResultsBox.style.display = 'none'
-                navSearchForm.classList.remove('results-open')
+                navResultsBox.style.display = 'none';
+                navSearchForm.classList.remove('results-open');
               }
-            })
-      
-            // Show results on focus
+            });
+
             navSearchInput.addEventListener('focus', () => {
-              const query = navSearchInput.value.trim()
-              if (query.length > 1) {
-                fetchNavResults(query) // Fetch results on focus if text exists
+              const query = navSearchInput.value.trim();
+              if (query.length > 2) {
+                navResultsBox.style.display = 'block';
+                fetchNavResults(query);
               }
-            })
+            });
           }
-        })
-      })()
-    </script>
-  </body>
+        });
+      })();
+  </script>
+</body>
+
 </html>

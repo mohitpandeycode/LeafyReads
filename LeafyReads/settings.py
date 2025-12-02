@@ -7,6 +7,7 @@ import dj_database_url
 env = Env()
 Env.read_env()
 
+
 ENVIRONMENT = env('ENVIRONMENT', default='production')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'debug_toolbar',
+    'django.contrib.postgres',
     
 ]
 
@@ -122,8 +124,9 @@ WSGI_APPLICATION = 'LeafyReads.wsgi.application'
 # }
 DATABASE_URL = env('DATABASE_URL')
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600,ssl_require=True)
+    'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600)
 }
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 CACHES = {
     "default": {
@@ -236,3 +239,5 @@ UNFOLD = {
      }
      
 }
+
+

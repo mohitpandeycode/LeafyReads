@@ -29,10 +29,6 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        indexes = [
-            models.Index(fields=['author']),
-            models.Index(fields=['book']),
-        ]
 
     def __str__(self):
         if self.book:
@@ -78,11 +74,6 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['created_at']
-        indexes = [
-            models.Index(fields=['post']),
-            models.Index(fields=['author']),
-            models.Index(fields=['parent']),
-        ]
 
     def __str__(self):
         if self.parent:
@@ -105,9 +96,6 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
-        indexes = [
-            models.Index(fields=['recipient']),
-        ]
 
     def __str__(self):
         return f'Notification for {self.recipient.username}: {self.sender.username} {self.verb}'

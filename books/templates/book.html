@@ -57,13 +57,13 @@
       position: absolute;
       right: 0;
       width: 274px;
-      background: rgb(255 255 255 / 81%);
+      background: rgb(255, 255, 255);
       top: 39px;
       border-radius: 0 0 15px 15px;
       display:none;
     }
     body.dark-mode .nav-results{
-      background: rgb(59 59 59 / 85%);
+      background: rgb(59, 59, 59);
     }
 
     
@@ -264,7 +264,7 @@
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
             <img src="{% static 'images/framebook1.png' %}" loading="lazy" class="cover-image" style="position: absolute;    left: -2px;width: 101%;top: -2px;height: 101%;" alt="forntFrame" />
-            <img src="{{ book.cover_front.url }}?q_auto,f_auto" loading="lazy" alt="Cover Image" class="cover-image" />
+            <img src="{{ book.cover_front.url }}?q_auto,f_auto" loading="lazy" style="object-fit: cover;" alt="Cover Image" class="cover-image" />
             <div class="bookinfocover">
               <h4 style="margin: 0;">{{book.title}}</h4>
               <p style="font-size:16px;margin: 0;">By: {{book.author}}</p>
@@ -528,118 +528,150 @@
 </script>
 
 <!-- searchbar -->
-     <script>
-      ;(function () {
+<script>
+      ; (function () {
         'use strict'
-      
+
+        // Tracks the current active request for cancellation (prevents race conditions)
+        let currentController = null;
+
         document.addEventListener('DOMContentLoaded', () => {
           // --- Nav Search Bar AJAX ---
           const navSearchForm = document.getElementById('navSearch')
           const navSearchInput = document.getElementById('navSearchInput')
           const navResultsBox = document.querySelector('.nav-results')
           const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null
-      
+
           if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
+
             const fetchNavResults = async (query) => {
+
+              // Cancel the previous running request
+              if (currentController) currentController.abort();
+              currentController = new AbortController();
+
+              // Show immediate Loading State
+              navHistoryContainer.innerHTML = `
+                    <div class="nav-search-history-title">Search results</div>
+                    <div class="nav-history-item loading-state">
+                        <i data-lucide="loader" class="animate-spin"></i>
+                        <div class="nav-history-item-info">
+                            <span class="nav-history-item-title">Searching...</span>
+                        </div>
+                    </div>
+                `;
+              navResultsBox.style.display = 'block';
+              navSearchForm.classList.add('results-open');
+              navSearchForm.style.borderRadius = '15px 15px 0 0';
+
+
               try {
-                // Using the same AJAX endpoint
-                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`)
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-                const data = await response.json()
-                const results = data.results
-      
-                navHistoryContainer.innerHTML = '' // Clear previous results
-                const fragment = document.createDocumentFragment()
-      
-                const titleEl = document.createElement('div')
-                titleEl.className = 'nav-search-history-title' // Use nav-specific class
-                titleEl.textContent = 'Search results'
-                fragment.appendChild(titleEl)
-      
+                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+                  signal: currentController.signal
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                const results = data.results;
+
+                // Render results
+                navHistoryContainer.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'nav-search-history-title';
+                titleEl.textContent = 'Search results';
+                fragment.appendChild(titleEl);
+
                 if (!results.length) {
-                  const noResultEl = document.createElement('div')
-                  noResultEl.className = 'nav-history-item' // Use nav-specific class
+                  const noResultEl = document.createElement('div');
+                  noResultEl.className = 'nav-history-item';
                   noResultEl.innerHTML = `<i data-lucide="search"></i>
-                          <div class="nav-history-item-info">
-                            <span class="nav-history-item-title">No results found</span>
-                          </div>`
-                  fragment.appendChild(noResultEl)
+                            <div class="nav-history-item-info">
+                                <span class="nav-history-item-title">No results found</span>
+                            </div>`;
+                  fragment.appendChild(noResultEl);
                 } else {
                   results.forEach((book) => {
-                    const link = document.createElement('a')
-                    link.href = `/book/library/open/${book.slug}`
-                    link.className = 'nav-history-item' // Use nav-specific class
-      
+                    const link = document.createElement('a');
+                    link.href = `/book/library/open/${book.slug}`;
+                    link.className = 'nav-history-item';
+
                     const icon = document.createElement('i')
                     icon.setAttribute('data-lucide', 'search')
-      
+
                     const infoDiv = document.createElement('div')
                     infoDiv.className = 'nav-history-item-info'
-      
+
                     const titleSpan = document.createElement('span')
                     titleSpan.className = 'nav-history-item-title'
                     titleSpan.textContent = book.title || 'Untitled'
-      
+
                     const authorSpan = document.createElement('span')
                     authorSpan.className = 'nav-history-item-author'
                     authorSpan.textContent = ` by ${book.author || 'Unknown Author'}`
-      
+
                     infoDiv.appendChild(titleSpan)
                     infoDiv.appendChild(authorSpan)
                     link.appendChild(icon)
                     link.appendChild(infoDiv)
                     fragment.appendChild(link)
-                  })
+                  });
                 }
-                navHistoryContainer.appendChild(fragment)
-                navResultsBox.style.display = 'block'
-                navSearchForm.classList.add('results-open') // Class to fix border radius
-                if (window.lucide) lucide.createIcons()
+                navHistoryContainer.appendChild(fragment);
+                if (window.lucide) lucide.createIcons();
+
               } catch (err) {
-                console.error('Nav search error:', err)
-                navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Search results</div><div class="nav-history-item"><div class="nav-history-item-info"><span class="nav-history-item-title">Error fetching results</span></div></div>`
-                navResultsBox.style.display = 'block'
-                navSearchForm.classList.add('results-open')
+                // Ignore AbortError: request was cancelled by user typing faster
+                if (err.name === 'AbortError') return;
+
+                console.error('Nav search error:', err);
+                navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Search results</div><div class="nav-history-item"><div class="nav-history-item-info"><span class="nav-history-item-title">Error fetching results</span></div></div>`;
+                if (window.lucide) lucide.createIcons();
               }
             }
-      
-            // Input listener with debounce
-            let navTypingTimer
-            const navDebounceDelay = 300
-      
+
+            // --- DEBOUNCE & INPUT LISTENER ---
+            let navTypingTimer;
+            const navDebounceDelay = 300;
+
             navSearchInput.addEventListener('input', () => {
-              clearTimeout(navTypingTimer)
-              const query = navSearchInput.value.trim()
-      
-              if (query.length > 1) {
-                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay)
-                navSearch.style.borderRadius = '15px 15px 0 0'
+              clearTimeout(navTypingTimer);
+              const query = navSearchInput.value.trim();
+
+              if (query.length > 2) {
+                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
+
               } else {
-                navResultsBox.style.display = 'none'
-                navSearchForm.classList.remove('results-open')
-                navSearch.style.borderRadius = '15px'
+                // Hide the box if the query is too short
+                navResultsBox.style.display = 'none';
+                navSearchForm.classList.remove('results-open');
+                navSearchForm.style.borderRadius = '15px';
+                // Cancel any pending fetch when search bar is cleared
+                if (currentController) currentController.abort();
               }
-            })
-      
-            // Hide results on outside click
+            });
+
+            // --- OUTSIDE CLICK & FOCUS LISTENERS ---
             document.addEventListener('click', (e) => {
               if (!navSearchForm.contains(e.target)) {
-                navResultsBox.style.display = 'none'
-                navSearchForm.classList.remove('results-open')
+                navResultsBox.style.display = 'none';
+                navSearchForm.classList.remove('results-open');
               }
-            })
-      
-            // Show results on focus
+            });
+
             navSearchInput.addEventListener('focus', () => {
-              const query = navSearchInput.value.trim()
-              if (query.length > 1) {
-                fetchNavResults(query) // Fetch results on focus if text exists
+              const query = navSearchInput.value.trim();
+              if (query.length > 2) {
+                navResultsBox.style.display = 'block';
+                fetchNavResults(query);
               }
-            })
+            });
           }
-        })
-      })()
-    </script>
+        });
+      })();
+  </script>
 
   </body>
 </html>

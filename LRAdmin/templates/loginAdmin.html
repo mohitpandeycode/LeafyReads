@@ -1,17 +1,21 @@
-{% extends 'basic.html' %}
+
 {% load static %}
 
 {% block title %}
-LeafyReads - Login To Admin Account
+<title>LeafyReads - Login To Admin Account</title>
 {% endblock %}
 
 {% block css %}
 <style>
-
+body{
+  margin: 0;
+}
 .loginpagesection {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image:
+  linear-gradient(rgba(0, 0, 255, 0.081), rgba(255, 255, 0, 0.075));
   
 }
 
@@ -19,7 +23,7 @@ LeafyReads - Login To Admin Account
   background-color: #fff;
   color: #0e0e1cfa;
   font-family: 'Segoe UI', sans-serif;
-  width: 420px;
+  width: 380px;
   max-width: 90%;
   padding: 2rem;
   border-radius: 16px;
