@@ -58,7 +58,7 @@ def dashboard(request):
 
     
     # Start with all books, fetch genre relationship efficiently
-    books_list = Book.objects.select_related("genre").all().order_by("-uploaded_at")
+    books_list = Book.objects.select_related("genre").filter(uploaded_by=request.user).order_by("-uploaded_at")
 
     book_query = request.GET.get("search", "").strip()
 
@@ -92,7 +92,7 @@ def dashboard(request):
 
 @login_required(login_url="login_admin")
 def updateBook(request, slug):
-    book = get_object_or_404(Book, slug=slug)
+    book = get_object_or_404(Book, slug=slug, uploaded_by=request.user)
     bookcontent, created = BookContent.objects.get_or_create(book=book)
     genres = Genre.objects.all()
 
@@ -158,6 +158,7 @@ def addBook(request):
                 genre=Genre.objects.get(id=request.POST.get("genre")) if request.POST.get("genre") else None,
                 cover_front=request.FILES.get("cover_front"),
                 audio_file=request.FILES.get("audio_file"),
+                uploaded_by=request.user
             )
             book._updated_by = request.user  # <-- attach user
             book.save()  # triggers Book "create" log
@@ -183,7 +184,7 @@ def addBook(request):
 
 @login_required(login_url="login_admin")
 def viewBookAdmin(request, slug):
-    book = get_object_or_404(Book.objects.select_related("genre"), slug=slug)
+    book = get_object_or_404(Book.objects.select_related("genre"), slug=slug, uploaded_by=request.user)
     bookcontent = get_object_or_404(BookContent.objects.only("content"), book=book)
     return render(
         request, "viewBook.html", {"book": book, "bookcontent": bookcontent.content}

@@ -73,11 +73,11 @@
       <div class="header-content">
         <a href="/" class="logo">
           <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
-            alt="" />
+            alt="logo" />
           <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
-            alt="" />
+            alt="logo" />
           <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}"
-            alt="" />
+            alt="logo" />
         </a>
         <nav class="desktop-nav" style="position: relative;">
           <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
@@ -484,6 +484,7 @@
             document.addEventListener('click', (e) => {
               if (!navSearchForm.contains(e.target)) {
                 navResultsBox.style.display = 'none';
+                navSearchForm.style.borderRadius = '15px';
                 navSearchForm.classList.remove('results-open');
               }
             });

@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Community - LeafyReads
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/community.css' %}" />
+{% endblock %}
+
+{% block body %}
+ {% if not user.is_authenticated %}
+    {% include 'login.html' %}
+  {% endif %}
+    <div class="comunitycontainer">
+        <!-- Left Sidebar -->
+        <aside class="sidebar left-sidebar">
+            <div class="sidebar-card">
+                <h3>📚 Trending Books</h3>
+                <ul class="trending-list">
+                    <li><span class="rank">#1</span> Atomic Habits</li>
+                    <li><span class="rank">#2</span> The Psychology of Money</li>
+                    <li><span class="rank">#3</span> Deep Work</li>
+                    <li><span class="rank">#4</span> Sapiens</li>
+                    <li><span class="rank">#5</span> Think Again</li>
+                </ul>
+            </div>
+            <div class="sidebar-card">
+                <h3>🏷️ Popular Tags</h3>
+                <div class="tags">
+                    <span class="tag">#fiction</span>
+                    <span class="tag">#selfhelp</span>
+                    <span class="tag">#thriller</span>
+                    <span class="tag">#romance</span>
+                    <span class="tag">#scifi</span>
+                    <span class="tag">#biography</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Create Post Section -->
+            <div class="create-post-card">
+                <div class="post-header">
+                    <div class="avatar">U</div>
+                    <span class="username">You</span>
+                </div>
+                <form id="postForm">
+                    <textarea id="postContent" placeholder="Share your thoughts about a book..." rows="3"></textarea>
+                    <input type="text" id="bookMention" placeholder="📖 Mention a book (e.g., The Great Gatsby)">
+                    <div class="image-upload-area" id="imageUploadArea">
+                        <input type="file" id="imageInput" accept="image/*" hidden>
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <span>📷 Click to upload an image</span>
+                        </div>
+                        <img id="imagePreview" class="image-preview" alt="Preview">
+                        <button type="button" id="removeImage" class="remove-image-btn">✕</button>
+                    </div>
+                    <button type="submit" class="post-btn">Post</button>
+                </form>
+            </div>
+
+            <!-- Posts Feed -->
+            <div id="postsFeed" class="posts-feed">
+                <!-- Posts will be dynamically added here -->
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar right-sidebar">
+            <div class="sidebar-card">
+                <h3>👥 Active Readers</h3>
+                <div class="active-users">
+                    <div class="user-item">
+                        <div class="avatar small">A</div>
+                        <span>Alice M.</span>
+                        <span class="online-dot"></span>
+                    </div>
+                    <div class="user-item">
+                        <div class="avatar small">B</div>
+                        <span>Bob K.</span>
+                        <span class="online-dot"></span>
+                    </div>
+                    <div class="user-item">
+                        <div class="avatar small">C</div>
+                        <span>Carol J.</span>
+                        <span class="online-dot"></span>
+                    </div>
+                    <div class="user-item">
+                        <div class="avatar small">D</div>
+                        <span>David R.</span>
+                        <span class="online-dot"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-card">
+                <h3>📅 Upcoming Events</h3>
+                <div class="events-list">
+                    <div class="event-item">
+                        <div class="event-date">
+                            <span class="day">15</span>
+                            <span class="month">Dec</span>
+                        </div>
+                        <div class="event-info">
+                            <h4>Book Club Meeting</h4>
+                            <p>Discussing "1984"</p>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-date">
+                            <span class="day">22</span>
+                            <span class="month">Dec</span>
+                        </div>
+                        <div class="event-info">
+                            <h4>Author Q&A</h4>
+                            <p>Live session</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Comments</h3>
+                <button class="close-modal" id="closeModal">✕</button>
+            </div>
+            <div class="comments-list" id="commentsList">
+                <!-- Comments will be added here -->
+            </div>
+            <div class="add-comment">
+                <input type="text" id="commentInput" placeholder="Write a comment...">
+                <button id="submitComment">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Community Page JavaScript
+
+// State
+let posts = [];
+let currentPostId = null;
+
+// DOM Elements
+const postForm = document.getElementById('postForm');
+const postContent = document.getElementById('postContent');
+const bookMention = document.getElementById('bookMention');
+const imageInput = document.getElementById('imageInput');
+const imageUploadArea = document.getElementById('imageUploadArea');
+const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+const imagePreview = document.getElementById('imagePreview');
+const removeImageBtn = document.getElementById('removeImage');
+const postsFeed = document.getElementById('postsFeed');
+const commentModal = document.getElementById('commentModal');
+const closeModal = document.getElementById('closeModal');
+const commentsList = document.getElementById('commentsList');
+const commentInput = document.getElementById('commentInput');
+const submitComment = document.getElementById('submitComment');
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadPosts();
+    renderPosts();
+});
+
+// Load posts from localStorage
+function loadPosts() {
+    const savedPosts = localStorage.getItem('communityPosts');
+    if (savedPosts) {
+        posts = JSON.parse(savedPosts);
+    }
+}
+
+// Save posts to localStorage
+function savePosts() {
+    localStorage.setItem('communityPosts', JSON.stringify(posts));
+}
+
+// Generate unique ID
+function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+// Format time ago
+function timeAgo(date) {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+    return new Date(date).toLocaleDateString();
+}
+
+// Image Upload Handling
+imageUploadArea.addEventListener('click', () => {
+    imageInput.click();
+});
+
+imageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imagePreview.src = e.target.result;
+            imagePreview.classList.add('show');
+            uploadPlaceholder.style.display = 'none';
+            removeImageBtn.classList.add('show');
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+removeImageBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    imageInput.value = '';
+    imagePreview.src = '';
+    imagePreview.classList.remove('show');
+    uploadPlaceholder.style.display = 'block';
+    removeImageBtn.classList.remove('show');
+});
+
+// Form Submit
+postForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const content = postContent.value.trim();
+    if (!content) return;
+    
+    const newPost = {
+        id: generateId(),
+        author: 'You',
+        content: content,
+        book: bookMention.value.trim(),
+        image: imagePreview.classList.contains('show') ? imagePreview.src : null,
+        likes: 0,
+        liked: false,
+        comments: [],
+        shares: 0,
+        createdAt: new Date().toISOString()
+    };
+    
+    posts.unshift(newPost);
+    savePosts();
+    renderPosts();
+    
+    // Reset form
+    postContent.value = '';
+    bookMention.value = '';
+    imageInput.value = '';
+    imagePreview.src = '';
+    imagePreview.classList.remove('show');
+    uploadPlaceholder.style.display = 'block';
+    removeImageBtn.classList.remove('show');
+});
+
+// Render Posts
+function renderPosts() {
+    if (posts.length === 0) {
+        postsFeed.innerHTML = `
+            <div class="no-posts">
+                <span>📚</span>
+                <p>No posts yet. Be the first to share your thoughts!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    postsFeed.innerHTML = posts.map(post => `
+        <article class="post-card" data-id="${post.id}">
+            <div class="post-header">
+                <div class="avatar">${post.author.charAt(0)}</div>
+                <span class="username">${post.author}</span>
+                <span class="post-meta">${timeAgo(post.createdAt)}</span>
+            </div>
+            <p class="post-content">${escapeHtml(post.content)}</p>
+            ${post.book ? `<div class="book-mention">📖 ${escapeHtml(post.book)}</div>` : ''}
+            ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image">` : ''}
+            <div class="post-actions">
+                <button class="action-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                    <span>${post.liked ? '❤️' : '🤍'}</span>
+                    <span class="count">${post.likes}</span>
+                    Like
+                </button>
+                <button class="action-btn" onclick="openComments('${post.id}')">
+                    <span>💬</span>
+                    <span class="count">${post.comments.length}</span>
+                    Comment
+                </button>
+                <button class="action-btn" onclick="sharePost('${post.id}')">
+                    <span>↗️</span>
+                    <span class="count">${post.shares}</span>
+                    Share
+                </button>
+            </div>
+        </article>
+    `).join('');
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Toggle Like
+function toggleLike(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+        post.liked = !post.liked;
+        post.likes += post.liked ? 1 : -1;
+        savePosts();
+        renderPosts();
+    }
+}
+
+// Share Post
+function sharePost(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+        post.shares += 1;
+        savePosts();
+        renderPosts();
+        
+        // Copy to clipboard simulation
+        if (navigator.share) {
+            navigator.share({
+                title: 'Check out this post!',
+                text: post.content,
+                url: window.location.href
+            }).catch(() => {});
+        } else {
+            alert('Post link copied to clipboard!');
+        }
+    }
+}
+
+// Comments Modal
+function openComments(postId) {
+    currentPostId = postId;
+    const post = posts.find(p => p.id === postId);
+    
+    if (post.comments.length === 0) {
+        commentsList.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No comments yet. Be the first!</p>';
+    } else {
+        commentsList.innerHTML = post.comments.map(comment => `
+            <div class="comment-item">
+                <div class="avatar small">${comment.author.charAt(0)}</div>
+                <div class="comment-content">
+                    <div class="username">${escapeHtml(comment.author)}</div>
+                    <p>${escapeHtml(comment.text)}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    commentModal.classList.add('show');
+    commentInput.focus();
+}
+
+closeModal.addEventListener('click', () => {
+    commentModal.classList.remove('show');
+    currentPostId = null;
+});
+
+commentModal.addEventListener('click', (e) => {
+    if (e.target === commentModal) {
+        commentModal.classList.remove('show');
+        currentPostId = null;
+    }
+});
+
+submitComment.addEventListener('click', addComment);
+commentInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addComment();
+});
+
+function addComment() {
+    const text = commentInput.value.trim();
+    if (!text || !currentPostId) return;
+    
+    const post = posts.find(p => p.id === currentPostId);
+    if (post) {
+        post.comments.push({
+            id: generateId(),
+            author: 'You',
+            text: text,
+            createdAt: new Date().toISOString()
+        });
+        savePosts();
+        openComments(currentPostId); // Refresh comments
+        renderPosts(); // Update comment count
+        commentInput.value = '';
+    }
+}
+
+    </script>
+
+{% endblock %}

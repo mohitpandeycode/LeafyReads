@@ -23,7 +23,7 @@ class Category(models.Model):
     class Meta:
         ordering = ["name"]
         indexes = [
-            models.Index(fields=["name"]),  # Added index for faster filtering by name
+            models.Index(fields=["name"]),
         ]
 
     def __str__(self):
@@ -46,7 +46,7 @@ class Genre(models.Model):
         indexes = [
             models.Index(
                 fields=["category", "slug"]
-            ),  # Added index for category+slug lookups
+            ),
         ]
 
     def __str__(self):
@@ -69,22 +69,24 @@ class Book(models.Model):
     )
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     isbn = models.CharField(max_length=20, blank=True, null=True)
+    uploaded_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="uploaded_books"
+    )
 
-    # Cloudinary fields with per-book folders
+    # Cloudinary fields
     cover_front = CloudinaryField(
         "image",
         resource_type="image",
         folder=book_folder,
         transformation=[
-        {
-            "width": 1200,
-            "height": 1200,
-            "crop": "limit",   
-            "quality": "auto:low",
-            "fetch_format": "auto"
-        }
-    ]
-        
+            {
+                "width": 1200,
+                "height": 1200,
+                "crop": "limit",   
+                "quality": "auto:low",
+                "fetch_format": "auto"
+            }
+        ]
     )
     pdf_file = CloudinaryField(
         "file",
@@ -95,7 +97,7 @@ class Book(models.Model):
     )
     audio_file = CloudinaryField(
         "audio",
-        resource_type="video",  # Cloudinary treats audio as video
+        resource_type="video",
         folder=book_folder,
         blank=True,
         null=True
@@ -113,14 +115,12 @@ class Book(models.Model):
             models.Index(fields=["slug"]),
             models.Index(fields=["title"]),
             models.Index(fields=["-uploaded_at"]),
-            
             GinIndex(
                 name='book_trgm_idx',
                 fields=['title', 'author', 'slug'],
                 opclasses=['gin_trgm_ops', 'gin_trgm_ops', 'gin_trgm_ops'],
             ),
         ]
-        
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -169,7 +169,7 @@ class Review(models.Model):
             ),  # Added index for queries by book/user
             models.Index(
                 fields=["-created_at"]
-            ),  # Added index for ordering reviews quickly
+            ),  
         ]
 
     def __str__(self):

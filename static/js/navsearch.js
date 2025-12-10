@@ -1,4 +1,3 @@
-
 const navSearch = document.getElementById("navSearch");
 const navSearchBtn = document.getElementById("navSearchBtn");
 const navSearchInput = document.getElementById("navSearchInput");
@@ -8,7 +7,7 @@ const expandedStyles = {
   backdropFilter: "blur(8px)",
   borderRadius: "15px",
   padding: "6px 12px",
-  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)"
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
 };
 
 const collapsedStyles = {
@@ -16,7 +15,7 @@ const collapsedStyles = {
   backdropFilter: "none",
   borderRadius: "0",
   padding: "0",
-  boxShadow: "none"
+  boxShadow: "none",
 };
 
 function expandSearch() {
@@ -35,11 +34,21 @@ function collapseSearch() {
 navSearchBtn.addEventListener("click", () => {
   if (navSearch.classList.contains("expanded")) {
     collapseSearch();
-    sctive.style.display="none";
+    sctive.style.display = "none";
   } else {
     expandSearch();
-    sctive.style.display="block";
+    sctive.style.display = "block";
   }
 });
-
+document.addEventListener("click", (e) => {
+  if (
+    !navSearch.contains(e.target) &&
+    !navSearchBtn.contains(e.target)
+  ) {
+    if (navSearch.classList.contains("expanded")) {
+      collapseSearch();
+      sctive.style.display = "none";
+    }
+  }
+});
 

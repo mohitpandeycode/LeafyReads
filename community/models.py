@@ -9,7 +9,10 @@ from django.utils.text import slugify
 
 
 def post_folder(instance):
-    return f"community/{slugify(instance.title)}"
+    post = instance.post
+    folder_name = slugify(post.book.title) if post.book else f"post-{post.id}"
+    return f"community/{folder_name}"
+
 
 # Helper function to define a clean upload path for post images
 def post_image_upload_path(instance, filename):

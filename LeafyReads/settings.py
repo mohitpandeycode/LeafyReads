@@ -122,6 +122,9 @@ WSGI_APPLICATION = 'LeafyReads.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+
 DATABASE_URL = env('DATABASE_URL')
 DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600)
