@@ -164,8 +164,8 @@
               <p class="dot"></p>
             </div>
             {% endif %}
-            <a href="#" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
-            <a href="#" class="{% if request.path == '/about/' %}active{% endif %}">About Us</a>
+            <a href="{% url 'community' %}" class="{% if request.path == '/community/' %}active{% endif %}">Community</a>
+            <a href="{% url 'aboutUs' %}" class="{% if request.path == '/aboutus/' %}active{% endif %}">About Us</a>
             <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
               <div id="navSearchBtn" class="nav-search-button" aria-label="Search">
                 <i data-lucide="search"></i>

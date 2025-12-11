@@ -105,8 +105,8 @@ body.dark-mode .login-leafy-dark {
  }
 
  body.dark-mode .leafy-auth-container {
-   background-color: #000000fa;
-   box-shadow:  2px 2px 7px rgb(34 34 34);
+    background-color: #181818;
+    box-shadow: 2px 2px 7px rgb(10 10 10);
    color: #ffffff;
  }
 

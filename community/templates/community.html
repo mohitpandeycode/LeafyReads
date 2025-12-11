@@ -41,6 +41,27 @@ Community - LeafyReads
   </div>
 </div>
 {% endif %}
+
+{% if posts.number > 2 %}
+
+<div class="refresh">
+  <a href="{% url 'community' %}" class="refresh-btn">
+      Back to latest
+      <i data-lucide="rotate-ccw"></i>  
+  </a>
+</div>
+  
+{% endif %}
+<!-- IMAGE POPUP MODAL -->
+<div id="imageModal" class="image-modal">
+  <span id="closeImageModal" class="close-img-modal">&times;</span>
+  <img id="modalImage" class="modal-content-img" />
+</div>
+
+<!-- comment POPUP MODAL -->
+<div style="position:fixed; top:7%;z-index:99;left:30%;width:600px" class="openpost">
+  {% include 'comment.html' %}
+</div>
 <div class="comunitycontainer">
   <aside class="sidebar left-sidebar">
     <div class="sidebar-card">
@@ -74,6 +95,7 @@ Community - LeafyReads
         </div>
         <span class="username">Share what's on your mind</span>
       </div>
+      {% if user.is_authenticated %}
 
       <form id="postForm" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -143,12 +165,17 @@ Community - LeafyReads
           <button type="submit" class="post-btn">Post</button>
         </div>
       </form>
+      {% else %}
+      <div class="login-reminder">
+        <p>🔒 <span>Log in</span> to share your thoughts with the world.</p>
+      </div>
+      {% endif %}
     </div>
-
+    
     <div id="postsFeed" class="posts-feed">
       {% if posts %}
       {% for post in posts %}
-      <article class="post-card">
+      <article class="post-card" data-post-id="{{ post.id }}">
         <div class="post-header">
           <div class="avatar">
             <img class="profileimage" src="https://i.pravatar.cc/150?u={{ post.author.username }}"
@@ -158,14 +185,14 @@ Community - LeafyReads
           <span class="post-meta">{{ post.created_at|timesince }} ago</span>
           <i style="margin-left: auto;" data-lucide="ellipsis-vertical"></i>
         </div>
+        <p class="post-content">{{ post.content }}</p>
+        {% if post.book %}
+        <a href="{% url 'book' post.book.slug %}" class="book-mention">
+          <span style="font-size: 20px;padding: 0px 0 6px 0;">📖</span> {{ post.book.title }}
+        </a>
+        {% endif %}
+        {% if post.images.all.exists or post.book %}
         <div class="contentbox">
-          <p class="post-content">{{ post.content }}</p>
-          {% if post.book %}
-          <a href="{% url 'book' post.book.slug %}" class="book-mention">
-            <span style="font-size: 20px;padding: 0px 0 6px 0;">📖</span> {{ post.book.title }}
-          </a>
-          {% endif %}
-          {% if post.images.all.exists or post.book %}
           <div class="post-images">
 
             {% if post.book %}
@@ -175,28 +202,39 @@ Community - LeafyReads
             {% for image in post.images.all %}
             <img src="{{ image.image.url }}" class="post-image" alt="post image">
             {% endfor %}
-
+            
           </div>
-          {% endif %}
         </div>
+        {% endif %}
         <div class="post-actions">
-          <button class="action-btn" onclick="toggleLike(this)">
-            <span class="heart">🤍</span>
-            <span class="count">{{ post.number_of_likes }}</span>
-            Like
+          <button class="action-btn {% if post.has_liked %}liked{% endif %}" data-post-id="{{ post.id }}" onclick="toggleLike(this)" {% if not request.user.is_authenticated %}disabled{% endif %}>
+              <span class="heart">{% if post.has_liked %}❤️{% else %}🤍{% endif %}</span>
+              <span class="count">{{ post.likes_count }}</span>
+              Like
           </button>
+
           <button class="action-btn" onclick="openComments(this)">
             <span>💬</span>
-            <span class="count">{{ post.number_of_comments }}</span>
+            <span class="count">{{ post.comments_count }}</span>
             Comment
           </button>
+
           <button class="action-btn" onclick="sharePost(this)">
-            <span>↗️</span>
+            <span><i data-lucide="share-2"></i></span>
             Share
           </button>
         </div>
       </article>
       {% endfor %}
+      {% if posts.has_next %}
+          <div class="pagination-container">
+              <a href="?page={{ posts.next_page_number }}" class="see-more-btn">
+                  See More Posts
+                  <i data-lucide="chevron-down"></i>  
+              </a>
+          </div>
+          {% endif %}
+          
       {% else %}
       <div class="no-posts">
         <span>📚</span>
@@ -244,254 +282,476 @@ Community - LeafyReads
     </div>
   </aside>
 </div>
-
-<div id="commentModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Comments</h3>
-      <button class="close-modal" id="closeModal">✕</button>
-    </div>
-    <div class="comments-list" id="commentsList">
-      <p style="text-align: center; color: #666;">No comments yet.</p>
-    </div>
-    <div class="add-comment">
-      <input type="text" id="commentInput" placeholder="Write a comment...">
-      <button id="submitComment">Send</button>
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
   //----------------------------------------------------------
-  // ELEMENT REFERENCES
+  // 1. HANDLE MESSAGES / ERROR ALERTS (Only if they exist)
   //----------------------------------------------------------
-  const editable = document.getElementById("postContentEditable");
-  const hiddenTextarea = document.getElementById("postContent");
-  const postBtn = document.querySelector(".post-btn");
-  const imageInput = document.getElementById("imageInput");
+  const errorCloseBtn = document.querySelector('.error__close');
+  const errorBox = document.querySelector('.error');
+  
+  if (errorCloseBtn && errorBox) {
+    errorCloseBtn.addEventListener('click', () => {
+      errorBox.style.display = "none";
+    });
+  }
+
+  //----------------------------------------------------------
+  // 2. CREATE POST LOGIC (Only runs if user is logged in)
+  //----------------------------------------------------------
   const postForm = document.getElementById("postForm");
-  const bookMentionInput = document.getElementById("bookMention");
+  if (postForm) {
 
-  const mentionedBookBox = document.querySelector(".mentionedbook");
-  const overlay = document.getElementById("overlay");
+    // --- Element References ---
+    const editable = document.getElementById("postContentEditable");
+    const hiddenTextarea = document.getElementById("postContent");
+    const postBtn = document.querySelector(".post-btn");
+    const imageInput = document.getElementById("imageInput");
+    const bookMentionInput = document.getElementById("bookMention");
+    
+    const mentionedBookBox = document.querySelector(".mentionedbook");
+    const overlay = document.getElementById("overlay");
 
-  // Search & List Elements
-  const searchInput = document.querySelector(".mentionedbook .search-container input");
-  const watchedSection = document.querySelector(".watched-section");
-  const searchResultsSection = document.querySelector(".search-results-section");
-  const searchResultsList = document.getElementById("searchResultsList");
+    // Search elements
+    const searchInput = document.querySelector(".mentionedbook .search-container input");
+    const watchedSection = document.querySelector(".watched-section");
+    const searchResultsSection = document.querySelector(".search-results-section");
+    const searchResultsList = document.getElementById("searchResultsList");
 
-  //----------------------------------------------------------
-  // LIVE SEARCH WITH DEBOUNCE
-  //----------------------------------------------------------
-  let debounceTimer = null;
+    // --- Live Search Logic ---
+    let debounceTimer = null;
 
-  searchInput.addEventListener("input", () => {
-    const q = searchInput.value.trim();
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+        const q = searchInput.value.trim();
 
-    // IF INPUT IS EMPTY: Show Recent, Hide Search
-    if (!q) {
-      watchedSection.style.display = "block";
-      searchResultsSection.style.display = "none";
-      searchResultsList.innerHTML = ""; // Clear old results
-      return;
-    }
-
-    // IF TYPING: Hide Recent, Show Search Container
-    watchedSection.style.display = "none";
-    searchResultsSection.style.display = "block";
-    searchResultsList.innerHTML = `<p style="padding:10px; font-size:13px; color:#666;">Searching...</p>`;
-
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => performSearch(q), 300);
-  });
-
-  function performSearch(query) {
-    fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`)
-      .then(res => res.json())
-      .then(data => {
-        // Handle no results
-        if (!data.results || data.results.length === 0) {
-          searchResultsList.innerHTML = `<p style="padding:10px; font-size:13px; color:#666;">No books found.</p>`;
-          return;
+        if (!q) {
+            watchedSection.style.display = "block";
+            searchResultsSection.style.display = "none";
+            searchResultsList.innerHTML = "";
+            return;
         }
 
-        // Render results using the exact same style as watched books
-        searchResultsList.innerHTML = data.results.map(book => `
-          <div class="watched-book flexDA search-book-item"
-               data-book-slug="${book.slug}"
-               data-book-title="${book.title} By ${book.author}">
-            <p class="flexDA" style="font-size: 14px;">
-              <i data-lucide="search"></i>
-              ${book.title} By ${book.author}
-            </p>
-          </div>
-        `).join("");
-        if(window.lucide) lucide.createIcons();
-        
-        // Attach click listeners to the new dynamic results
-        attachSearchBookClicks();
-      })
-      .catch(err => {
-        searchResultsList.innerHTML = `<p style="color:red; padding:10px;">Error searching.</p>`;
-      });
-  }
+        watchedSection.style.display = "none";
+        searchResultsSection.style.display = "block";
+        searchResultsList.innerHTML = `<p style="padding:10px; font-size:13px; color:#666;">Searching...</p>`;
 
-  //----------------------------------------------------------
-  // CLICK HANDLER: DYNAMIC SEARCH RESULTS
-  //----------------------------------------------------------
-  function attachSearchBookClicks() {
-    document.querySelectorAll(".search-book-item").forEach(item => {
-      item.addEventListener("click", () => {
-        const title = item.dataset.bookTitle;
-        const slug = item.dataset.bookSlug;
-        selectBook(slug, title);
-      });
-    });
-  }
-
-  //----------------------------------------------------------
-  // CLICK HANDLER: RECENT WATCHED BOOKS
-  //----------------------------------------------------------
-  document.querySelectorAll(".watched-book:not(.search-book-item)").forEach(book => {
-    book.addEventListener("click", () => {
-      const slug = book.dataset.bookId;
-      const title = book.dataset.bookTitle;
-      selectBook(slug, title);
-    });
-  });
-
-  //----------------------------------------------------------
-  // SHARED: SELECT BOOK LOGIC
-  //----------------------------------------------------------
-  function selectBook(slug, title) {
-    bookMentionInput.value = slug;
-    addBookTag(title);
-
-    // Reset UI
-    searchInput.value = "";
-    searchResultsSection.style.display = "none";
-    watchedSection.style.display = "block";
-    mentionedBookBox.style.display = "none";
-    overlay.classList.remove("active");
-
-    togglePostButton();
-  }
-
-  //----------------------------------------------------------
-  // ADD BOOK TAG TO EDITOR
-  //----------------------------------------------------------
-  function addBookTag(title) {
-    // Remove existing tag if user tries to add another (optional, keeps it to 1 book)
-    const existing = editable.querySelector(".book-tag");
-    if(existing) existing.remove();
-
-    const tag = document.createElement("span");
-    tag.classList.add("book-tag");
-    tag.setAttribute("contenteditable", "false");
-    tag.innerHTML = `📘 ${title} <span class="remove-tag">×</span>`;
-
-    editable.appendChild(tag);
-    editable.appendChild(document.createTextNode(" ")); // Space after
-  }
-
-  editable.addEventListener("click", (e) => {
-    if (e.target.classList.contains("remove-tag")) {
-      e.target.parentElement.remove();
-      bookMentionInput.value = "";
-      togglePostButton();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => performSearch(q), 300);
+        });
     }
-  });
 
-  //----------------------------------------------------------
-  // SHOW/HIDE POPUP
-  //----------------------------------------------------------
-  window.toggleBookInput = function (event) {
-    event.stopPropagation();
-    overlay.classList.add("active");
-    mentionedBookBox.style.display = "block";
-    searchInput.focus(); // Focus input when opened
-  };
+    function performSearch(query) {
+      fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.results || data.results.length === 0) {
+            searchResultsList.innerHTML = `<p style="padding:10px; font-size:13px; color:#666;">No books found.</p>`;
+            return;
+          }
+          searchResultsList.innerHTML = data.results.map(book => `
+            <div class="watched-book flexDA search-book-item"
+                 data-book-slug="${book.slug}"
+                 data-book-title="${book.title} By ${book.author}">
+              <p class="flexDA" style="font-size: 14px;">
+                <i data-lucide="search"></i>
+                ${book.title} By ${book.author}
+              </p>
+            </div>
+          `).join("");
 
-  document.addEventListener("click", (event) => {
-    if (!mentionedBookBox.contains(event.target) && event.target.closest('.tool-btn') === null) {
+          if (window.lucide) lucide.createIcons();
+          attachSearchBookClicks();
+        })
+        .catch(err => {
+          searchResultsList.innerHTML = `<p style="color:red; padding:10px;">Error searching.</p>`;
+        });
+    }
+
+    function attachSearchBookClicks() {
+      document.querySelectorAll(".search-book-item").forEach(item => {
+        item.addEventListener("click", () => {
+          selectBook(item.dataset.bookSlug, item.dataset.bookTitle);
+        });
+      });
+    }
+
+    // --- Recent Watched Book Click ---
+    document.querySelectorAll(".watched-book:not(.search-book-item)").forEach(book => {
+      book.addEventListener("click", () => {
+        selectBook(book.dataset.bookId, book.dataset.bookTitle);
+      });
+    });
+
+    // --- Book Select Logic ---
+    function selectBook(slug, title) {
+      bookMentionInput.value = slug;
+      addBookTag(title);
+
+      searchInput.value = "";
+      searchResultsSection.style.display = "none";
+      watchedSection.style.display = "block";
       mentionedBookBox.style.display = "none";
       overlay.classList.remove("active");
+
+      togglePostButton();
     }
-  });
 
-  //----------------------------------------------------------
-  // POST BUTTON STATE
-  //----------------------------------------------------------
-  function togglePostButton() {
-    const clone = editable.cloneNode(true);
-    clone.querySelectorAll(".book-tag").forEach(t => t.remove());
-    const text = clone.innerText.trim();
+    // --- Insert Book Tag ---
+    function addBookTag(title) {
+      const existing = editable.querySelector(".book-tag");
+      if (existing) existing.remove();
 
-    const hasText = text !== "";
-    const hasBook = bookMentionInput.value !== "";
-    const hasImage = imageInput.files.length > 0;
+      const tag = document.createElement("span");
+      tag.classList.add("book-tag");
+      tag.setAttribute("contenteditable", "false");
+      tag.innerHTML = `📘 ${title} <span class="remove-tag">×</span>`;
 
-    if (hasText || hasBook || hasImage) {
-      postBtn.removeAttribute("disabled");
-      postBtn.style.display = "block";
-    } else {
-      postBtn.setAttribute("disabled", true);
-      postBtn.style.display = "none";
+      editable.appendChild(tag);
+      editable.appendChild(document.createTextNode(" "));
     }
+
+    editable.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-tag")) {
+        e.target.parentElement.remove();
+        bookMentionInput.value = "";
+        togglePostButton();
+      }
+    });
+
+    const mainBorder = document.querySelector(".mainborder");
+
+    // When clicking INSIDE → set blue border
+    mainBorder.addEventListener("click", (e) => {
+        mainBorder.style.border = "1px solid rgb(138 125 255 / 61%)";
+        e.stopPropagation();
+    });
+
+    // When clicking OUTSIDE → reset border
+    window.addEventListener("click", (e) => {
+        if (!mainBorder.contains(e.target)) {
+            mainBorder.style.border = "1px solid #9595952c";
+        }
+    });
+
+    // --- Book Popup Show/Hide ---
+    window.toggleBookInput = function (event) {
+      event.stopPropagation();
+      overlay.classList.add("active");
+      mentionedBookBox.style.display = "block";
+      searchInput.focus();
+    };
+
+    document.addEventListener("click", (event) => {
+      if (mentionedBookBox && !mentionedBookBox.contains(event.target) && event.target.closest('.tool-btn') === null) {
+        mentionedBookBox.style.display = "none";
+        overlay.classList.remove("active");
+      }
+    });
+
+    // --- Post Button Enable/Disable ---
+    function togglePostButton() {
+      const clone = editable.cloneNode(true);
+      clone.querySelectorAll(".book-tag").forEach(t => t.remove());
+
+      const text = clone.innerText.trim();
+      const hasText = text !== "";
+      const hasBook = bookMentionInput.value !== "";
+      const hasImage = imageInput.files.length > 0;
+
+      if (hasText || hasBook || hasImage) {
+        postBtn.removeAttribute("disabled");
+        postBtn.style.display = "block";
+      } else {
+        postBtn.setAttribute("disabled", true);
+        postBtn.style.display = "none";
+      }
+    }
+
+    editable.addEventListener("input", togglePostButton);
+    imageInput.addEventListener("change", togglePostButton);
+    togglePostButton();
+
+    // --- Image Preview ---
+    const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+    const imgPreview = document.getElementById("imagePreview");
+    const removeImageBtn = document.getElementById("removeImage");
+
+    imageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          imgPreview.src = e.target.result;
+          imagePreviewContainer.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+      togglePostButton();
+    });
+
+    removeImageBtn.addEventListener("click", () => {
+      imageInput.value = "";
+      imgPreview.src = "";
+      imagePreviewContainer.style.display = "none";
+      togglePostButton();
+    });
+
+    // --- Submit Handler ---
+    postForm.addEventListener("submit", (e) => {
+      const clone = editable.cloneNode(true);
+      clone.querySelectorAll(".book-tag").forEach(t => t.remove());
+      const caption = clone.innerText.trim();
+
+      if (caption === "" && bookMentionInput.value === "" && imageInput.files.length === 0) {
+        e.preventDefault();
+        alert("You cannot post empty content.");
+        return;
+      }
+
+      hiddenTextarea.value = caption;
+
+      postBtn.disabled = true;
+      postBtn.innerText = "Posting...";
+      postBtn.style.opacity = "0.6";
+      postBtn.style.cursor = "not-allowed";
+    });
+
+  } // END OF IF(POSTFORM)
+});
+
+//----------------------------------------------------------
+//  REAL-TIME LIKE SYSTEM (AJAX)
+//----------------------------------------------------------
+function toggleLike(btn) {
+  const postId = btn.dataset.postId;
+  const heartSpan = btn.querySelector('.heart');
+  const countSpan = btn.querySelector('.count');
+
+  const isCurrentlyLiked = btn.classList.contains('liked');
+  let currentCount = parseInt(countSpan.innerText);
+  
+  if (isCurrentlyLiked) {
+      btn.classList.remove('liked');
+      heartSpan.innerText = '🤍';
+      countSpan.innerText = Math.max(0, currentCount - 1);
+  } else {
+      btn.classList.add('liked');
+      heartSpan.innerText = '❤️';
+      countSpan.innerText = currentCount + 1;
   }
 
-  editable.addEventListener("input", togglePostButton);
-  imageInput.addEventListener("change", togglePostButton);
-  togglePostButton();
+  const formData = new FormData();
+  formData.append('post_id', postId);
+  // Note: Ensure csrf_token is available in context or use cookie
+  formData.append('csrfmiddlewaretoken', '{{ csrf_token }}'); 
 
-  //----------------------------------------------------------
-  // IMAGE PREVIEW
-  //----------------------------------------------------------
-  const imagePreviewContainer = document.getElementById("imagePreviewContainer");
-  const imgPreview = document.getElementById("imagePreview");
-  const removeImageBtn = document.getElementById("removeImage");
-
-  imageInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        imgPreview.src = e.target.result;
-        imagePreviewContainer.style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    }
-    togglePostButton();
+  fetch('{% url "like_post" %}', {
+      method: 'POST',
+      body: formData
+  })
+  .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+  })
+  .then(data => {
+      if (data.is_liked) {
+          btn.classList.add('liked');
+          heartSpan.innerText = '❤️';
+      } else {
+          btn.classList.remove('liked');
+          heartSpan.innerText = '🤍';
+      }
+      countSpan.innerText = data.likes_count;
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      if (isCurrentlyLiked) {
+          btn.classList.add('liked');
+          heartSpan.innerText = '❤️';
+          countSpan.innerText = currentCount;
+      } else {
+          btn.classList.remove('liked');
+          heartSpan.innerText = '🤍';
+          countSpan.innerText = currentCount;
+      }
   });
+}
 
-  removeImageBtn.addEventListener("click", () => {
-    imageInput.value = "";
-    imgPreview.src = "";
-    imagePreviewContainer.style.display = "none";
-    togglePostButton();
-  });
+//----------------------------------------------------------
+//  REAL-TIME COMMENT SYSTEM (AJAX)
+//----------------------------------------------------------
+let activePostId = null;
 
-  //----------------------------------------------------------
-  // FORM SUBMISSION
-  //----------------------------------------------------------
-  postForm.addEventListener("submit", (e) => {
-    const clone = editable.cloneNode(true);
-    clone.querySelectorAll(".book-tag").forEach(t => t.remove());
-    const caption = clone.innerText.trim();
+function openComments(btn) {
+    const postCard = btn.closest(".post-card");
+    activePostId = postCard.dataset.postId;
 
-    if (caption === "" && bookMentionInput.value === "" && imageInput.files.length === 0) {
-      e.preventDefault();
-      alert("You cannot post empty content.");
-      return false;
-    }
-    hiddenTextarea.value = caption;
-  });
+    document.querySelector(".comment-overlay").style.display = "block";
+    document.getElementById("commentModal").style.display = "block";
+    document.body.style.overflow = "hidden";
 
+    loadComments(activePostId);
+}
+
+function loadComments(postId) {
+    const list = document.getElementById("commentList");
+    const commentOwner = document.getElementById("commentOwner");
+
+    // Clear previous data
+    commentOwner.innerHTML = ""; 
+    
+    // Skeleton Loader
+    list.innerHTML = `
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+    `;
+
+    fetch(`/community/comment/${postId}/`)
+        .then(res => res.json())
+        .then(data => {
+            list.innerHTML = "";
+
+            // ------------------------------------------------------
+            // 1. RENDER POST OWNER INFO
+            // ------------------------------------------------------
+            if (data.post) {
+                commentOwner.innerHTML = `
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <div class="avatar">
+                            <img class="profileimage" style="border: 3px solid green;" src="${data.post.avatar}" alt="ownerimg">
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: center; width: 100%;">
+                            <div style="display:flex; align-items:center; gap:10px">
+                                <span class="username" style="font-weight:bold;">${data.post.author}</span>
+                                <span class="post-meta" style="font-size:12px; color:#666;">${data.post.created} ago</span>
+                            </div>
+                            <p class="ownertext">${data.post.content}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // ------------------------------------------------------
+            // 2. CHECK FOR COMMENTS
+            // ------------------------------------------------------
+            if (!data.comments || data.comments.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align:center; padding:40px 10px; color:var(--text-muted); font-size:15px;">
+                        <i data-lucide="message-circle" style="width:38px;height:38px;margin-bottom:8px;"></i>
+                        <div>No comments yet</div>
+                        <div style="font-size:14px;">Be the first to comment!</div>
+                    </div>
+                `;
+                if(window.lucide) lucide.createIcons();
+                return;
+            }
+
+            // ------------------------------------------------------
+            // 3. RENDER COMMENTS
+            // ------------------------------------------------------
+            data.comments.forEach(c => {
+                list.innerHTML += `
+                    <div class="comment-card">
+                        <div class="avatar">
+                            <img class="profileimage" src="${c.avatar}" alt="profile" />
+                        </div>
+                        <div class="comment-lines" style="margin-top:0">
+                            <div style="font-weight:600;font-size:15px">
+                                ${c.author}
+                            </div>
+                            <div style="font-size:14px;line-height:1.5">
+                                ${c.content}
+                            </div>
+                            <div style="display:flex;gap:16px;margin-top:6px">
+                                <span style="font-size:13px;color:var(--text-muted);">${c.created}</span>
+                                <span style="font-size:13px;color:var(--accent);cursor:pointer">Like</span>
+                                <span style="font-size:13px;color:var(--accent);cursor:pointer">Reply</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        })
+        .catch(err => {
+            console.error("Error loading comments:", err);
+            list.innerHTML = `<div style="text-align:center;">Unable to load comments</div>`;
+        });
+}
+
+// Add check here too: Button only exists if modal exists
+const sendCommentBtn = document.getElementById("sendCommentBtn");
+if(sendCommentBtn){
+    sendCommentBtn.addEventListener("click", () => {
+        const text = document.getElementById("commentInput").value.trim();
+        if (!text) return;
+
+        const formData = new FormData();
+        formData.append("post_id", activePostId);
+        formData.append("content", text);
+        // Use a safe selector for token
+        const tokenInput = document.querySelector("input[name=csrfmiddlewaretoken]");
+        if(tokenInput) formData.append("csrfmiddlewaretoken", tokenInput.value);
+
+        fetch("/community/comment/add/", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(() => {
+            document.getElementById("commentInput").value = "";
+            loadComments(activePostId);
+        });
+    });
+}
+
+const closeComment = document.getElementById("closeComment");
+if(closeComment) {
+    closeComment.addEventListener('click', () => {
+        document.getElementById("commentModal").style.display = "none";
+        document.querySelector(".comment-overlay").style.display = "none";
+        document.body.style.overflow = "auto";
+
+    });
+}
+
+// -------------------------------------------------
+// Show image on full size when click on post images
+// -------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    const closeBtn = document.getElementById("closeImageModal");
+
+    // Attach click event to all post images
+    document.querySelectorAll(".post-image").forEach(img => {
+        img.addEventListener("click", () => {
+            modal.style.display = "block";
+            modalImg.src = img.src;
+            document.body.style.overflow = "hidden";
+        });
+    });
+
+    // Close modal
+    closeBtn.onclick = () => {
+        modal.style.display = "none";
+        document.body.style.overflow = "auto";
+    };
+
+    // Close when background clicked
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+    });
 });
+
 </script>
+
 
 
 

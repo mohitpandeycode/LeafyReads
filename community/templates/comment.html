@@ -1,0 +1,219 @@
+<style>
+    :root {
+        --bg: #f2f4f8;
+        --card: #ffffff;
+        --accent: #6366f1;
+        --accent-light: #e0e7ff;
+        --text-muted: #6b7280;
+        --radius: 16px;
+        --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        font-family: Inter, sans-serif;
+    }
+
+    body.dark-mode {
+        --bg: #0f1115;
+        --card: #1a1c21;
+        --accent: #818cf8;
+        --accent-light: #3a3f55;
+        --text-muted: #9ca3af;
+        color: #e5e7eb;
+    }
+
+    body.dark-mode .wrap {
+        background: var(--card);
+        box-shadow: none;
+        border: 1px solid #2a2d33
+    }
+
+    body.dark-mode .comment-card {
+        background: #1f2228;
+        border-color: #2c2f36
+    }
+
+    body.dark-mode .comment-lines div {
+        color: #d1d5db
+    }
+
+    body.dark-mode .input-area {
+        background: #1f2228;
+        border-color: #2c2f36
+    }
+
+    body.dark-mode .input-box {
+        background: #14161a;
+        border-color: #2d3036;
+        color: #e5e7eb
+    }
+
+    body.dark-mode .input-box:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2)
+    }
+
+    body.dark-mode .send-btn {
+        background: var(--accent);
+        color: white;
+        box-shadow: none
+    }
+
+    .comment-modal {
+        width: 100%;
+    }
+
+    .wrap {
+        width: 100%;
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 10px;
+        box-shadow: var(--shadow)
+    }
+
+    .comment_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* COMMENT LIST */
+    .comment-card {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-radius: var(--radius);
+        border: 1px solid #e5e7eb;
+        background: #fafbff;
+        margin-bottom: 8px;
+    }
+
+
+    .comment-lines {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-top: 6px
+    }
+
+    .line {
+        height: 14px;
+        border-radius: 8px;
+        background: #e5e7eb
+    }
+
+    .line.short {
+        width: 60%
+    }
+
+    /* INPUT AREA */
+    .input-area {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 24px;
+        padding: 10px;
+        border-radius: var(--radius);
+        background: #f9faff;
+        border: 1px solid #e5e7eb
+    }
+
+    .input-box {
+        flex: 1;
+        padding: 14px 18px;
+        border-radius: var(--radius);
+        border: 1px solid #d1d5db;
+        font-size: 15px;
+        outline: none;
+        transition: 0.2s;
+        background: white
+    }
+
+    .input-box:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-light)
+    }
+
+    .send-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        transition: 0.2s
+    }
+
+    .send-btn:hover {
+        transform: scale(1.06)
+    }
+
+    .comment-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(5px);
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+    .ownertext{
+        margin-top:4px; 
+        font-size:14px;
+        color:rgb(71 71 71);
+    }
+    body.dark-mode .ownertext{
+        color: rgb(205, 205, 205);
+    }
+</style>
+
+<div class="comment-overlay" style="display:none;"></div>
+
+<div class="comment-modal" id="commentModal" style="display:none;">
+    {% csrf_token %}
+    <div class="wrap">
+        <div class="comment_header" style="margin-bottom: 10px;">
+            <h4>Comments</h4>
+            <div id="closeComment" style="cursor: pointer;">
+                <i data-lucide="circle-x"></i>
+            </div>
+        </div>
+        <div class="post-header" style="border-bottom: 1px solid #9b9b9b26;background: #8080800d;padding:5px;margin-bottom: 5px;" id="commentOwner">
+
+        </div>
+        <!-- COMMENT LIST -->
+        <div class="commentsection" id="commentList" style="overflow:auto; max-height:400px; padding:10px;">
+        </div>
+        <!-- INPUT AREA -->
+
+        {% if user.is_authenticated %}
+        <div class="input-area">
+            <input class="input-box" id="commentInput" type="text" placeholder="Write a comment...">
+
+            <button class="send-btn" id="sendCommentBtn">
+                <i data-lucide="message-square-share"></i>
+            </button>
+        </div>
+        {% else %}
+        <div class="input-area" style="display: flex;justify-content:center;">
+            <h5 style="display: flex;justify-content: center;align-items: center;gap:5px">Login to Post Comment <i
+                    data-lucide="traffic-cone"></i> </h5>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('click', function (e) {
+        // Check if the clicked element is the close button or inside it (e.g., the SVG path)
+        if (e.target && e.target.closest('#closeComment')) {
+            document.getElementById("commentModal").style.display = "none";
+            document.querySelector(".comment-overlay").style.display = "none";
+        }
+    });
+</script>
