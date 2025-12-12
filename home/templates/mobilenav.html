@@ -1,0 +1,72 @@
+<style>
+    .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #ffffff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 9999;
+}
+
+.mobile-bottom-nav .nav-item {
+    text-decoration: none;
+    color: #444;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.mobile-bottom-nav .nav-item i {
+    width: 20px;
+    height: 20px;
+    margin: auto;
+}
+
+.mobile-bottom-nav .active {
+    color: #008753;   /* green active color */
+    font-weight: 600;
+}
+
+.mobile-bottom-nav .active i {
+    color: #008753 !important;
+}
+
+</style>
+<div class="mobile-bottom-nav">
+    <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">
+        <i data-lucide="home"></i>
+        <span>Home</span>
+    </a>
+
+    <a href="{% url 'library' %}" class="nav-item {% if request.path == '/book/library/' %}active{% endif %}">
+        <i data-lucide="library"></i>
+        <span>Library</span>
+    </a>
+
+    <a href="{% url 'myBooks' %}" class="nav-item {% if request.path == '/book/my-books/' %}active{% endif %}">
+        <i data-lucide="bookmark"></i>
+        <span>Read Later</span>
+    </a>
+
+    <a href="{% url 'community' %}" class="nav-item {% if request.path == '/community/' %}active{% endif %}">
+        <i data-lucide="users"></i>
+        <span>Community</span>
+    </a>
+
+    <a href="{% url 'aboutUs' %}" class="nav-item {% if request.path == '/aboutus/' %}active{% endif %}">
+        <i data-lucide="info"></i>
+        <span>About Us</span>
+    </a>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>

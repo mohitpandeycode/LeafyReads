@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="{% static 'css/mobilehome.css' %}" />
   <link rel="stylesheet" href="{% static 'css/library.css' %}" />
 {% endblock %}
 
@@ -36,7 +37,7 @@
   {% if user.is_authenticated %}
     {% if request.path == '/book/library/' %}
       <section class="recent-books-section">
-        <div class="container">
+        <div class="container bookscontainer">
           <h2 class="section-title">Recently Read Books</h2>
           {% if recently_read_books %}
             <div class="book-list">
@@ -72,7 +73,7 @@
     {% endif %}
   {% endif %}
   <section class="bg-white">
-    <div class="container">
+    <div class="container bookscontainer">
       {% if search and not books %}
         <div class="fallback-modern">
           <div class="fallback-card">
@@ -102,7 +103,7 @@
               <h2 style="font-size: 1.8rem;">Your Saved Books</h2>
               <p>Read anytime, anywhere.</p>
             {% else %}
-              <h2 style="font-size: 1.8rem;">Explore the Collection {{ category }}</h2>
+              <h2 style="font-size: 1.7rem;padding-top: 0px;">Explore the Collection {{ category }}</h2>
               <p>A vast range of books curated just for you.</p>
             {% endif %}
           {% endif %}
@@ -117,7 +118,7 @@
                   <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
                     <div class="readby">
                       <h3 class="truncate">{{ book.title }}</h3>
-                      <div class="views" style="margin-right: 5px;">
+                      <div class="views">
                         <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
                       </div>
                     </div>

@@ -264,8 +264,8 @@ body.dark-mode .logo-dark {
     width: 95%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem
+    padding-left: 1rem;
+    padding-right: 1rem
 }
 
 .header {
@@ -463,6 +463,8 @@ section {
     position: relative;
     z-index: 1;
 }
+
+
 
 @media (min-width: 992px) {
     .hero-container {
@@ -888,11 +890,8 @@ body.dark-mode .book-item img:hover {
     justify-content: center;
     align-items: center;
     gap: 2px;
-    background: rgb(63 63 63 / 86%);
     padding: 2px 5px;
-    border-radius: 5px;
     font-size: 14px;
-    color: rgb(255, 255, 255) !important;
 }
 
 
@@ -998,7 +997,7 @@ body.dark-mode .feature-icon.bg-purple {
     --btn-bg-color: hsla(360 100% 100% / 1);
     --radii: 0.5em;
     cursor: pointer;
-    padding: .9em 1.4em;
+    padding: .9em 1em;
     margin: 5% auto auto auto;
     width: 200px;
     display: flex;
@@ -1101,7 +1100,8 @@ body.dark-mode .footer {
 .footer-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem
+    gap: 2rem;
+    text-align: center;
 }
 
 .footer-about {
@@ -1128,10 +1128,6 @@ body.dark-mode .footer {
     color: var(--color-white)
 }
 
-.footer-socials {
-    display: flex;
-    gap: 1rem
-}
 
 .footer-copyright {
     margin-top: 1rem;

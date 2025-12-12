@@ -692,6 +692,8 @@ body.dark-mode .contentbox {
 /* Fullscreen dark background */
 .image-modal {
     display: none;
+    justify-content: center;
+    align-items: center;
     position: fixed;
     z-index: 9999;
     padding-top: 50px;
@@ -851,6 +853,20 @@ body.dark-mode .skeleton-card{
         flex: 1 1 45%;
     }
 }
+.read-more-btn {
+    color: var(--accent, #4c6fff);
+    cursor: pointer;
+    font-weight: 600;
+}
+.openpost{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    z-index: 99;
+}
+
 
 .pagination-container {
     display: flex;

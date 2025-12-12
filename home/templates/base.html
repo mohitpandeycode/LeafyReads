@@ -23,6 +23,129 @@
     .desktop-nav a.active {
       color: #149546 !important;
     }
+    /* ---------------------------------- */
+/* Tablet (<= 1024px)                 */
+/* ---------------------------------- */
+@media (max-width: 1024px) {
+
+  .header-content {
+    gap: 20px;
+  }
+
+  .desktop-nav a {
+    font-size: 0.95rem;
+    padding: 6px 10px;
+  }
+
+  .nav-search-wrapper {
+    width: 180px;
+  }
+
+  .nav-search-input {
+    font-size: 0.9rem;
+  }
+
+  .header-actions .btn,
+  .theme-toggle-btn {
+    padding: 6px;
+  }
+
+  .logo-light, .logo-dark {
+    width: 110px !important;
+  }
+}
+
+
+/* ---------------------------------- */
+/* Mobile (<= 768px)                  */
+/* ---------------------------------- */
+@media (max-width: 768px) {
+
+  .header-content {
+    justify-content: space-between;
+  }
+  .navcontainer{
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Hide desktop links */
+  .desktop-nav a,
+  .desktop-nav form,
+  .nav-results {
+    display: none !important;
+  }
+
+  /* Use a hamburger for mobile (you can hook JS later) */
+  .mobile-menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+
+
+  .logo-light, .logo-dark {
+    width: 105px !important;
+  }
+
+  /* Header Actions on mobile */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .theme-toggle-btn {
+    padding: 6px;
+      display: none;
+  }
+
+  #dropdown-button {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+}
+
+
+/* ---------------------------------- */
+/* Small Mobile (<= 480px)            */
+/* ---------------------------------- */
+@media (max-width: 480px) {
+
+  .header {
+    padding: 5px;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  #dropdown-button {
+    font-size: 0.78rem;
+  }
+
+  .theme-toggle-btn i,
+  .header-actions i {
+    width: 18px;
+    height: 18px;
+    display: none;
+  }
+
+  /* Optional: reduce bell spacing */
+  .notify-dot {
+    width: 6px;
+    height: 6px;
+    top: 3px;
+    right: 3px;
+  }
+}
+
 
     .nav-history-item {
       display: flex;
@@ -69,7 +192,7 @@
 <body>
   {% include 'loader.html' %}
   <header class="header">
-    <div class="container">
+    <div class="container navcontainer">
       <div class="header-content">
         <a href="/" class="logo">
           <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
@@ -161,6 +284,9 @@
       </div>
     </div>
   </header>
+  <div class="bottomnav">
+    {% include 'mobilenav.html' %}
+  </div>
 
   {% block body %}
 
@@ -295,53 +421,68 @@
       }
     })
   </script>
-  <script>
+  <!-- <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const MIN_WIDTH = 900 // breakpoint for desktop view
+      const MIN_WIDTH = 600 // breakpoint for desktop view
       const isMobileSize = window.innerWidth < MIN_WIDTH
 
       if (isMobileSize) {
         document.body.innerHTML = `
+          <div style="
+              display:flex;
+              flex-direction:column;
+              justify-content:center;
+              align-items:center;
+              height:100vh;
+              width:100vw;
+              margin:0;
+              padding:0;
+              background:#101114;
+              color:#e5e5e5;
+              font-family: 'Inter', system-ui, sans-serif;
+              text-align:center;
+          ">
+
               <div style="
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                height:100vh;
-                width:100vw;
-                background: linear-gradient(135deg, rgba(59,130,246,0.8), rgba(139,92,246,0.8)), 
-                            url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-                color:#fff;
-                text-align:center;
-                flex-direction:column;
-                font-family:'Inter', system-ui, sans-serif;
-                overflow:hidden;
-                margin:0;
+                  max-width:360px;
+                  padding:20px;
               ">
-                <div style="
-                  backdrop-filter: blur(10px);
-                  background: rgba(255,255,255,0.1);
-                  border: 1px solid rgba(255,255,255,0.2);
-                  padding: 2rem 2.5rem;
-                  border-radius: 1rem;
-                  max-width: 380px;
-                  box-shadow: 0 4px 25px rgba(0,0,0,0.25);
-                  animation: fadeIn 1s ease forwards;
-                ">
-                  <h1 style="font-size:1.8rem;margin-bottom:1rem;">🌐 Not Available on Mobile Yet</h1>
-                  <p style="font-size:1rem;opacity:0.9;line-height:1.6;">
-                    This site is currently optimized for larger screens.<br>
-                    Please use a <strong>laptop</strong>, <strong>desktop</strong>, or <strong>tablet</strong> for the best experience.
+                  <h1 style="
+                      font-size:1.3rem;
+                      font-weight:600;
+                      margin-bottom:12px;
+                  ">
+                      Mobile Version Not Supported
+                  </h1>
+
+                  <p style="
+                      font-size:0.8rem;
+                      line-height:1.5;
+                      color:#b1b1b1;
+                  ">
+                      This WebPage is not available on mobile devices.  
+                      Please visit using a laptop, desktop, or iPads.
                   </p>
-                </div>
               </div>
-              <style>
-                @keyframes fadeIn {
-                  from { opacity: 0; transform: translateY(15px); }
-                  to { opacity: 1; transform: translateY(0); }
-                }
-              </style>
-            `
-        return // prevents loading your site after replacing body
+
+              <button onclick="history.back()" style="
+                  margin-top:25px;
+                  padding:10px 22px;
+                  background:#1f1f1f;
+                  border:1px solid #333;
+                  border-radius:6px;
+                  color:#e5e5e5;
+                  font-size:0.95rem;
+                  cursor:pointer;
+                  transition:0.2s;
+              " onmouseover="this.style.background='#2a2a2a'" onmouseout="this.style.background='#1f1f1f'">
+                  Go Back
+              </button>
+
+          </div>
+          `;
+
+          return;
       }
 
       // Optional: handle resize for live width changes (without infinite reload)
@@ -353,7 +494,7 @@
         lastWidth = window.innerWidth
       })
     })
-  </script>
+  </script> -->
 
   <script>
       ; (function () {

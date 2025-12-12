@@ -8,13 +8,13 @@ from django.db import connection
 import time
 
 def home(request):
-    categories = cache.get("home_categories") 
-    if categories is None:
+    # categories = cache.get("home_categories") 
+    # if categories is None:
         # Wrap in list() to force evaluation immediately so we cache the DATA, not the lazy query
-        categories = list(
+    categories = list(
             Genre.objects.only("id", "name", "slug", "lucidicon").order_by("pk")
         )
-        cache.set("home_categories", categories, timeout=60 * 60 * 24)
+        # cache.set("home_categories", categories, timeout=60 * 60 * 24)
 
     # Fetch Books (Cache for 15 minutes) ---
     books = cache.get("home_books")

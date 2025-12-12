@@ -160,7 +160,7 @@
         background: rgba(0, 0, 0, 0.4);
         backdrop-filter: blur(5px);
         transition: opacity 0.3s ease;
-        z-index: -1;
+        z-index: 50;
     }
     .ownertext{
         margin-top:4px; 
@@ -172,7 +172,6 @@
     }
 </style>
 
-<div class="comment-overlay" style="display:none;"></div>
 
 <div class="comment-modal" id="commentModal" style="display:none;">
     {% csrf_token %}
