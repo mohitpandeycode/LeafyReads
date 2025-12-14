@@ -1,45 +1,235 @@
 <style>
+    /* --- 1. Utility: Stop Page Scroll --- */
+    body.no-scroll {
+        overflow: hidden;
+        position: fixed;
+        /* Ensures it locks on all mobile browsers */
+        width: 100%;
+    }
+
+    /* --- 2. Search Overlay & Box --- */
+    .mobsearchoverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(5px);
+        transition: opacity 0.3s ease;
+        z-index: 99;
+        /* Hidden by default */
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .mobsearch-box {
+        background: #2f2f2f;
+        border-radius: 14px;
+        padding: 14px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        width: 96%;
+        left: 2%;
+        /* Centers it horizontally (2% margin on each side) */
+
+        /* FIXED POSITIONING (Crucial for keyboard fix) */
+        position: fixed;
+        top: 30%;
+        z-index: 999;
+
+        /* Animation & State */
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(15px);
+        /* Start slightly down */
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Active States */
+    .mobsearchoverlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .mobsearch-box.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    /* KEYBOARD FIX: Moves box up when input is focused */
+    .mobsearch-box.keyboard-active {
+        top: 10%;
+        /* Pushes box up so keyboard doesn't hide it */
+    }
+
+    /* --- 3. Search Form Elements --- */
+    .mobsearch-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .mobsearch-input-wrap {
+        flex: 1;
+        position: relative;
+    }
+
+    .mobsearch-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: #666;
+    }
+
+    .mobsearch-input {
+        width: 100%;
+        height: 44px;
+        padding: 0 12px 0 38px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        /* 16px prevents iOS zoom on focus */
+        outline: none;
+    }
+
+    .mobsearch-input:focus {
+        border-color: #22a06b;
+    }
+
+    .mobsearch-btn {
+        height: 44px;
+        padding: 0 16px;
+        border-radius: 10px;
+        border: none;
+        background: #22a06b;
+        color: #fff;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+    }
+
+    .mobsearch-results {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid #eee;
+        /* Scrollable results inside the box */
+        max-height: 40vh;
+        overflow-y: auto;
+    }
+
+    .mobsearch-title {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
+    .mobsearch-empty {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #555;
+        font-size: 14px;
+    }
+
+    /* --- 4. Bottom Nav Bar --- */
     .mobile-bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: #ffffff;
-    border-top: 1px solid #ddd;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 9999;
-}
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #ffffff;
+        border-top: 1px solid #ddd;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 9;
+    }
 
-.mobile-bottom-nav .nav-item {
-    text-decoration: none;
-    color: #444;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 2px;
-}
+    body.dark-mode .mobile-bottom-nav {
+        background: rgb(26 32 44);
+        border-top: 1px solid #444;
+    }
 
-.mobile-bottom-nav .nav-item i {
-    width: 20px;
-    height: 20px;
-    margin: auto;
-}
+    .mobile-bottom-nav .nav-item {
+        text-decoration: none;
+        color: #717171;
+        font-size: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 2px;
+        cursor: pointer;
+    }
 
-.mobile-bottom-nav .active {
-    color: #008753;   /* green active color */
-    font-weight: 600;
-}
+    .mobile-bottom-nav .nav-item i {
+        width: 20px;
+        height: 20px;
+        margin: auto;
+    }
 
-.mobile-bottom-nav .active i {
-    color: #008753 !important;
-}
+    .mobile-bottom-nav .active {
+        color: #008753;
+        font-weight: 600;
+        transform: translateY(-5px) scale(1.1);
+        transition: transform 0.2s ease;
+    }
 
+    .mobile-bottom-nav .active i {
+        color: #008753 !important;
+    }
+
+    /* Button Reset for Theme Toggle */
+    .btn-reset {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (min-width: 769px) {
+        .mobile-bottom-nav {
+            display: none;
+        }
+    }
 </style>
+
+<div class="mobsearchoverlay"></div>
+
+<div class="mobsearch-box">
+    <form class="mobsearch-form" action="{% url 'searchbooks' %}" method="get">
+        <div class="mobsearch-input-wrap">
+            <i data-lucide="search" class="mobsearch-icon"></i>
+            <input type="text" id="mob-search-input" class="mobsearch-input" placeholder="Search..." name="q" />
+        </div>
+
+        <button type="submit" class="mobsearch-btn">
+            <i data-lucide="search"></i>
+            <span>Search</span>
+        </button>
+    </form>
+
+    <div class="mobsearch-results">
+        <p class="mobsearch-title">Search results</p>
+        <div class="mobsearch-empty">
+            <i data-lucide="search"></i>
+            <span>No results found</span>
+        </div>
+    </div>
+</div>
+
 <div class="mobile-bottom-nav">
     <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">
         <i data-lucide="home"></i>
@@ -51,22 +241,200 @@
         <span>Library</span>
     </a>
 
+    {% if user.is_authenticated %}
     <a href="{% url 'myBooks' %}" class="nav-item {% if request.path == '/book/my-books/' %}active{% endif %}">
         <i data-lucide="bookmark"></i>
         <span>Read Later</span>
     </a>
+    {% endif %}
 
     <a href="{% url 'community' %}" class="nav-item {% if request.path == '/community/' %}active{% endif %}">
         <i data-lucide="users"></i>
         <span>Community</span>
     </a>
 
-    <a href="{% url 'aboutUs' %}" class="nav-item {% if request.path == '/aboutus/' %}active{% endif %}">
-        <i data-lucide="info"></i>
-        <span>About Us</span>
-    </a>
-</div>
+    <div id="mobsearch" class="nav-item">
+        <i data-lucide="search"></i>
+        <span>Search</span>
+    </div>
 
+    <div class="nav-item theme-toggle-item">
+        <button id="theme-toggle-mobile" class="theme-toggle-touch theme-toggle-handler btn-reset">
+            <i data-lucide="sun"></i>
+        </button>
+        <span>Dark/Light</span>
+    </div>
+</div>
 <script>
-    lucide.createIcons();
+    // ISOLATED SCOPE TO PREVENT CONFLICTS
+    {
+        lucide.createIcons();
+
+        // --- Elements ---
+        const mobileSearchBtn = document.getElementById('mobsearch');
+        const overlay = document.querySelector('.mobsearchoverlay');
+        const searchBox = document.querySelector('.mobsearch-box');
+        const searchInput = document.getElementById('mob-search-input');
+        const resultsContainer = document.querySelector('.mobsearch-results');
+        const localBody = document.body;
+
+        // --- State Variables ---
+        let typingTimer;
+        let abortController;
+
+        // --- 1. UI LOGIC: Open/Close & Keyboard ---
+        const openSearch = () => {
+            if (!overlay || !searchBox) return;
+            overlay.classList.add('active');
+            searchBox.classList.add('active');
+            localBody.classList.add('no-scroll');
+            if (mobileSearchBtn) mobileSearchBtn.style.color = '#008753';
+
+            // Show Result Box Immediately
+            if (resultsContainer) {
+                resultsContainer.style.display = 'block';
+                // Reset to default message
+                resultsContainer.innerHTML = `<div class="mobsearch-empty"><i data-lucide="search"></i><span>Type to search...</span></div>`;
+                lucide.createIcons();
+            }
+
+            setTimeout(() => { if (searchInput) searchInput.focus(); }, 200);
+        };
+
+        const closeSearch = () => {
+            if (!overlay || !searchBox) return;
+            overlay.classList.remove('active');
+            searchBox.classList.remove('active');
+            localBody.classList.remove('no-scroll');
+            if (mobileSearchBtn) mobileSearchBtn.style.color = "";
+            searchBox.classList.remove('keyboard-active');
+
+            if (searchInput) {
+                searchInput.blur();
+                searchInput.value = '';
+            }
+            if (resultsContainer) {
+                resultsContainer.style.display = 'none';
+                resultsContainer.innerHTML = '';
+            }
+        };
+
+        if (searchInput) {
+            searchInput.addEventListener('focus', () => {
+                if (searchBox) searchBox.classList.add('keyboard-active');
+            });
+            searchInput.addEventListener('blur', () => {
+                if (searchBox) searchBox.classList.remove('keyboard-active');
+            });
+        }
+
+        if (mobileSearchBtn) mobileSearchBtn.addEventListener('click', openSearch);
+        if (overlay) overlay.addEventListener('click', closeSearch);
+
+
+        // --- 2. API LOGIC ---
+        const fetchResults = async (query) => {
+            if (abortController) abortController.abort();
+            abortController = new AbortController();
+
+            try {
+                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+                    signal: abortController.signal
+                });
+
+                if (!response.ok) throw new Error("Network error");
+                const data = await response.json();
+                const results = data.results;
+
+                resultsContainer.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'mobsearch-title';
+                titleEl.textContent = `Results for "${query}"`;
+                fragment.appendChild(titleEl);
+
+                if (!results || results.length === 0) {
+                    const noRes = document.createElement('div');
+                    noRes.className = 'mobsearch-empty';
+                    noRes.innerHTML = `<i data-lucide="search"></i><span>No results found</span>`;
+                    fragment.appendChild(noRes);
+                } else {
+                    results.forEach(book => {
+                        const link = document.createElement('a');
+                        link.href = `/book/library/open/${book.slug}/`;
+                        link.className = 'history-item';
+
+                        link.innerHTML = `
+                            <i data-lucide="notebook"></i>  
+                            <div class="history-item-info">
+                                <span class="history-item-title">${escapeHtml(book.title)}</span>
+                                <span class="history-item-author">by ${escapeHtml(book.author)}</span>
+                            </div>
+                        `;
+                        fragment.appendChild(link);
+                    });
+                }
+
+                resultsContainer.appendChild(fragment);
+                resultsContainer.style.display = 'block';
+                
+                // Optimized: Only scan the results container for icons
+                lucide.createIcons({
+                  root: resultsContainer,
+                  nameAttr: 'data-lucide'
+                });
+
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                console.error("Search failed", err);
+                resultsContainer.innerHTML = `<div class="mobsearch-empty"><span>Error loading results.</span></div>`;
+            }
+        };
+
+        // --- 3. INPUT HANDLER with SKELETON LOADER ---
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                clearTimeout(typingTimer);
+                const query = searchInput.value.trim();
+
+                resultsContainer.style.display = 'block';
+
+                if (query.length > 1) {
+                    // --- NEW: Inject Skeleton Loader HTML ---
+                    const skeletonHTML = `
+                        <div class="skeleton-item">
+                            <div class="skeleton-icon"></div>
+                            <div class="skeleton-text-col">
+                                <div class="skeleton-line long"></div>
+                                <div class="skeleton-line short"></div>
+                            </div>
+                        </div>`;
+
+                    // Repeat it 3 times to look like a list
+                    resultsContainer.innerHTML = `
+                        <div class="mobsearch-title">Searching...</div>
+                        ${skeletonHTML}
+                        ${skeletonHTML}
+                        ${skeletonHTML}
+                    `;
+
+                    typingTimer = setTimeout(() => fetchResults(query), 300);
+                } else if (query.length === 0) {
+                    resultsContainer.innerHTML = `<div class="mobsearch-empty"><i data-lucide="search"></i><span>Type to search...</span></div>`;
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        const escapeHtml = (unsafe) => {
+            if (!unsafe) return "Unknown";
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    }
 </script>

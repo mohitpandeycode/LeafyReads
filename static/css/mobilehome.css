@@ -46,11 +46,7 @@
         gap: 1rem;
     }
 
-    .books-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.4rem;
-    }
+
 
     .book-item h3 {
         font-size: 1rem;
@@ -195,24 +191,9 @@
         gap: 1rem !important;
     }
 
-    .books-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-
-    .book-item img.imgbook {
-        height: 200px !important;
-    }
-
     .book-item h3 {
         font-size: 0.9rem;
         font-weight: 700;
-    }
-
-    .book-item {
-        width: 170px;
-        margin: auto;
     }
 
     .btn-donate {
@@ -299,11 +280,11 @@
     }
 
     .post-image {
-        max-height: 210px;
+        max-height: 250px;
     }
 
     .post-images {
-        max-height: 200px;
+        max-height: 250px;
     }
 
     .action-btn {
@@ -398,6 +379,10 @@
     .send-btn svg {
         width: 22px;
         height: 22px;
+    }
+    .mentionedbook{
+        width: 95%;
+        left: 2%;
     }
 }
 

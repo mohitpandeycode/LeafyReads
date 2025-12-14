@@ -231,7 +231,7 @@
               data-lucide="bell"></i>
             <p class="notify-dot"></p>
           </button>
-          <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
+          <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn theme-toggle-handler"><i data-lucide="sun"></i></button>
           {% if user.is_authenticated %}
           <div class="dropdown">
             <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i
@@ -264,6 +264,12 @@
                 <i data-lucide="circle-question-mark"></i>
                 <span>Get Help</span>
               </li>
+              <a href="{% url 'aboutUs' %}">
+                <li class="dropdown-item">
+                  <i data-lucide="info"></i>  
+                  <span>About Us</span>
+                </li>
+              </a>
               {% endif %}
               <li class="separator"></li>
               <a href="{% url 'logout' %}">
@@ -421,226 +427,171 @@
       }
     })
   </script>
-  <!-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const MIN_WIDTH = 600 // breakpoint for desktop view
-      const isMobileSize = window.innerWidth < MIN_WIDTH
+  
+<script>
+    ; (function () {
+        'use strict';
 
-      if (isMobileSize) {
-        document.body.innerHTML = `
-          <div style="
-              display:flex;
-              flex-direction:column;
-              justify-content:center;
-              align-items:center;
-              height:100vh;
-              width:100vw;
-              margin:0;
-              padding:0;
-              background:#101114;
-              color:#e5e5e5;
-              font-family: 'Inter', system-ui, sans-serif;
-              text-align:center;
-          ">
-
-              <div style="
-                  max-width:360px;
-                  padding:20px;
-              ">
-                  <h1 style="
-                      font-size:1.3rem;
-                      font-weight:600;
-                      margin-bottom:12px;
-                  ">
-                      Mobile Version Not Supported
-                  </h1>
-
-                  <p style="
-                      font-size:0.8rem;
-                      line-height:1.5;
-                      color:#b1b1b1;
-                  ">
-                      This WebPage is not available on mobile devices.  
-                      Please visit using a laptop, desktop, or iPads.
-                  </p>
-              </div>
-
-              <button onclick="history.back()" style="
-                  margin-top:25px;
-                  padding:10px 22px;
-                  background:#1f1f1f;
-                  border:1px solid #333;
-                  border-radius:6px;
-                  color:#e5e5e5;
-                  font-size:0.95rem;
-                  cursor:pointer;
-                  transition:0.2s;
-              " onmouseover="this.style.background='#2a2a2a'" onmouseout="this.style.background='#1f1f1f'">
-                  Go Back
-              </button>
-
-          </div>
-          `;
-
-          return;
-      }
-
-      // Optional: handle resize for live width changes (without infinite reload)
-      let lastWidth = window.innerWidth
-      window.addEventListener('resize', () => {
-        if ((lastWidth >= MIN_WIDTH && window.innerWidth < MIN_WIDTH) || (lastWidth < MIN_WIDTH && window.innerWidth >= MIN_WIDTH)) {
-          location.reload()
-        }
-        lastWidth = window.innerWidth
-      })
-    })
-  </script> -->
-
-  <script>
-      ; (function () {
-        'use strict'
-
-        // Tracks the current active request for cancellation (prevents race conditions)
+        // Tracks the current active request for cancellation
         let currentController = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-          // --- Nav Search Bar AJAX ---
-          const navSearchForm = document.getElementById('navSearch')
-          const navSearchInput = document.getElementById('navSearchInput')
-          const navResultsBox = document.querySelector('.nav-results')
-          const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null
+            // --- Nav Search Bar Elements ---
+            const navSearchForm = document.getElementById('navSearch');
+            const navSearchInput = document.getElementById('navSearchInput');
+            const navResultsBox = document.querySelector('.nav-results');
+            const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null;
 
-          if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
+            if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
 
-            const fetchNavResults = async (query) => {
+                // --- 1. Fetch Logic ---
+                const fetchNavResults = async (query) => {
+                    // Cancel previous request
+                    if (currentController) currentController.abort();
+                    currentController = new AbortController();
 
-              // Cancel the previous running request
-              if (currentController) currentController.abort();
-              currentController = new AbortController();
+                    try {
+                        const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+                            signal: currentController.signal
+                        });
 
-              // Show immediate Loading State
-              navHistoryContainer.innerHTML = `
-                    <div class="nav-search-history-title">Search results</div>
-                    <div class="nav-history-item loading-state">
-                        <i data-lucide="loader" class="animate-spin"></i>
-                        <div class="nav-history-item-info">
-                            <span class="nav-history-item-title">Searching...</span>
-                        </div>
-                    </div>
-                `;
-              navResultsBox.style.display = 'block';
-              navSearchForm.classList.add('results-open');
-              navSearchForm.style.borderRadius = '15px 15px 0 0';
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
+                        const data = await response.json();
+                        const results = data.results;
 
-              try {
-                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
-                  signal: currentController.signal
+                        // Render results
+                        navHistoryContainer.innerHTML = '';
+                        const fragment = document.createDocumentFragment();
+
+                        const titleEl = document.createElement('div');
+                        titleEl.className = 'nav-search-history-title';
+                        titleEl.textContent = `Results for "${query}"`;
+                        fragment.appendChild(titleEl);
+
+                        if (!results || results.length === 0) {
+                            const noResultEl = document.createElement('div');
+                            noResultEl.className = 'nav-history-item';
+                            noResultEl.innerHTML = `
+                                <i data-lucide="search"></i>
+                                <div class="nav-history-item-info">
+                                    <span class="nav-history-item-title">No results found</span>
+                                </div>`;
+                            fragment.appendChild(noResultEl);
+                        } else {
+                            results.forEach((book) => {
+                                const link = document.createElement('a');
+                                link.href = `/book/library/open/${book.slug}`;
+                                link.className = 'nav-history-item';
+
+                                // XSS Safe Rendering
+                                link.innerHTML = `
+                                    <i data-lucide="notebook"></i>  
+                                    <div class="nav-history-item-info">
+                                        <span class="nav-history-item-title">${escapeHtml(book.title)}</span>
+                                        <span class="nav-history-item-author">by ${escapeHtml(book.author)}</span>
+                                    </div>
+                                `;
+                                fragment.appendChild(link);
+                            });
+                        }
+
+                        navHistoryContainer.appendChild(fragment);
+                        
+                        // OPTIMIZATION: Scan only the new container
+                        if (window.lucide) {
+                            lucide.createIcons({
+                                root: navHistoryContainer,
+                                nameAttr: 'data-lucide'
+                            });
+                        }
+
+                    } catch (err) {
+                        if (err.name === 'AbortError') return; // Ignore user cancellation
+
+                        console.error('Nav search error:', err);
+                        navHistoryContainer.innerHTML = `
+                            <div class="nav-search-history-title">Error</div>
+                            <div class="nav-history-item">
+                                <span class="nav-history-item-title">Could not load results</span>
+                            </div>`;
+                    }
+                };
+
+                // --- 2. Input Listener (Debounce + Skeleton) ---
+                let navTypingTimer;
+                const navDebounceDelay = 300;
+
+                navSearchInput.addEventListener('input', () => {
+                    clearTimeout(navTypingTimer);
+                    const query = navSearchInput.value.trim();
+
+                    if (query.length > 1) { // Trigger after 2 chars
+                        // Show Box & Styling
+                        navResultsBox.style.display = 'block';
+                        navSearchForm.classList.add('results-open');
+                        navSearchForm.style.borderRadius = '15px 15px 0 0';
+
+                        // Show Skeleton Immediately
+                        const skeletonHTML = `
+                            <div class="skeleton-item">
+                                <div class="skeleton-icon"></div>
+                                <div class="skeleton-text-col">
+                                    <div class="skeleton-line long"></div>
+                                    <div class="skeleton-line short"></div>
+                                </div>
+                            </div>`;
+                        
+                        navHistoryContainer.innerHTML = `
+                            <div class="nav-search-history-title">Searching...</div>
+                            ${skeletonHTML}
+                            ${skeletonHTML}
+                            ${skeletonHTML}
+                        `;
+
+                        navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
+
+                    } else {
+                        // Hide Box
+                        navResultsBox.style.display = 'none';
+                        navSearchForm.classList.remove('results-open');
+                        navSearchForm.style.borderRadius = '15px';
+                        if (currentController) currentController.abort();
+                    }
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                // --- 3. UI Helpers ---
+                document.addEventListener('click', (e) => {
+                    if (!navSearchForm.contains(e.target)) {
+                        navResultsBox.style.display = 'none';
+                        navSearchForm.style.borderRadius = '15px';
+                        navSearchForm.classList.remove('results-open');
+                    }
+                });
 
-                const data = await response.json();
-                const results = data.results;
-
-                // Render results
-                navHistoryContainer.innerHTML = '';
-                const fragment = document.createDocumentFragment();
-
-                const titleEl = document.createElement('div');
-                titleEl.className = 'nav-search-history-title';
-                titleEl.textContent = 'Search results';
-                fragment.appendChild(titleEl);
-
-                if (!results.length) {
-                  const noResultEl = document.createElement('div');
-                  noResultEl.className = 'nav-history-item';
-                  noResultEl.innerHTML = `<i data-lucide="search"></i>
-                            <div class="nav-history-item-info">
-                                <span class="nav-history-item-title">No results found</span>
-                            </div>`;
-                  fragment.appendChild(noResultEl);
-                } else {
-                  results.forEach((book) => {
-                    const link = document.createElement('a');
-                    link.href = `/book/library/open/${book.slug}`;
-                    link.className = 'nav-history-item';
-
-                    const icon = document.createElement('i')
-                    icon.setAttribute('data-lucide', 'search')
-
-                    const infoDiv = document.createElement('div')
-                    infoDiv.className = 'nav-history-item-info'
-
-                    const titleSpan = document.createElement('span')
-                    titleSpan.className = 'nav-history-item-title'
-                    titleSpan.textContent = book.title || 'Untitled'
-
-                    const authorSpan = document.createElement('span')
-                    authorSpan.className = 'nav-history-item-author'
-                    authorSpan.textContent = ` by ${book.author || 'Unknown Author'}`
-
-                    infoDiv.appendChild(titleSpan)
-                    infoDiv.appendChild(authorSpan)
-                    link.appendChild(icon)
-                    link.appendChild(infoDiv)
-                    fragment.appendChild(link)
-                  });
-                }
-                navHistoryContainer.appendChild(fragment);
-                if (window.lucide) lucide.createIcons();
-
-              } catch (err) {
-                // Ignore AbortError: request was cancelled by user typing faster
-                if (err.name === 'AbortError') return;
-
-                console.error('Nav search error:', err);
-                navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Search results</div><div class="nav-history-item"><div class="nav-history-item-info"><span class="nav-history-item-title">Error fetching results</span></div></div>`;
-                if (window.lucide) lucide.createIcons();
-              }
+                navSearchInput.addEventListener('focus', () => {
+                    const query = navSearchInput.value.trim();
+                    if (query.length > 1) {
+                        navResultsBox.style.display = 'block';
+                        navSearchForm.classList.add('results-open');
+                        navSearchForm.style.borderRadius = '15px 15px 0 0';
+                    }
+                });
+                
+                // Helper for XSS Security
+                const escapeHtml = (unsafe) => {
+                    if (!unsafe) return "Unknown";
+                    return unsafe
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                };
             }
-
-            // --- DEBOUNCE & INPUT LISTENER ---
-            let navTypingTimer;
-            const navDebounceDelay = 300;
-
-            navSearchInput.addEventListener('input', () => {
-              clearTimeout(navTypingTimer);
-              const query = navSearchInput.value.trim();
-
-              if (query.length > 2) {
-                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
-
-              } else {
-                // Hide the box if the query is too short
-                navResultsBox.style.display = 'none';
-                navSearchForm.classList.remove('results-open');
-                navSearchForm.style.borderRadius = '15px';
-                // Cancel any pending fetch when search bar is cleared
-                if (currentController) currentController.abort();
-              }
-            });
-
-            // --- OUTSIDE CLICK & FOCUS LISTENERS ---
-            document.addEventListener('click', (e) => {
-              if (!navSearchForm.contains(e.target)) {
-                navResultsBox.style.display = 'none';
-                navSearchForm.style.borderRadius = '15px';
-                navSearchForm.classList.remove('results-open');
-              }
-            });
-
-            navSearchInput.addEventListener('focus', () => {
-              const query = navSearchInput.value.trim();
-              if (query.length > 2) {
-                navResultsBox.style.display = 'block';
-                fetchNavResults(query);
-              }
-            });
-          }
         });
-      })();
-  </script>
+    })();
+</script>
 </body>
 
 </html>

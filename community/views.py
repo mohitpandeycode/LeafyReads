@@ -65,7 +65,7 @@ def community(request):
         if image_file:
             PostImage.objects.create(post=post, image=image_file)
 
-        messages.success(request, "Your post has been created!")
+        messages.success(request, "Your post has been published!")
         return redirect("community")
 
     context = {

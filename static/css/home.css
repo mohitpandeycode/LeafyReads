@@ -576,6 +576,69 @@ section {
     animation: fadeUp 0.8s ease forwards;
     animation-delay: 0.8s;
 }
+/* SKELETON LOADER ANIMATION */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-bottom: 1px solid #eee; /* Light mode border */
+}
+.skeleton-line {
+    height: 12px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    flex-grow: 1;
+}
+
+/* Dark mode support if needed, assuming parent handles theme */
+.dark-mode .skeleton-item {
+    border-bottom: 1px solid #333;
+}
+
+.skeleton-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: #e0e0e0;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-text-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.skeleton-line {
+    height: 12px;
+    border-radius: 4px;
+    background: #e0e0e0;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-line.short { width: 40%; }
+.skeleton-line.long { width: 80%; }
+
+/* Dark mode adjustments for skeleton colors */
+body.dark-mode .skeleton-icon,
+body.dark-mode .skeleton-line {
+    background: #333;
+    background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+    background-size: 200% 100%;
+}
 
 .results {
     display: none;
@@ -609,6 +672,7 @@ body.dark-mode .results{
     font-size: 13px;
     color: #6b7280;
     margin-bottom: 8px;
+    text-align: start;
 }
 
 .history-item {
@@ -819,16 +883,47 @@ body.dark-mode .dark-image {
 .books-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem
+    gap: 10px;
 }
 
+/* Tablets */
+@media (min-width: 640px) {
+    .books-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Small desktops */
+@media (min-width: 768px) {
+    .books-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+}
+
+/* Large desktops */
+@media (min-width: 1024px) {
+    .books-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+
 .book-item {
-    width: 200px
+    width: 100%;
+    max-width: 180px;
+    margin: 0px auto 10px auto;
+}
+
+.imgbook {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
 }
 
 .book-item img {
     width: 95%;
-    height: 230px;
+    height: 210px;
     border-radius: .5rem .5rem 0 0;
     box-shadow: 4px 0 20px -1px rgb(0 0 0 / .64), 4px -4px 10px 0 rgb(0 0 0 / .64);
     aspect-ratio: 2 / 3;
@@ -1175,9 +1270,6 @@ body.dark-mode .hero-bg {
         display: inline
     }
 
-    .books-grid {
-        grid-template-columns: repeat(3, 1fr)
-    }
 }
 
 @media (min-width:768px) {
@@ -1189,10 +1281,6 @@ body.dark-mode .hero-bg {
         font-size: 2.25rem
     }
 
-    .books-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2rem
-    }
 
     .features-grid {
         grid-template-columns: repeat(3, 1fr)
@@ -1212,10 +1300,6 @@ body.dark-mode .hero-bg {
 }
 
 @media (min-width:1024px) {
-    .books-grid {
-        grid-template-columns: repeat(6, 1fr)
-    }
-
     .footer-grid {
         grid-template-columns: repeat(5, 1fr)
     }

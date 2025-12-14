@@ -312,61 +312,124 @@ document.addEventListener("DOMContentLoaded", () => {
     const mentionedBookBox = document.querySelector(".mentionedbook");
     const overlay = document.getElementById("overlay");
 
-    // Search elements
-    const searchInput = document.querySelector(".mentionedbook .search-container input");
-    const watchedSection = document.querySelector(".watched-section");
-    const searchResultsSection = document.querySelector(".search-results-section");
-    const searchResultsList = document.getElementById("searchResultsList");
+    // --- Search Elements ---
+const searchInput = document.querySelector(".mentionedbook .search-container input");
+const watchedSection = document.querySelector(".watched-section");
+const searchResultsSection = document.querySelector(".search-results-section");
+const searchResultsList = document.getElementById("searchResultsList");
 
-    // --- Live Search Logic ---
-    let debounceTimer = null;
+// --- Live Search State ---
+let debounceTimer = null;
+let searchController = null;
 
-    if (searchInput) {
-        searchInput.addEventListener("input", () => {
+// --- XSS Protection Helper ---
+const escapeHtml = (unsafe) => {
+    if (!unsafe) return "";
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
+// --- Input Listener ---
+if (searchInput) {
+    searchInput.addEventListener("input", () => {
         const q = searchInput.value.trim();
+        clearTimeout(debounceTimer);
 
-        if (!q) {
+        // CHANGE: Only search if 2 or more characters
+        if (q.length < 2) {
+            // Reset UI when empty or just 1 char
             watchedSection.style.display = "block";
             searchResultsSection.style.display = "none";
             searchResultsList.innerHTML = "";
+            
+            // Cancel any pending request
+            if (searchController) searchController.abort();
             return;
         }
 
+        // Show Results Section immediately
         watchedSection.style.display = "none";
         searchResultsSection.style.display = "block";
-        searchResultsList.innerHTML = `<p style="padding:10px; font-size:13px; color:#666;">Searching...</p>`;
 
-        clearTimeout(debounceTimer);
+        // Render Skeleton Loader
+        const skeletonHTML = `
+            <div class="skeleton-item">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-line"></div>
+            </div>`;
+        
+        // Repeat skeleton 3 times
+        searchResultsList.innerHTML = skeletonHTML + skeletonHTML + skeletonHTML;
+
+        // Debounce API Call (Wait 300ms)
         debounceTimer = setTimeout(() => performSearch(q), 300);
-        });
-    }
+    });
+}
 
-    function performSearch(query) {
-      fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.results || data.results.length === 0) {
+// --- API Search Logic ---
+async function performSearch(query) {
+    // 1. Cancel previous stale request
+    if (searchController) searchController.abort();
+    searchController = new AbortController();
+
+    try {
+        const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+            signal: searchController.signal
+        });
+
+        if (!response.ok) throw new Error("Network response was not ok");
+        
+        const data = await response.json();
+
+        // 2. Handle No Results
+        if (!data.results || data.results.length === 0) {
             searchResultsList.innerHTML = `<p style="padding:10px; font-size:13px; color:#666;">No books found.</p>`;
             return;
-          }
-          searchResultsList.innerHTML = data.results.map(book => `
+        }
+
+        // 3. Render Results (Secure Mapping)
+        searchResultsList.innerHTML = data.results.map(book => {
+            const safeTitle = escapeHtml(book.title);
+            const safeAuthor = escapeHtml(book.author);
+            const safeSlug = escapeHtml(book.slug);
+            const displayTitle = `${safeTitle} By ${safeAuthor}`;
+
+            return `
             <div class="watched-book flexDA search-book-item"
-                 data-book-slug="${book.slug}"
-                 data-book-title="${book.title} By ${book.author}">
+                 data-book-slug="${safeSlug}"
+                 data-book-title="${displayTitle}">
               <p class="flexDA" style="font-size: 14px;">
-                <i data-lucide="search"></i>
-                ${book.title} By ${book.author}
+                <i data-lucide="book-plus"></i> 
+                ${displayTitle}
               </p>
             </div>
-          `).join("");
+            `;
+        }).join("");
 
-          if (window.lucide) lucide.createIcons();
-          attachSearchBookClicks();
-        })
-        .catch(err => {
-          searchResultsList.innerHTML = `<p style="color:red; padding:10px;">Error searching.</p>`;
-        });
+        // 4. Performance Optimization: Only scan the new list for icons
+        if (window.lucide) {
+            lucide.createIcons({
+                root: searchResultsList,
+                nameAttr: 'data-lucide'
+            });
+        }
+
+        // 5. Re-attach clicks
+        if (typeof attachSearchBookClicks === 'function') {
+            attachSearchBookClicks();
+        }
+
+    } catch (err) {
+        if (err.name === 'AbortError') return;
+        
+        console.error("Search Error:", err);
+        searchResultsList.innerHTML = `<p style="color:red; padding:10px; font-size:13px;">Error searching.</p>`;
     }
+}
 
     function attachSearchBookClicks() {
       document.querySelectorAll(".search-book-item").forEach(item => {
