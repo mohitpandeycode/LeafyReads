@@ -14,6 +14,7 @@ urlpatterns = [
     path('book/', include('books.urls')),
     path('community/', include('community.urls')),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
+    path('ht/', include('health_check.urls')),
 
 ]
 if settings.DEBUG:

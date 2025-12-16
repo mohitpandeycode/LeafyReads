@@ -54,6 +54,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'debug_toolbar',
     'django.contrib.postgres',
+    'health_check',
+    'health_check.db',
+    'health_check.cache',
+    'health_check.storage',
     
 ]
 
@@ -112,23 +116,23 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = 'LeafyReads.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'LeafyReads',
-        'USER': 'postgres',
-        'PASSWORD': 'mohit@123@123', 
-        'HOST': 'localhost',
-        'PORT': '5433',
-    }
-}
-
-
-# DATABASE_URL = env('DATABASE_URL')
 # DATABASES = {
-#     'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600)
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'LeafyReads',
+#         'USER': 'postgres',
+#         'PASSWORD': 'mohit@123@123', 
+#         'HOST': 'localhost',
+#         'PORT': '5433',
+#     }
 # }
-# SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+
+
+DATABASE_URL = env('DATABASE_URL')
+DATABASES = {
+    'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600)
+}
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 CACHES = {
     "default": {
@@ -209,17 +213,16 @@ CKEDITOR_5_FILE_UPLOAD_PERMISSION = lambda user: user.is_staff
 CKEDITOR_5_IMAGE_BACKEND = "pillow"
 
 if ENVIRONMENT != 'development':
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_HSTS_SECONDS = 3600
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

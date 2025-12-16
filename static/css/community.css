@@ -75,7 +75,7 @@ body {
     flex-direction: column;
     gap: 20px;
     position: sticky;
-    top: 24px;
+    top: 60px;
     height: fit-content;
 }
 
