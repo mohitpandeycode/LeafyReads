@@ -11,36 +11,53 @@ from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404
 from django.utils.timesince import timesince
 from django.template.defaultfilters import truncatechars
-
+from django.core.cache import cache
 
 def community(request):
-    # Fetch posts with calculated counts instead of loading objects
-    posts_qs = Post.objects.select_related('author', 'book').annotate(
-        likes_count=Count('likes', distinct=True),
-        comments_count=Count('comments', distinct=True)
-    ).order_by('-created_at')
+    # --- 1. FETCH SHARED FEED (CACHED) ---
+    page_number = request.GET.get('page', '1')
+    feed_cache_key = f"community_feed:page:{page_number}"
+    posts_page = cache.get(feed_cache_key)
 
+    if not posts_page:
+        posts_qs = Post.objects.select_related('author', 'book').annotate(
+            likes_count=Count('likes', distinct=True),
+            comments_count=Count('comments', distinct=True)
+        ).prefetch_related('images').order_by('-created_at')
+
+        paginator = Paginator(posts_qs, 20)
+        posts_page = paginator.get_page(page_number)
+        
+        # Save to Redis for 15 minutes
+        cache.set(feed_cache_key, posts_page, timeout=900)
+
+    # --- 2. PERSONALIZE FEED ---
     if request.user.is_authenticated:
-        is_liked = Post.likes.through.objects.filter(
-            post_id=OuterRef('pk'),
-            user_id=request.user.id
-        )
-        posts_qs = posts_qs.annotate(has_liked=Exists(is_liked))
+        # Get the IDs of the ~20 posts on this page
+        visible_post_ids = [p.id for p in posts_page.object_list]
+        
+        # Efficiently fetch which of THESE posts the user liked
+        liked_post_ids = set(Post.likes.through.objects.filter(
+            user_id=request.user.id,
+            post_id__in=visible_post_ids
+        ).values_list('post_id', flat=True))
+        
+        # Attach the status to the post objects
+        for post in posts_page:
+            post.has_liked = post.id in liked_post_ids
 
-    # Prefetch images
-    posts_qs = posts_qs.prefetch_related('images')
-
-    # Only fetch 10 posts at a time to keep the page fast
-    paginator = Paginator(posts_qs, 20) 
-    page_number = request.GET.get('page')
-    posts_page = paginator.get_page(page_number)
-
-    # Optimized watched book query
-    books =[]
+    # --- 3. FETCH SIDEBAR (USER CACHED) ---
+    books = []
     if request.user.is_authenticated:
-        books = ReadBy.objects.filter(user=request.user).select_related('book')[:5]
+        sidebar_key = f"user_sidebar:{request.user.id}"
+        books = cache.get(sidebar_key)
+        
+        if not books:
+            # Fetch and cache user's watched books for 30 mins
+            books = list(ReadBy.objects.filter(user=request.user).select_related('book')[:5])
+            cache.set(sidebar_key, books, timeout=1800)
 
-    # POST SUBMISSION LOGIC ---
+    # --- 4. POST SUBMISSION LOGIC ---
     if request.method == "POST":
         content = request.POST.get("content", "").strip()
         book_slug = request.POST.get("book", "").strip()
@@ -61,9 +78,12 @@ def community(request):
             book=book_obj
         )
 
-        # Handle Image
         if image_file:
             PostImage.objects.create(post=post, image=image_file)
+        try:
+            cache.delete_pattern("community_feed:page:*")
+        except AttributeError:
+            cache.clear()
 
         messages.success(request, "Your post has been published!")
         return redirect("community")
@@ -73,6 +93,67 @@ def community(request):
         "books": books,
     }
     return render(request, "community.html", context)
+
+# def community(request):
+#     # Fetch posts with calculated counts instead of loading objects
+#     posts_qs = Post.objects.select_related('author', 'book').annotate(
+#         likes_count=Count('likes', distinct=True),
+#         comments_count=Count('comments', distinct=True)
+#     ).order_by('-created_at')
+
+#     if request.user.is_authenticated:
+#         is_liked = Post.likes.through.objects.filter(
+#             post_id=OuterRef('pk'),
+#             user_id=request.user.id
+#         )
+#         posts_qs = posts_qs.annotate(has_liked=Exists(is_liked))
+
+#     # Prefetch images
+#     posts_qs = posts_qs.prefetch_related('images')
+
+#     # Only fetch 10 posts at a time to keep the page fast
+#     paginator = Paginator(posts_qs, 20) 
+#     page_number = request.GET.get('page')
+#     posts_page = paginator.get_page(page_number)
+
+#     # Optimized watched book query
+#     books =[]
+#     if request.user.is_authenticated:
+#         books = ReadBy.objects.filter(user=request.user).select_related('book')[:5]
+
+#     # POST SUBMISSION LOGIC ---
+#     if request.method == "POST":
+#         content = request.POST.get("content", "").strip()
+#         book_slug = request.POST.get("book", "").strip()
+#         image_file = request.FILES.get("image", None)
+
+#         if not content and not book_slug and not image_file:
+#             messages.error(request, "Cannot create an empty post.")
+#             return redirect("community")
+
+#         book_obj = None
+#         if book_slug:
+#             book_obj = Book.objects.filter(slug=book_slug).first()
+
+#         # Create Post
+#         post = Post.objects.create(
+#             author=request.user,
+#             content=content,
+#             book=book_obj
+#         )
+
+#         # Handle Image
+#         if image_file:
+#             PostImage.objects.create(post=post, image=image_file)
+
+#         messages.success(request, "Your post has been published!")
+#         return redirect("community")
+
+#     context = {
+#         "posts": posts_page,
+#         "books": books,
+#     }
+#     return render(request, "community.html", context)
 
 
 
