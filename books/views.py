@@ -37,12 +37,47 @@ def home(request, slug):
 
         transaction.on_commit(save_read)
 
+    # --- DEVICE DETECTION & PAGINATION ---
+    full_content = getattr(book.content, "content", "")
+    
+    if request.user_agent.is_mobile:
+        template_name = "mobileBook.html"
+        
+        # 1. Turn the long string into a list of paragraphs
+        # We split by '</p>' and add it back to maintain valid HTML
+        # The 'if p.strip()' removes any empty chunks
+        content_chunks = [p + '</p>' for p in full_content.split('</p>') if p.strip()]
+
+        # 2. Setup Paginator
+        # 'paragraphs_per_page' controls how long a page is. 
+        # Adjust '3' to '5' or '2' depending on how long your paragraphs usually are.
+        paragraphs_per_page = 20 
+        paginator = Paginator(content_chunks, paragraphs_per_page)
+
+        # 3. Get the current page number from the URL (e.g., ?page=2)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        # 4. Join the list of paragraphs back into a string to display
+        # We override the 'bookcontent' variable just for this mobile view
+        display_content = "".join(page_obj.object_list)
+        
+        # We pass 'page_obj' to context so the template can show Next/Prev buttons
+        pagination_context = page_obj 
+
+    else:
+        # Desktop view: No pagination, show everything
+        template_name = "book.html"
+        display_content = full_content
+        pagination_context = None
+
     return render(
         request,
-        "book.html",
+        template_name,
         {
             "book": book,
-            "bookcontent": getattr(book.content, "content", ""),
+            "bookcontent": display_content, # Contains only the current page's text on mobile
+            "page_obj": pagination_context, # Needed for Next/Prev buttons
             "saved": getattr(book, "is_saved", False),
             "liked": getattr(book, "is_liked", False),
         },

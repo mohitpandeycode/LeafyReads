@@ -28,6 +28,7 @@ django-health-check==3.20.0
 django-js-asset==3.1.2
 django-redis==6.0.0
 django-unfold==0.67.0
+django-user-agents==0.4.0
 gprof2dot==2025.4.14
 gTTS==2.5.4
 gunicorn==23.0.0
@@ -50,7 +51,10 @@ soupsieve==2.8
 sqlparse==0.5.3
 typing_extensions==4.15.0
 tzdata==2025.2
+ua-parser==1.0.1
+ua-parser-builtins==0.18.0.post1
 urllib3==2.5.0
+user-agents==2.2.0
 vine==5.1.0
 wcwidth==0.2.14
 webencodings==0.5.1

@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'health_check.cache',
     'health_check.storage',
     'django_extensions',
+    'django_user_agents',
     
 ]
 
@@ -90,6 +91,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
     
 ]
 

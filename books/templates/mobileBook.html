@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load socialaccount %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="LeafyReads - read, search, and explore books online with a fast and smooth experience." />
+
+  <title>Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/mobilebook.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark-dimmed.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+ <style>
+    body {
+      background-image: url('{% static "images/backk.jpg" %}');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+    body.dark-mode {
+      background-image: url('{% static "images/backdark1.png" %}');
+    }
+    .leafy-auth-container{
+        max-width: 80%;
+        padding: 1rem;
+    }
+
+    /* Highlighter Styles */
+    .highlighted {
+        background-color: #ffeb3b;
+        color: #000;
+        border-radius: 2px;
+        padding: 0 2px;
+    }
+    body.dark-mode .highlighted {
+        background-color: #ff9800; /* Darker orange for dark mode */
+        color: #000;
+    }
+
+    /* Active State for Buttons (like Highlight Pen) */
+    .tool-active {
+        background-color: #f59e0b !important; /* Orange */
+        color: white !important;
+        transform: scale(1.1);
+    }
+  </style>
+  <script src="{% static 'js/loading.js' %}"></script>
+</head>
+
+<body>
+  {% if messages %}
+  <div
+    class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start"
+    role="alert">
+    <div class="error__icon mr-3">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
+        <path fill-rule="evenodd"
+          d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </div>
+    <div class="error__title grow">
+      <ul style="padding:0px 14px;" class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="error__close ml-4 cursor-pointer">
+      <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+        class="text-gray-700 hover:text-gray-900 transition-colors">
+        <path
+          d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
+        </path>
+      </svg>
+    </div>
+  </div>
+  {% endif %}
+  <section class="loginpagesection" id="loginSection">
+    <div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
+      <button class="close-btn" id="closelogin">&times;</button>
+      <div class="login-logo" style="display: flex; align-items: center; justify-content: center;">
+        <img style="width: 60px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" loading="lazy" alt="">
+        <img class="login-leafy-light" style="width: 140px; border-radius: 15px;"
+          src="{% static 'images/leafylight.png' %}" loading="lazy" alt="">
+        <img class="login-leafy-dark" style="width: 140px; border-radius: 15px;"
+          src="{% static 'images/leafyDark.png' %}" loading="lazy" alt="">
+      </div>
+      <h3 style="margin: 0;">Create Your Account</h3>
+      <div class="leafy-sub-text">
+        Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
+      </div>
+      <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy"
+        alt="Funny loading GIF" />
+
+      <a style="width: 94%;" href="{% provider_login_url 'google' %}?next={{ request.path }}"
+        class="leafy-auth-button google">
+        <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
+        Continue with Google
+      </a>
+
+      <button class="leafy-auth-button github">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" loading="lazy" alt="GitHub icon" />
+        Sign in with GitHub
+      </button>
+
+      <button class="leafy-auth-button apple">
+        <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" loading="lazy" alt="Apple icon" />
+        Sign in with Apple
+      </button>
+
+      <div class="leafy-terms">
+        By clicking "signup" you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>.
+      </div>
+
+      <div class="leafy-explore">
+        Continue without signup? <a href="/">explore</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="loader-overlay" style="display:flex;flex-direction: column;">
+    <img src="{% static 'images/Book.gif' %}" style="width: 100px;" alt="Loading..." />
+    <h4>Unfolding stories, please wait...</h4>
+  </div>
+
+  <header class="co-header">
+    <div class="co-container">
+      <div class="co-header-content">
+        <a href="/" class="logo">
+          <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="">
+          <img class="logo-light" style="width: 105px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
+            alt="">
+          <img class="logo-dark" style="width: 105px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}"
+            alt="">
+        </a>
+        <div class="co-header-actions">
+          {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i
+                data-lucide="arrow-big-down-dash"></i></button>
+
+            <ul id="dropdown-menu" class="dropdown-menu hidden">
+              {% if user.is_staff %}
+              <a href="/admin-dashboard/">
+                <li class="dropdown-item">
+                  <i data-lucide="shield-check"></i>
+                  <span>Admin Pannel</span>
+                </li>
+              </a>
+              {% else %}
+              <a href="{% url 'profilepage' %}">
+                <li class="dropdown-item">
+                  <i data-lucide="user-pen"></i>
+                  <span>Profile</span>
+                </li>
+              </a>
+              <li class="dropdown-item">
+                <i data-lucide="gem"></i>
+                <span>Go Pro</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="credit-card"></i>
+                <span>Billing & Plans</span>
+              </li>
+              <li class="dropdown-item">
+                <i data-lucide="circle-question-mark"></i>
+                <span>Get Help</span>
+              </li>
+              {% endif %}
+              <li class="separator"></li>
+              <a href="{% url 'logout' %}">
+                <li class="dropdown-item">
+                  <i data-lucide="log-out"></i>
+                  <span>Logout</span>
+                </li>
+              </a>
+            </ul>
+          </div>
+          {% else %}
+          <div style="display: flex;align-items: center;justify-content: center;gap: 4px;" id="startlogin"
+            class="btn primary-btn"><span>Start Reading Now </span><i style="width: 20px;" data-lucide="sparkles"></i>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="fab-container" id="fabContainer">
+    <button id="fabTrigger" class="fab-btn main-btn">
+      <i data-lucide="plus"></i>
+    </button>
+
+    <div class="fab-options">
+      {% if user.is_authenticated %}
+      <a href="{% url 'community' %}" id="comment" class="fab-btn mini-btn" title="Community">
+        <i data-lucide="messages-square"></i>
+      </a>
+
+      <button id="saveBtn" class="fab-btn mini-btn {% if saved %}save-active{% endif %}" title="Save"
+        data-url="{% url 'toggle_read_later' book.slug %}">
+        <i data-lucide="bookmark"></i>
+      </button>
+
+      <button id="likeBtn" class="fab-btn mini-btn {% if liked %}like-active{% endif %}" title="Like"
+        data-url="{% url 'toggle_like' book.slug %}">
+        <i data-lucide="thumbs-up"></i>
+      </button>
+      {% endif %}
+
+      <button id="highlightBtn" class="fab-btn mini-btn" title="Highlighter">
+        <i data-lucide="highlighter"></i>
+      </button>
+
+      <button disabled id="play" class="fab-btn mini-btn" title="Listen">
+        <i data-lucide="play"></i>
+      </button>
+
+      <button id="darkModeBtn" class="fab-btn mini-btn" title="Dark Mode">
+        <i data-lucide="moon"></i>
+      </button>
+    </div>
+
+    <div id="toast-notification" class="toast">
+      <span id="toast-message"></span>
+    </div>
+  </div>
+  <main id="container-wrapper">
+    <section id="container">
+      {{ bookcontent|safe }}
+    </section>
+  </main>
+  <div class="pagination-container">
+
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="nav-btn">
+        <i data-lucide="chevron-left"></i>
+      </a>
+      {% else %}
+      <button class="nav-btn disabled">
+        <i data-lucide="chevron-left"></i>
+      </button>
+      {% endif %}
+
+      <div class="page-info">
+        <span class="current-page">Page {{ page_obj.number }}</span>
+        <span class="total-pages">of {{ page_obj.paginator.num_pages }}</span>
+      </div>
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="nav-btn">
+        <i data-lucide="chevron-right"></i>
+      </a>
+      {% else %}
+      <button class="nav-btn disabled">
+        <i data-lucide="chevron-right"></i>
+      </button>
+      {% endif %}
+
+    </div>
+
+
+  <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
+  <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
+  <div id="shortcutsPanel" class="shortcuts-panel">
+    <div class="shortcuts-header">
+      <h2>Keyboard Shortcuts</h2>
+      <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
+    </div>
+    <ul>
+      <li>
+        <b>( ᖴ )</b> ☛ Fullscreen Mode
+      </li>
+      <li>
+        <b>( D )</b> ☛ Dark Mode/Light Mode
+      </li>
+      <li>
+        <b>( M )</b> ☛ Mute/Unmute
+      </li>
+      <li>
+        <b>( H )</b> ☛ Highlighter Pen
+      </li>
+      <li>
+        <b>(➡️)</b> ☛ Next Page
+      </li>
+      <li>
+        <b>(⬅️)</b> ☛ Previous Page
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    // --- FAB Menu Toggle Logic ---
+    const fabContainer = document.getElementById('fabContainer');
+    const fabTrigger = document.getElementById('fabTrigger');
+
+    if (fabTrigger && fabContainer) {
+      fabTrigger.addEventListener('click', () => {
+        // Toggle the 'active' class on the container
+        fabContainer.classList.toggle('active');
+
+        // Optional: Close menu if clicking outside
+        const closeMenu = (e) => {
+          if (!fabContainer.contains(e.target)) {
+            fabContainer.classList.remove('active');
+            document.removeEventListener('click', closeMenu);
+          }
+        };
+
+        // Add click-outside listener only if menu is open
+        if (fabContainer.classList.contains('active')) {
+          setTimeout(() => { document.addEventListener('click', closeMenu); }, 0);
+        }
+      });
+    }
+  </script>
+  {% if book.audio_file %}
+  <script>
+    // Audio Play/Pause Logic
+    let audioFile = new Audio('{{ book.audio_file.url }}');
+    const playBtn = document.getElementById('play');
+
+    if (playBtn) {
+      playBtn.addEventListener('click', () => {
+        if (audioFile.paused) {
+          audioFile.play();
+          playBtn.innerHTML = '<i data-lucide="pause"></i>';
+        } else {
+          audioFile.pause();
+          playBtn.innerHTML = '<i data-lucide="play"></i>';
+        }
+        lucide.createIcons();
+      });
+    }
+  </script>
+  {% endif %}
+
+  <script>
+    const clicks = new Audio('/static/sounds/click.mp3');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const likeBtn = document.getElementById('likeBtn');
+      const saveBtn = document.getElementById('saveBtn');
+      const dot = document.querySelector('.dot');
+      const toast = document.getElementById('toast-notification');
+      const toastMessage = document.getElementById('toast-message');
+
+      function showToast(message) {
+        toastMessage.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+
+      // --- 1. Dark Mode Logic ---
+      const darkModeBtn = document.getElementById('darkModeBtn');
+      const body = document.body;
+
+      // Check Local Storage on load
+      if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+        if (darkModeBtn) darkModeBtn.innerHTML = '<i data-lucide="sun"></i>';
+      }
+
+      if (darkModeBtn) {
+        darkModeBtn.addEventListener('click', () => {
+          clicks.currentTime = 0; clicks.play();
+          body.classList.toggle('dark-mode');
+
+          // Save preference
+          const isDark = body.classList.contains('dark-mode');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+          // Change Icon
+          darkModeBtn.innerHTML = isDark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+          lucide.createIcons();
+        });
+      }
+
+      // --- 3. Highlighter Logic ---
+      // --- 3. Highlighter Logic ---
+      const highlightBtn = document.getElementById('highlightBtn');
+      const bookContainer = document.getElementById('container');
+      let isHighlightMode = false;
+
+      if (highlightBtn) {
+        highlightBtn.addEventListener('click', () => {
+          clicks.currentTime = 0; clicks.play();
+          isHighlightMode = !isHighlightMode;
+
+          // Toggle Active Visual Class
+          if (isHighlightMode) {
+            highlightBtn.classList.add('tool-active');
+            showToast('Highlighter ON - Select text to highlight');
+
+            // ENABLE SELECTION: Add the class that overrides user-select: none
+            bookContainer.classList.add('allow-selection');
+          } else {
+            highlightBtn.classList.remove('tool-active');
+            showToast('Highlighter OFF');
+
+            // DISABLE SELECTION: Remove the class
+            bookContainer.classList.remove('allow-selection');
+
+            // Clear any current selection so it doesn't look stuck
+            window.getSelection().removeAllRanges();
+          }
+        });
+      }
+
+      // Listen for text selection inside the book container
+      if (bookContainer) {
+        bookContainer.addEventListener('mouseup', () => {
+          if (!isHighlightMode) return;
+
+          const selection = window.getSelection();
+          // Ensure we have a selection and it's not empty
+          if (selection.rangeCount > 0 && !selection.isCollapsed) {
+            const range = selection.getRangeAt(0);
+
+            // Check if selection is inside the book container
+            if (bookContainer.contains(range.commonAncestorContainer)) {
+              try {
+                const span = document.createElement('span');
+                span.className = 'highlighted';
+                range.surroundContents(span);
+                selection.removeAllRanges(); // Deselect text after highlighting
+              } catch (e) {
+                showToast('Try selecting text within a single paragraph.');
+              }
+            }
+          }
+        });
+      }
+
+      // --- Existing Functionality ---
+
+      // Burst Likes Animation
+      function burstLikes(count = 30) {
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i >= count) return clearInterval(interval);
+          requestAnimationFrame(() => {
+            const like = document.createElement('div');
+            like.classList.add('like');
+            like.textContent = '👍';
+            const size = Math.random() * 16 + 16;
+            like.style.cssText = `
+            font-size: ${size}px;
+            left: ${Math.random() * window.innerWidth}px;
+            animation-duration: ${Math.random() * 2 + 2}s;
+          `;
+            document.body.appendChild(like);
+            setTimeout(() => like.remove(), 4000);
+          });
+          i++;
+        }, 20);
+      }
+
+      // AJAX for Save / Read Later (Optimistic)
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function () {
+          const url = this.dataset.url;
+          const csrfToken = '{{ csrf_token }}';
+
+          // --- Optimistic UI Update ---
+          const isSaving = !this.classList.contains('save-active');
+          this.classList.toggle('save-active'); // Toggle UI immediately
+          clicks.currentTime = 0;
+          clicks.play();
+
+          if (isSaving) {
+            if (dot) dot.style.display = "block";
+          } else {
+            if (dot) dot.style.display = "none";
+          }
+          // --- End Optimistic UI ---
+
+          fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status !== 'saved' && data.status !== 'removed') {
+                // ERROR: Revert UI
+                showToast(data.message || 'An error occurred.');
+                this.classList.toggle('save-active'); // Revert toggle
+                if (dot) dot.style.display = isSaving ? "none" : "block"; // Revert dot
+              } else {
+                // Server confirmed, just update the message
+                showToast(data.message);
+              }
+            })
+            .catch(error => {
+              // NETWORK ERROR: Revert UI
+              console.error('Error:', error);
+              showToast('Something went wrong. Please try again.');
+              this.classList.toggle('save-active'); // Revert toggle
+              if (dot) dot.style.display = isSaving ? "none" : "block"; // Revert dot
+            });
+        });
+      }
+
+      // AJAX for Like Button (Optimistic)
+      if (likeBtn) {
+        likeBtn.addEventListener('click', function () {
+          const url = this.dataset.url;
+          const csrfToken = '{{ csrf_token }}';
+
+          // --- Optimistic UI Update ---
+          const isLiking = !this.classList.contains('like-active');
+          this.classList.toggle('like-active'); // Toggle UI immediately
+          clicks.currentTime = 0;
+          clicks.play();
+
+          if (isLiking) {
+            burstLikes(30);
+          }
+
+          fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status !== 'liked' && data.status !== 'unliked') {
+                // ERROR: Revert UI
+                showToast(data.message || 'An error occurred.');
+                this.classList.toggle('like-active'); // Revert toggle
+              } else {
+                // Server confirmed, just update the message
+                showToast(data.message);
+              }
+            })
+            .catch(error => {
+              // NETWORK ERROR: Revert UI
+              console.error('Error:', error);
+              showToast('Something went wrong. Please try again.');
+              this.classList.toggle('like-active'); // Revert toggle
+            });
+        });
+      }
+
+      // Login Modal Toggle
+      const startlogin = document.getElementById('startlogin');
+      const loginSection = document.getElementById('loginSection');
+      const closelogin = document.getElementById('closelogin');
+
+      if (startlogin && loginSection && closelogin) {
+        startlogin.addEventListener('click', () => loginSection.classList.add('active'));
+        closelogin.addEventListener('click', () => loginSection.classList.remove('active'));
+        loginSection.addEventListener('click', (e) => {
+          if (e.target === loginSection) loginSection.classList.remove('active');
+        });
+      }
+
+      // alert Fade-Out
+      const errorDiv = document.querySelector('.error');
+      if (errorDiv) {
+        const closeButton = errorDiv.querySelector('.error__close');
+        const hideError = () => {
+          errorDiv.classList.add('fade-out');
+          const onAnimationEnd = () => {
+            errorDiv.remove();
+            errorDiv.removeEventListener('animationend', onAnimationEnd);
+          };
+          errorDiv.addEventListener('animationend', onAnimationEnd);
+        };
+        const timer = setTimeout(hideError, 3000);
+        if (closeButton) closeButton.addEventListener('click', () => {
+          clearTimeout(timer);
+          hideError();
+        });
+      }
+
+      // User Dropdown Menu
+      const dropdownButton = document.getElementById('dropdown-button');
+      const dropdownMenu = document.getElementById('dropdown-menu');
+
+      if (dropdownButton && dropdownMenu) {
+        dropdownButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+          dropdownMenu.classList.toggle('hidden');
+        });
+
+        window.addEventListener('click', (event) => {
+          if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+          }
+        });
+      }
+
+      // Initialize Lucide Icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+  </script>
+
+</body>
+
+</html>
