@@ -14,9 +14,8 @@ import hashlib
 import time
 
 
-
 def home(request, slug):
-    # Base queryset with related content
+
     book_qs = Book.objects.select_related("content")
 
     if request.user.is_authenticated:
@@ -31,18 +30,27 @@ def home(request, slug):
 
     book = get_object_or_404(book_qs, slug=slug)
     if request.user.is_authenticated:
-
         def save_read():
             ReadBy.objects.get_or_create(user=request.user, book=book)
-
         transaction.on_commit(save_read)
 
     # --- DEVICE DETECTION & PAGINATION ---
-    full_content = getattr(book.content, "content", "")
     
     if request.user_agent.is_mobile:
         template_name = "mobileBook.html"
-        content_chunks = [p + '</p>' for p in full_content.split('</p>') if p.strip()]
+        cache_key = f"book_mobile_chunks_{book.pk}" 
+        
+        content_chunks = cache.get(cache_key) 
+
+        if not content_chunks:
+            full_content = getattr(book.content, "content", "")
+
+            if full_content:
+                content_chunks = [p + '</p>' for p in full_content.split('</p>') if p.strip()]
+            else:
+                content_chunks = []
+            cache.set(cache_key, content_chunks, 1800)
+
         paragraphs_per_page = 50 
         paginator = Paginator(content_chunks, paragraphs_per_page)
         page_number = request.GET.get('page')
@@ -52,9 +60,8 @@ def home(request, slug):
         pagination_context = page_obj 
 
     else:
-        # Desktop view: No pagination, show everything
         template_name = "book.html"
-        display_content = full_content
+        display_content = getattr(book.content, "content", "")
         pagination_context = None
 
     return render(
@@ -62,8 +69,8 @@ def home(request, slug):
         template_name,
         {
             "book": book,
-            "bookcontent": display_content, # Contains only the current page's text on mobile
-            "page_obj": pagination_context, # Needed for Next/Prev buttons
+            "bookcontent": display_content,
+            "page_obj": pagination_context,
             "saved": getattr(book, "is_saved", False),
             "liked": getattr(book, "is_liked", False),
         },
