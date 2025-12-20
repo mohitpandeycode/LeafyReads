@@ -1,74 +1,165 @@
 <!DOCTYPE html>
 
 <html lang="en">
-  {% load static %}
+{% load static %}
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}
-
-      {% endblock %}
-    </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
-    <style>
-      .desktop-nav a.active {
-        color: #60a5fa !important;
-      }
-    </style>
-
-    {% block css %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    {% block title %}
 
     {% endblock %}
-  </head>
+  </title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+  
 
-  <body>
-    <header class="header">
-      <div class="container">
-        <div class="header-content">
-          <a href="/" class="logo">
-            <!-- common logo part -->
-            <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="">
-            <!-- light theme image -->
-            <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" alt="">
-            <!-- dark theme image -->
-            <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}" alt="">
-          </a>
-          <nav class="desktop-nav">
-            <a href="{% url 'dashboard' %}" class="{% if request.path == '/admin-dashboard/' %}active{% endif %}" >Admin Home</a>
-            <a href="{% url 'addBook' %}" class="{% if request.path == '/admin-dashboard/add-book' %}active{% endif %}" >Add Book</a>
-           {% if request.resolver_match.url_name == 'updateBook' %}
-                <a href="{% url 'viewBookAdmin' book.slug %}" target="_blank" class="">View Book</a>
-            {% endif %}
-            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Visit Site</a>
-            <a href="/logout/" >Logout</a>
-            <form id="navSearch" class="nav-search-wrapper" method="get">
-                <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
-                <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-                <button type="submit" id="sctive" style="display: none;border: none; background: #25b95f;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
-            </form>
-          </nav>
-           
-          <div class="header-actions">
-            <button id="theme-toggle" class="theme-toggle-btn"><i data-lucide="sun"></i></button>
-            <div class="btn primary-btn">Welcome {{user.username}} ✌️</div>
-          </div>
-        </div>
+  <style>
+    .desktop-nav a.active {
+      color: #60a5fa !important;
+    }
+
+    .moon-icon {
+      display: none;
+    }
+
+    .sun-icon {
+      display: block;
+    }
+
+
+    body.dark-mode .moon-icon {
+      display: block;
+    }
+
+    body.dark-mode .sun-icon {
+      display: none;
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+    }
+
+    .theme-toggle-btn:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .theme-toggle-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    @media (max-width: 768px) {
+      .container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    }
+    .logo-light, .logo-dark{
+      width: 100px !important;
+    }
+    .primary-btn{
+      padding: 10px 5px !important;
+      font-size: 14px !important;
+    }
+    .books-container{
+      margin: 5px 10px !important;
+    }
+  }
+  </style>
+
+  {% block css %}
+
+  {% endblock %}
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <!-- common logo part -->
+          <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="">
+          <!-- light theme image -->
+          <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
+            alt="">
+          <!-- dark theme image -->
+          <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}"
+            alt="">
+        </a>
+        <nav class="desktop-nav">
+          <a href="{% url 'dashboard' %}" class="{% if request.path == '/admin-dashboard/' %}active{% endif %}">Admin
+            Home</a>
+          <a href="{% url 'addBook' %}"
+            class="{% if request.path == '/admin-dashboard/add-book' %}active{% endif %}">Add Book</a>
+          {% if request.resolver_match.url_name == 'updateBook' %}
+          <a href="{% url 'viewBookAdmin' book.slug %}" target="_blank" class="">View Book</a>
+          {% endif %}
+          <a href="/" class="{% if request.path == '/' %}active{% endif %}">Visit Site</a>
+          <a href="/logout/">Logout</a>
+          <form id="navSearch" class="nav-search-wrapper" method="get">
+            <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>
+            <input type="text" name="search" id="navSearchInput" class="nav-search-input"
+              placeholder="Search for books, authors, or genres..." />
+            <button type="submit" id="sctive"
+              style="display: none;border: none; background: #25b95f;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
+          </form>
+        </nav>
+
+        <div class="header-actions">
+          <button id="theme-toggle" class="theme-toggle-btn">
+            <i data-lucide="sun" class="sun-icon"></i>
+            <i data-lucide="moon" class="moon-icon"></i>
+          </button>
+          <div class="btn primary-btn">Welcome {{user.username}} ✌️</div>
       </div>
-    </header>
+    </div>
+    </div>
+  </header>
 
-    {% block body %}
+  {% block body %}
 
-    {% endblock %}
-    
+  {% endblock %}
 
-    <script src="{% static 'js/home.js' %}"></script>
-     <script src="{% static 'js/navsearch.js' %}"></script>
-  </body>
+
+  <script src="{% static 'js/home.js' %}"></script>
+  <script src="{% static 'js/navsearch.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const body = document.body;
+
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme === "dark") {
+        body.classList.add("dark-mode");
+    }
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", function () {
+
+            body.classList.toggle("dark-mode");
+
+            // Save preference to LocalStorage
+            if (body.classList.contains("dark-mode")) {
+                localStorage.setItem("theme", "dark");
+            } else {
+                localStorage.setItem("theme", "light");
+            }
+        });
+    }
+
+    lucide.createIcons();
+});
+  </script>
+</body>
+
 </html>

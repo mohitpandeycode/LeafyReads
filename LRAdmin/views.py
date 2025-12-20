@@ -3,7 +3,7 @@ from books.models import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import BookContentForm
+from .forms import BookContentForm,BookForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -92,52 +92,50 @@ def dashboard(request):
 
 @login_required(login_url="login_admin")
 def updateBook(request, slug):
+    # Fetch objects
     book = get_object_or_404(Book, slug=slug, uploaded_by=request.user)
     bookcontent, created = BookContent.objects.get_or_create(book=book)
-    genres = Genre.objects.all()
 
+    # Initialize forms with instances
     if request.method == "POST":
-        form = BookContentForm(request.POST, request.FILES, instance=bookcontent)
-        if form.is_valid():
-            # Attach user to both book and bookcontent before saving
-            book._updated_by = request.user
-            bookcontent._updated_by = request.user
+        book_form = BookForm(request.POST, request.FILES, instance=book)
+        content_form = BookContentForm(request.POST, request.FILES, instance=bookcontent)
 
-            # Save book content (triggers content_update signal)
-            form.save()
+        if book_form.is_valid() and content_form.is_valid():
+            # OPTIMIZED BOOK SAVE
+            if book_form.has_changed():
+                # Attach user for signals/tracking
+                book = book_form.save(commit=False)
+                book._updated_by = request.user
+                
+                # Only update specific fields that changed in the DB
+                book.save(update_fields=book_form.changed_data) 
+            
+            # CONTENT SAVE
+            if content_form.has_changed():
+                content = content_form.save(commit=False)
+                content._updated_by = request.user
 
-            # Update book fields
-            book.title = request.POST.get("title")
-            book.slug = request.POST.get("slug")
-            book.author = request.POST.get("author")
-            book.price = request.POST.get("price") or None
-            book.isbn = request.POST.get("isbn") or None
-            book.is_published = "is_published" in request.POST
+                content.save(update_fields=content_form.changed_data)
 
-            genre_id = request.POST.get("genre")
-            book.genre = Genre.objects.get(id=genre_id) if genre_id else None
-
-            if "cover_front" in request.FILES:
-                book.cover_front = request.FILES["cover_front"]
-            if "audio_file" in request.FILES:
-                book.audio_file = request.FILES["audio_file"]
-
-            # Save book (triggers update signal)
-            book.save()
-
+            # Handle redirection
             action = request.POST.get("action")
             if action == "save":
                 return redirect("dashboard")
             elif action == "continue":
                 return redirect("updateBook", slug=book.slug)
-    else:
-        form = BookContentForm(instance=bookcontent)
 
-    return render(
-        request,
-        "updateBook.html",
-        {"book": book, "form": form, "genres": genres},
-    )
+    else:
+        book_form = BookForm(instance=book)
+        content_form = BookContentForm(instance=bookcontent)
+
+    context = {
+        "book_form": book_form,
+        "content_form": content_form,
+        "book": book,
+    }
+
+    return render(request, "updateBook.html", context)
 
 
 

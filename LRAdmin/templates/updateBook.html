@@ -7,60 +7,82 @@ Update Book - LeafyReads Admin
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/addBook.css' %}" />
+<style> 
+    .hide-default-file-input input[type="file"] {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+    }
+    
+    .errorlist {
+        color: #ff4d4d;
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+        font-size: 0.85rem;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
 
 <div class="addbookcontainer">
     <h1>Update Book - Admin</h1>
+    
+    {% if book_form.non_field_errors %}
+        <div class="error-banner">
+            {{ book_form.non_field_errors }}
+        </div>
+    {% endif %}
+
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        
         <div class="form-actions">
             <button type="submit" name="action" value="save" class="btn-primary">Save</button>
             <button type="submit" name="action" value="continue" class="btn-secondary">Save and Continue Editing</button>
         </div>
 
-    <div class="split-layout" >
-        <!-- Left side: book info -->
+    <div class="split-layout">
         <div class="form-left">
+            
             <div style="margin-bottom: 10px;">
-                <label for="title">Title</label>
-                <input type="text" name="title" id="title" value="{{ book.title }}" placeholder="Enter book title">
+                <label for="{{ book_form.title.id_for_label }}">Title</label>
+                {{ book_form.title }}
+                {{ book_form.title.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="slug">Slug</label>
-                <input type="text" name="slug" id="slug" value="{{ book.slug }}" placeholder="book-title-slug">
+                <label for="{{ book_form.slug.id_for_label }}">Slug</label>
+                {{ book_form.slug }}
+                {{ book_form.slug.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="author">Author</label>
-                <input type="text" name="author" id="author" value="{{ book.author }}" placeholder="Enter author name">
+                <label for="{{ book_form.author.id_for_label }}">Author</label>
+                {{ book_form.author }}
+                {{ book_form.author.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="genre">Genre</label>
-                <select id="genre" name="genre">
-                    <option value="">-- Select genre --</option>
-                    {% for g in genres %}
-                        <option value="{{ g.id }}" {% if book.genre and book.genre.id == g.id %}selected{% endif %}>
-                            {{ g.name }}
-                        </option>
-                    {% endfor %}
-                </select>
+                <label for="{{ book_form.genre.id_for_label }}">Genre</label>
+                {{ book_form.genre }}
+                {{ book_form.genre.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="price">Price</label>
-                <input type="number" name="price" id="price" value="{{ book.price }}" placeholder="Enter price">
+                <label for="{{ book_form.price.id_for_label }}">Price</label>
+                {{ book_form.price }}
+                {{ book_form.price.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="isbn">ISBN</label>
-                <input type="text" name="isbn" id="isbn" value="{{ book.isbn }}" placeholder="Enter ISBN number">
+                <label for="{{ book_form.isbn.id_for_label }}">ISBN</label>
+                {{ book_form.isbn }}
+                {{ book_form.isbn.errors }}
             </div>
 
-            <label for="original_cover">Front Cover</label>
+            <label>Front Cover</label>
             <div class="image-upload">
                 {% if book.cover_front %}
                     <img id="preview" src="{{ book.cover_front.url }}" alt="Cover Front">
@@ -70,35 +92,38 @@ Update Book - LeafyReads Admin
                     <input type="hidden" id="original_cover" value="https://via.placeholder.com/250x150?text=No+Cover">
                 {% endif %}
 
-                <!-- Camera icon -->
-                <label for="cover" class="overlay">📷</label>
-                <input type="file" id="cover" name="cover_front" accept="image/*" onchange="previewImage(event)">
-                <!-- Remove/Undo button -->
+                <label for="{{ book_form.cover_front.id_for_label }}" class="overlay">📷</label>
+                
+                <div class="hide-default-file-input">
+                    {{ book_form.cover_front }}
+                </div>
+
                 <button type="button" class="remove-btn" onclick="resetImage()">X</button>
+                
+                {{ book_form.cover_front.errors }}
             </div>
 
             <div class="checkbox">
-                <label style="color: white;" for="published">Is Published</label>
-                <input type="checkbox" name="is_published" id="published" {% if book.is_published %}checked{% endif %}>
+                <label style="color: white;" for="{{ book_form.is_published.id_for_label }}">Is Published</label>
+                {{ book_form.is_published }}
             </div>
 
             <div class="file-input">
-                <label for="audio">Audio File</label>
-                <input type="file" name="audio_file" accept="audio/*" id="audio">
+                <label for="{{ book_form.audio_file.id_for_label }}">Audio File</label>
+                {{ book_form.audio_file }}
+                {{ book_form.audio_file.errors }}
             </div>
         </div>
 
-        <!-- Right side: book content -->
-         
         <div class="form-right">
-           
-            {{ form.media }}
-            <label for="bookContent">Book Content</label>
+            
+            {{ content_form.media }}
+            <label for="{{ content_form.content.id_for_label }}">Book Content</label>
 
-            {{ form.content }}
-            {{ form.content.errors }}
+            {{ content_form.content }}
+            {{ content_form.content.errors }}
 
-            <div class="form-actions">
+            <div class="form-actions" style="margin-top: 20px;">
                 <button type="submit" name="action" value="save" class="btn-primary">Save</button>
                 <button type="submit" name="action" value="continue" class="btn-secondary">Save and Continue Editing</button>
             </div>
@@ -109,22 +134,41 @@ Update Book - LeafyReads Admin
 </div>
 
 <script>
+// Attach the preview event listener to the file input rendered by Django
+document.addEventListener("DOMContentLoaded", function() {
+    // Find the input by its ID (Django defaults to id_field_name)
+    const coverInput = document.getElementById("{{ book_form.cover_front.id_for_label }}");
+    
+    if (coverInput) {
+        coverInput.addEventListener('change', previewImage);
+        
+        // Ensure it's hidden if you rely on the camera overlay (optional, depends on your CSS)
+        // coverInput.style.display = 'none'; 
+    }
+});
+
 function previewImage(event) {
     const reader = new FileReader();
     reader.onload = function() {
         document.getElementById('preview').src = reader.result;
     }
-    reader.readAsDataURL(event.target.files[0]);
+    if (event.target.files[0]) {
+        reader.readAsDataURL(event.target.files[0]);
+    }
 }
 
 function resetImage() {
-    // restore original cover
+    // Restore original cover
     const original = document.getElementById('original_cover').value;
     document.getElementById('preview').src = original;
-    document.getElementById('cover').value = ""; // clear the new file input
+    
+    // Clear the new file input
+    const coverInput = document.getElementById("{{ book_form.cover_front.id_for_label }}");
+    if (coverInput) {
+        coverInput.value = ""; 
+    }
 }
-
-
 </script>
+
 
 {% endblock body %}

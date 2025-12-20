@@ -125,6 +125,8 @@ button {
     width: 250px;
     border-radius: 10px;
     display: block;
+    max-height: 250px;
+    object-fit: cover;
 }
 
 .image-upload input[type="file"] {

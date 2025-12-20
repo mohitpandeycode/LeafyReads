@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
+import re
 from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
 from django.contrib.postgres.indexes import GinIndex
@@ -144,8 +145,24 @@ class Book(models.Model):
 class BookContent(models.Model):
     book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="content")
     content = CKEditor5Field("content", config_name="extends")
+    chunks = models.JSONField(default=list, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    import re
+
+    def save(self, *args, **kwargs):
+        if self.content:
+            raw_chunks = self.content.split('</p>')
+            clean_chunks = []
+            for chunk in raw_chunks:
+                chunk = chunk.strip()
+                if chunk and not re.match(r'^<p>(&nbsp;|\s)*$', chunk):
+                    clean_chunks.append(chunk + '</p>')            
+            self.chunks = clean_chunks
+        else:
+            self.chunks = []  
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"Content for {self.book.title}"
 
@@ -225,3 +242,7 @@ class ReadBy(models.Model):
 
     def __str__(self):
         return f"{self.user.username} readed {self.book.title} "
+    
+    
+    
+    

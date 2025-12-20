@@ -13,56 +13,61 @@ from django.contrib.postgres.search import TrigramSimilarity
 import hashlib
 import time
 
-
 def home(request, slug):
-
     book_qs = Book.objects.select_related("content")
-
     if request.user.is_authenticated:
         saved_subquery = ReadLater.objects.filter(
             book=OuterRef("pk"), user=request.user
         )
-        liked_subquery = Like.objects.filter(book=OuterRef("pk"), user=request.user)
-
+        liked_subquery = Like.objects.filter(
+            book=OuterRef("pk"), user=request.user
+        )
         book_qs = book_qs.annotate(
-            is_saved=Exists(saved_subquery), is_liked=Exists(liked_subquery)
+            is_saved=Exists(saved_subquery), 
+            is_liked=Exists(liked_subquery)
         )
 
     book = get_object_or_404(book_qs, slug=slug)
+
+    # RECORD HISTORY (Async-safe)
     if request.user.is_authenticated:
         def save_read():
             ReadBy.objects.get_or_create(user=request.user, book=book)
         transaction.on_commit(save_read)
 
-    # --- DEVICE DETECTION & PAGINATION ---
-    
+    # Book exists but has no Content yet.
+    try:
+        content_obj = book.content
+        has_content = True
+    except Exception:
+        content_obj = None
+        has_content = False
+
+    # 5. DEVICE DETECTION & RENDERING
+    pagination_context = None
+    display_content = ""
+
     if request.user_agent.is_mobile:
         template_name = "mobileBook.html"
-        cache_key = f"book_mobile_chunks_{book.pk}" 
-        
-        content_chunks = cache.get(cache_key) 
+        if has_content:
+            content_chunks = getattr(content_obj, "chunks", [])
+        else:
+            content_chunks = []
 
-        if not content_chunks:
-            full_content = getattr(book.content, "content", "")
-
-            if full_content:
-                content_chunks = [p + '</p>' for p in full_content.split('</p>') if p.strip()]
-            else:
-                content_chunks = []
-            cache.set(cache_key, content_chunks, 1800)
-
-        paragraphs_per_page = 50 
+        # Paginate the pre-split chunks
+        paragraphs_per_page = 30 
         paginator = Paginator(content_chunks, paragraphs_per_page)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
+        # Join only the paragraphs needed for THIS page
         display_content = "".join(page_obj.object_list)
         pagination_context = page_obj 
 
     else:
         template_name = "book.html"
-        display_content = getattr(book.content, "content", "")
-        pagination_context = None
+        if has_content:
+            display_content = getattr(content_obj, "content", "")
 
     return render(
         request,

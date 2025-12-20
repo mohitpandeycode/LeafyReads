@@ -14,7 +14,7 @@ All Books - LeafyReads Admin
 {% block body %}
     <div class="books-container" style="margin: 5px 20px;">
         <div class="books-header">
-            <h2>All Books</h2>
+            <h4>All Books</h4>
             <div class="action-bar">
                 <form method="GET" class="search-form" style="display: flex; gap: 5px;">
                     <input type="text" name="search" placeholder="Search title, author, slug..." value="{{ search|default:'' }}" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
@@ -27,7 +27,7 @@ All Books - LeafyReads Admin
             </div>
         </div>
         
-        <form method="POST" id="bulk-action-form">
+        <form style="overflow-x: auto;" method="POST" id="bulk-action-form">
             {% csrf_token %}
             <div class="bulk-actions" style="margin-bottom: 10px;">
                 <select name="action" id="action-select">
@@ -100,7 +100,7 @@ All Books - LeafyReads Admin
         {% endif %}
 
         <div class="books-footer" style="padding-top: 10px; text-align: right; color: #777;">
-            Showing {{ books.start_index }} out of  {{ books.end_index }} pages.
+            Showing {{ books.start_index }} out of  {{ books.end_index }} books.
         </div>
     </div>
 <script>
