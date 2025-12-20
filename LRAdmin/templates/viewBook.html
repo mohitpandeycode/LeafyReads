@@ -49,45 +49,6 @@
 
   </style>
   <body>
-    <!-- Login Model -->
-    <section class="loginpagesection" id="loginSection">
-      <div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
-        <button class="close-btn" id="closelogin">&times;</button>
-         <div style="border-radius: 15px;background-color:white;align-items: center;justify-content: center;display: flex;" >
-            <img style="width: 60px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
-            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
-          </div>
-        <h3>Create Your Account</h3>
-        <div class="leafy-sub-text">
-          Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
-        </div>
-        <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" alt="Funny loading GIF" />
-
-        <button class="leafy-auth-button google">
-          <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
-          Continue with Google
-        </button>
-
-        <button class="leafy-auth-button github">
-          <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub icon" />
-          Sign in with GitHub
-        </button>
-
-        <button class="leafy-auth-button apple">
-          <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" alt="Apple icon" />
-          Sign in with Apple
-        </button>
-
-        <div class="leafy-terms">
-          By clicking "signup" you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>.
-        </div>
-
-        <div class="leafy-explore">
-          Continue without signup? <a href="/">explore</a>
-        </div>
-      </div>
-    </section>
-
     <div id="loader-overlay" style="display:flex;flex-direction: column;">
       <div id="loader-spinner"></div>
       <h2>Unfolding stories, please wait...</h2>
@@ -96,8 +57,10 @@
       <div class="co-container">
         <div class="co-header-content">
            <a href="/" class="co-logo" style="background-color: white;border-radius: 15px;">
-            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo.png' %}" alt="">
-            <img style="width: 140px;border-radius: 15px;" src="{% static 'images/leafyreads.png' %}" alt="">
+            <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
+            alt="logo" />
+          <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
+            alt="logo" />
           </a>
 
           <nav class="co-desktop-nav">
