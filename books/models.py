@@ -148,21 +148,38 @@ class BookContent(models.Model):
     chunks = models.JSONField(default=list, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    import re
-
     def save(self, *args, **kwargs):
         if self.content:
-            raw_chunks = self.content.split('</p>')
+            pattern = r'(</p>|</div>|<br\s*/?>)'
+            parts = re.split(pattern, self.content, flags=re.IGNORECASE)
+
             clean_chunks = []
-            for chunk in raw_chunks:
-                chunk = chunk.strip()
-                if chunk and not re.match(r'^<p>(&nbsp;|\s)*$', chunk):
-                    clean_chunks.append(chunk + '</p>')            
+            current_buffer = ""
+
+            for part in parts:
+                current_buffer += part
+                # If this part was a closing tag/break, finalize the chunk
+                if re.match(pattern, part, re.IGNORECASE):
+                    # Only add if it has actual content (ignore empty paragraphs)
+                    if re.search(r'[a-zA-Z0-9]', current_buffer): 
+                        clean_chunks.append(current_buffer)
+                    current_buffer = "" # Reset buffer
+
+            # Append any remaining text
+            if current_buffer.strip():
+                clean_chunks.append(current_buffer)
+
+            # Fallback: If split failed (chunk len is 1), force split by character count
+            if len(clean_chunks) < 2 and len(self.content) > 1000:
+                # Naive split every 1000 chars if HTML structure is broken
+                clean_chunks = [self.content[i:i+1000] for i in range(0, len(self.content), 1000)]
+
             self.chunks = clean_chunks
         else:
-            self.chunks = []  
+            self.chunks = []
+            
         super().save(*args, **kwargs)
-    
+
     def __str__(self):
         return f"Content for {self.book.title}"
 

@@ -7,11 +7,37 @@ Add Book - LeafyReads Admin
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/addBook.css' %}" />
+<style>
+    .errorlist { color: #ff6b6b; list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 0.85em; }
+    
+    /* Make the whole image area clickable */
+    .image-upload-label {
+        display: block;
+        position: relative;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Ensure image fits */
+    .image-upload-label img {
+        width: 100%;
+        height: auto;
+        display: block;
+        min-height: 200px; /* Ensure clickable area even if image is missing */
+        object-fit: cover;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
 <div class="addbookcontainer">
     <h1>Add Book - LeafyReads</h1>
+    
+    {% if book_form.non_field_errors %}
+        <div class="alert alert-danger">{{ book_form.non_field_errors }}</div>
+    {% endif %}
+
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-actions">
@@ -21,69 +47,76 @@ Add Book - LeafyReads Admin
         </div>
 
         <div class="split-layout">
-            <!-- Left side: book info -->
             <div class="form-left">
+                
                 <div style="margin-bottom: 10px;">
-                    <label for="title">Title <span style="color: red;">*</span></label>
-                    <input type="text" name="title" id="title" placeholder="Enter book title" required>
+                    <label for="{{ book_form.title.id_for_label }}">Title <span style="color: red;">*</span></label>
+                    {{ book_form.title }}
+                    {{ book_form.title.errors }}
                 </div>
 
                 <div style="margin-bottom: 10px;">
-                    <label for="slug">Slug <span style="color: red;">*</span></label>
-                    <input type="text" name="slug" id="slug" placeholder="book-title-slug" required>
+                    <label for="{{ book_form.slug.id_for_label }}">Slug <span style="color: red;">*</span></label>
+                    {{ book_form.slug }}
+                    {{ book_form.slug.errors }}
                 </div>
 
                 <div style="margin-bottom: 10px;">
-                    <label for="author">Author <span style="color: red;">*</span></label>
-                    <input type="text" name="author" id="author" placeholder="Enter author name" required>
+                    <label for="{{ book_form.author.id_for_label }}">Author <span style="color: red;">*</span></label>
+                    {{ book_form.author }}
+                    {{ book_form.author.errors }}
                 </div>
 
                 <div style="margin-bottom: 10px;">
-                    <label for="genre">Genre <span style="color: red;">*</span></label>
-                    <select id="genre" name="genre" required>
-                        <option value="">-- Select genre --</option>
-                        {% for g in genres %}
-                            <option value="{{ g.id }}">{{ g.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="{{ book_form.genre.id_for_label }}">Genre <span style="color: red;">*</span></label>
+                    {{ book_form.genre }}
+                    {{ book_form.genre.errors }}
                 </div>
 
                 <div style="margin-bottom: 10px;">
-                    <label for="price">Price <span style="color: red;">*</span></label>
-                    <input type="number" name="price" id="price" placeholder="Enter price" required>
+                    <label for="{{ book_form.price.id_for_label }}">Price <span style="color: red;">*</span></label>
+                    {{ book_form.price }}
+                    {{ book_form.price.errors }}
                 </div>
 
                 <div style="margin-bottom: 10px;">
-                    <label for="isbn">ISBN <span style="color: red;">*</span></label>
-                    <input type="text" name="isbn" id="isbn" placeholder="Enter ISBN number" required>
+                    <label for="{{ book_form.isbn.id_for_label }}">ISBN <span style="color: red;">*</span></label>
+                    {{ book_form.isbn }}
+                    {{ book_form.isbn.errors }}
                 </div>
 
-                <label for="cover">Front Cover <span style="color: red;">*</span></label>
+                <label>Front Cover <span style="color: red;">*</span></label>
                 <div class="image-upload">
-                    <img id="preview" src="{% static 'images/uploadimage.png' %}" alt="Cover Front">
-                    <input type="hidden" id="original_cover" value="{% static 'images/uploadimage.png' %}">
-                    <!-- Camera icon -->
-                    <label for="cover" class="overlay">📷</label>
-                    <input type="file" id="cover" name="cover_front" accept="image/*" onchange="previewImage(event)" required>
+                    <label for="{{ book_form.cover_front.id_for_label }}" class="image-upload-label">
+                        <img id="preview" src="{% static 'images/uploadimage.png' %}" alt="Cover Front">
+                        <div class="overlay">📷</div>
+                    </label>
+
+                    <div style="display: none;">
+                        {{ book_form.cover_front }}
+                    </div>
+                    
+                    {{ book_form.cover_front.errors }}
                 </div>
 
                 <div class="checkbox">
-                    <label style="color: white;" for="published">Is Published</label>
-                    <input type="checkbox" name="is_published" id="published">
+                    <label style="color: white;" for="{{ book_form.is_published.id_for_label }}">Is Published</label>
+                    {{ book_form.is_published }}
                 </div>
 
                 <div class="file-input">
-                    <label for="audio">Audio File</label>
-                    <input type="file" name="audio_file" id="audio">
+                    <label for="{{ book_form.audio_file.id_for_label }}">Audio File</label>
+                    {{ book_form.audio_file }}
+                    {{ book_form.audio_file.errors }}
                 </div>
             </div>
 
-            <!-- Right side: book content -->
             <div class="form-right">
-                {{ form.media }}
-                <label for="bookContent">Book Content <span style="color: red;">*</span></label>
-                {{ form.content }}
-                {{ form.content.errors }}
+                {{ content_form.media }}
+                
+                <label for="{{ content_form.content.id_for_label }}">Book Content <span style="color: red;">*</span></label>
+                {{ content_form.content }}
+                {{ content_form.content.errors }}
 
                 <div class="form-actions">
                     <button type="submit" name="action" value="save" class="btn-primary">Save</button>
@@ -96,19 +129,33 @@ Add Book - LeafyReads Admin
 </div>
 
 <script>
-function previewImage(event) {
-    const reader = new FileReader();
-    reader.onload = function() {
-        document.getElementById('preview').src = reader.result;
-    }
-    reader.readAsDataURL(event.target.files[0]);
-}
+    // 1. Auto-Slug Script
+    const titleInput = document.getElementById('{{ book_form.title.id_for_label }}'); 
+    const slugInput = document.getElementById('{{ book_form.slug.id_for_label }}');
 
-function resetImage() {
-    // restore original cover
-    const original = document.getElementById('original_cover').value;
-    document.getElementById('preview').src = original;
-    document.getElementById('cover').value = "";
-}
+    if (titleInput && slugInput) {
+        titleInput.addEventListener('keyup', function() {
+            slugInput.value = titleInput.value
+                .toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+        });
+    }
+
+    // 2. Image Preview Script
+    const coverInput = document.getElementById('{{ book_form.cover_front.id_for_label }}');
+    
+    if (coverInput) {
+        coverInput.addEventListener('change', function(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const preview = document.getElementById('preview');
+                if(preview) preview.src = reader.result;
+            }
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+    }
 </script>
 {% endblock body %}

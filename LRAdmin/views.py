@@ -96,27 +96,30 @@ def updateBook(request, slug):
     book = get_object_or_404(Book, slug=slug, uploaded_by=request.user)
     bookcontent, created = BookContent.objects.get_or_create(book=book)
 
-    # Initialize forms with instances
+    # Initialize forms
     if request.method == "POST":
         book_form = BookForm(request.POST, request.FILES, instance=book)
         content_form = BookContentForm(request.POST, request.FILES, instance=bookcontent)
 
         if book_form.is_valid() and content_form.is_valid():
-            # OPTIMIZED BOOK SAVE
+            
+            # --- 1. BOOK SAVE ---
             if book_form.has_changed():
-                # Attach user for signals/tracking
                 book = book_form.save(commit=False)
                 book._updated_by = request.user
-                
-                # Only update specific fields that changed in the DB
+                # Optimization: This is safe for the Book model because 
+                # we don't have custom 'save' logic that modifies other fields on the fly.
                 book.save(update_fields=book_form.changed_data) 
             
-            # CONTENT SAVE
+            # --- 2. CONTENT SAVE (THE FIX) ---
             if content_form.has_changed():
                 content = content_form.save(commit=False)
                 content._updated_by = request.user
 
-                content.save(update_fields=content_form.changed_data)
+                # CRITICAL FIX: Removed 'update_fields'.
+                # We MUST run a full save() so that the 'chunks' field 
+                # (calculated in models.py) gets written to the DB.
+                content.save() 
 
             # Handle redirection
             action = request.POST.get("action")
@@ -138,35 +141,32 @@ def updateBook(request, slug):
     return render(request, "updateBook.html", context)
 
 
-
 @login_required(login_url="login_admin")
 def addBook(request):
     genres = Genre.objects.all()
 
     if request.method == "POST":
-        form = BookContentForm(request.POST, request.FILES)
-        if form.is_valid():
-            book = Book(
-                title=request.POST.get("title"),
-                slug=request.POST.get("slug"),
-                author=request.POST.get("author"),
-                price=request.POST.get("price") or None,
-                isbn=request.POST.get("isbn") or None,
-                is_published="is_published" in request.POST,
-                genre=Genre.objects.get(id=request.POST.get("genre")) if request.POST.get("genre") else None,
-                cover_front=request.FILES.get("cover_front"),
-                audio_file=request.FILES.get("audio_file"),
-                uploaded_by=request.user
-            )
-            book._updated_by = request.user  # <-- attach user
-            book.save()  # triggers Book "create" log
+        # Initialize both forms
+        book_form = BookForm(request.POST, request.FILES)
+        content_form = BookContentForm(request.POST, request.FILES)
 
-            # Save book content
-            bookcontent = form.save(commit=False)
+        if book_form.is_valid() and content_form.is_valid():
+            
+            # 1. Save Book
+            book = book_form.save(commit=False)
+            book.uploaded_by = request.user
+            book._updated_by = request.user
+            book.save()  # Full save triggers creation logs
+
+            # 2. Save Content
+            bookcontent = content_form.save(commit=False)
             bookcontent.book = book
-            bookcontent.book._updated_by = request.user  # attach for content log
-            bookcontent.save()  # triggers BookContent "create" log
+            bookcontent.book._updated_by = request.user
+            
 
+            bookcontent.save() 
+
+            # 3. Handle Actions
             action = request.POST.get("action")
             if action == "save":
                 return redirect("dashboard") 
@@ -175,9 +175,14 @@ def addBook(request):
             elif action == "continue":
                 return redirect("updateBook", slug=book.slug)
     else:
-        form = BookContentForm()
+        book_form = BookForm()
+        content_form = BookContentForm()
 
-    return render(request, "addbook.html", {"form": form, "genres": genres})
+    return render(request, "addbook.html", {
+        "book_form": book_form,  
+        "content_form": content_form, 
+        "genres": genres
+    })
 
 
 @login_required(login_url="login_admin")
