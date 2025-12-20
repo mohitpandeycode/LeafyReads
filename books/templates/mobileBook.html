@@ -329,22 +329,42 @@
   </script>
   {% if book.audio_file %}
   <script>
-    // Audio Play/Pause Logic
-    let audioFile = new Audio('{{ book.audio_file.url }}');
-    const playBtn = document.getElementById('play');
+    document.addEventListener('DOMContentLoaded', () => {
+      const audioUrl = '{{ book.audio_file.url }}';
+      const playBtn = document.getElementById('play');
+      let audioFile = new Audio(audioUrl);
 
-    if (playBtn) {
-      playBtn.addEventListener('click', () => {
-        if (audioFile.paused) {
-          audioFile.play();
-          playBtn.innerHTML = '<i data-lucide="pause"></i>';
-        } else {
-          audioFile.pause();
-          playBtn.innerHTML = '<i data-lucide="play"></i>';
-        }
-        lucide.createIcons();
-      });
-    }
+      if (playBtn) {
+        //  IMPORTANT: Enable the button because audio exists
+        playBtn.removeAttribute('disabled');
+        playBtn.style.cursor = 'pointer'; //
+        
+        // 3. Add Click Listener
+        playBtn.addEventListener('click', () => {
+          if (audioFile.paused) {
+            audioFile.play()
+              .then(() => {
+                playBtn.innerHTML = '<i data-lucide="pause"></i>';
+                lucide.createIcons();
+              })
+              .catch(error => {
+                console.error("Audio play failed:", error);
+                alert("Error playing audio. Check console.");
+              });
+          } else {
+            audioFile.pause();
+            playBtn.innerHTML = '<i data-lucide="play"></i>';
+            lucide.createIcons();
+          }
+        });
+
+        // 4. Reset icon when audio finishes
+        audioFile.addEventListener('ended', () => {
+           playBtn.innerHTML = '<i data-lucide="play"></i>';
+           lucide.createIcons();
+        });
+      }
+    });
   </script>
   {% endif %}
 

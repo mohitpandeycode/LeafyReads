@@ -125,7 +125,7 @@ class Book(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            base_slug = f"{slugify(self.title)}-by-{slugify(self.author)}"
+            base_slug = f"{slugify(self.slug)}-by-{slugify(self.author)}"
             unique_slug = base_slug
             counter = 1
             while Book.objects.filter(slug=unique_slug).exists():

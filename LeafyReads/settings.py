@@ -26,8 +26,12 @@ if ENVIRONMENT == 'development':
     ALLOWED_HOSTS = ['*']
 else:
     DEBUG = False
-    # You MUST add '127.0.0.1' and 'localhost' to test production mode locally!
-    ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".vercel.app", ".amazonaws.com"]
+    ALLOWED_HOSTS = [
+        "127.0.0.1", 
+        "localhost", 
+        "3.108.52.246",
+        "ec2-3-108-52-246.ap-south-1.compute.amazonaws.com",
+    ]
 
 
 
