@@ -56,7 +56,6 @@
         transform: scale(1.1);
     }
   </style>
-  <script src="{% static 'js/loading.js' %}"></script>
 </head>
 
 <body>
@@ -301,7 +300,7 @@
       </li>
     </ul>
   </div>
-
+  <script src="{% static 'js/loading.js' %}"></script>
   <script>
     // --- FAB Menu Toggle Logic ---
     const fabContainer = document.getElementById('fabContainer');
@@ -332,25 +331,33 @@
     document.addEventListener('DOMContentLoaded', () => {
       const audioUrl = '{{ book.audio_file.url }}';
       const playBtn = document.getElementById('play');
+      
+      // Create audio object
       let audioFile = new Audio(audioUrl);
 
       if (playBtn) {
-        //  IMPORTANT: Enable the button because audio exists
         playBtn.removeAttribute('disabled');
-        playBtn.style.cursor = 'pointer'; //
-        
-        // 3. Add Click Listener
+        playBtn.style.cursor = 'pointer';
+
         playBtn.addEventListener('click', () => {
           if (audioFile.paused) {
-            audioFile.play()
-              .then(() => {
+            // Attempt to play
+            let playPromise = audioFile.play();
+
+            if (playPromise !== undefined) {
+              playPromise.then(_ => {
+                // Play started successfully
                 playBtn.innerHTML = '<i data-lucide="pause"></i>';
                 lucide.createIcons();
               })
               .catch(error => {
-                console.error("Audio play failed:", error);
-                alert("Error playing audio. Check console.");
+                console.error("Audio playback error:", error);
+                // Specifically check for NotSupportedError or 404 issues
+                if(error.name === "NotSupportedError" || error.message.includes("supported sources")) {
+                    alert("Audio file not found or format not supported on this device.");
+                }
               });
+            }
           } else {
             audioFile.pause();
             playBtn.innerHTML = '<i data-lucide="play"></i>';
@@ -358,10 +365,18 @@
           }
         });
 
-        // 4. Reset icon when audio finishes
         audioFile.addEventListener('ended', () => {
            playBtn.innerHTML = '<i data-lucide="play"></i>';
            lucide.createIcons();
+        });
+        
+        // Add error listener to the audio object itself
+        audioFile.addEventListener('error', (e) => {
+            console.error("Error loading audio file:", audioFile.error);
+            // Verify if it is a 404
+            if(audioFile.networkState === 3) { // NETWORK_NO_SOURCE
+                console.log("File not found (404) or decode error.");
+            }
         });
       }
     });
