@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ title }}- Discover & Read Your Favorite Books
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mobilehome.css' %}" />
+<link rel="stylesheet" href="{% static 'css/bookDesc.css' %}" />
+{% endblock %}
+
+{% block body %}
+{% include 'login.html' %}
+
+<main class="leafy-main-container">
+    <div class="book-details-wrapper">
+
+        <aside class="book-sidebar">
+            <div class="cover-container">
+                <img src="{{ book.cover_front.url }}" alt="{{ book.title }}" class="book-cover"
+                    onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';">
+                <div class="badge-overlay">
+                    {% if book.level %}Level {{ book.level }}{% endif %}
+                </div>
+            </div>
+
+            <div class="book-stats">
+                <div class="stat-item">
+                    <span class="count">{{ book.likes_count }}</span>
+                    <span class="label">❤️Likes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="count">{{ book.read_count }}</span>
+                    <span class="label">📖Reads</span>
+                </div>
+                <div class="stat-item verified">
+                    <span class="count">{{ book.saved_count }}</span>
+                    <span class="label">📂Saved</span>
+                </div>
+            </div>
+
+            <div class="share-row">
+                {% with saved_label=user_saved|yesno:"✔ Saved,➕ Add to Read Later" %}
+                <button class="btn-chip">{{ saved_label }}</button>
+                {% endwith %}
+                <button class="btn-chip">🔗 Share</button>
+                {% if book.audio_file %}
+                <button class="btn-chip">🎧 Listen Audio</button>
+                {% endif %}
+            </div>
+        </aside>
+
+        <section class="book-info">
+            <header class="book-header">
+                <h1 class="book-title">{{ book.title }}</h1>
+            </header>
+
+            <div class="book-credits">
+                <div class="credit-row">
+                    <span class="credit-label">Author:</span>
+                    <span class="credit-value">{{ book.author }}</span>
+                </div>
+                <div class="credit-row">
+                    <span class="credit-label">Publisher:</span>
+                    <span class="credit-value" style="color: rgb(16 194 130);">
+                        LeafyReads
+                    </span>
+                </div>
+                <div class="credit-row">
+                    <span class="credit-label">Language:</span>
+                    <span class="credit-value">Hindi, English</span>
+                </div>
+                <div class="credit-row">
+                    <span class="credit-label">Type:</span>
+                    <span class="credit-value">{{ book.genre }}, {{book.genre.category}}</span>
+                </div>
+                <div class="credit-row">
+                    <span class="credit-label">Published:</span>
+                    <span class="credit-value">
+                        {{ book.uploaded_at|date:"d-m-Y h:i A" }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="book-description">
+                <h4>About this story</h4>
+                <p>{{ book.bookcontent|escape }}....</p>
+            </div>
+
+            <div class="action-area">
+                <a href="{% url 'read-book' book.slug %}" class="btn btn-primary btn-lg icon-btn">
+                    <i data-lucide="book-open-text"></i> 
+                    <span> Read Story Now</span>
+                </a>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- Explore Section -->
+    <section class="explore-section">
+        <div class="explore-header">
+            <h3>You may also like</h3>
+            <a href="#" class="explore-link">View All</a>
+        </div>
+
+        <div class="books-grid">
+            {% if related_books %}
+            {% for b in related_books %}
+            <div class="book-item" style="position: relative;">
+                <a href="{% url 'book' b.slug %}">
+                    <img class="imgbook" src="{{ b.cover_front.url }}" alt="{{ b.title }}" loading="lazy"
+                        onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';"
+                        style="object-fit: cover;" />
+
+                    <img loading="lazy" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;"
+                        src="{% static 'images/framebook1.png' %}" alt="frame" />
+
+                    <div style="box-shadow:1px 1px 1px #61616138;border-radius:0 0 5px 5px;">
+                        <div class="readby">
+                            <h3 class="truncate">{{ b.title }}</h3>
+                            <div class="views">
+                                <h4>{{ b.read_count }}</h4>
+                                <i style="width:16px;" data-lucide="eye"></i>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;align-items:center;" class="truncate">
+                            <p>
+                                <span style="font-weight:700;">by:</span> {{ b.author }}
+                            </p>
+                            <div style="font-size:14px;display:flex;align-items:center;margin-right:5px;">
+                                ❤️ {{ b.likes_count }}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="muted">No similar books found.</p>
+        {% endif %}
+        </div>
+    </section>
+
+</main>
+{% endblock %}

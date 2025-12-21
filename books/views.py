@@ -6,10 +6,12 @@ from django.http import JsonResponse
 from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy
 from django.db.models import Count, OuterRef, Subquery, IntegerField
 from django.db import transaction
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef,Subquery, Value
+from django.db.models.functions import Substr, Coalesce
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.contrib.postgres.search import TrigramSimilarity
+from django.utils.html import strip_tags
 import hashlib
 import time
 
@@ -80,6 +82,67 @@ def home(request, slug):
             "liked": getattr(book, "is_liked", False),
         },
     )
+
+
+
+def openBook(request, slug):
+    # 1. Reuseable Subqueries
+    likes_sq = Like.objects.filter(book_id=OuterRef("pk")).values("book").annotate(c=Count("id")).values("c")
+    saved_sq = ReadLater.objects.filter(book_id=OuterRef("pk")).values("book").annotate(c=Count("id")).values("c")
+    reads_sq = ReadBy.objects.filter(book_id=OuterRef("pk")).values("book").annotate(c=Count("id")).values("c")
+
+    # 2. Fetch Main Book
+    book = get_object_or_404(
+        Book.objects.select_related("genre", "genre__category")
+        .annotate(
+            likes_count=Coalesce(Subquery(likes_sq, output_field=IntegerField()), 0),
+            saved_count=Coalesce(Subquery(saved_sq, output_field=IntegerField()), 0),
+            read_count=Coalesce(Subquery(reads_sq, output_field=IntegerField()), 0),
+        ),
+        slug=slug,
+        is_published=True,
+    )
+
+    # 3. Optimized Content
+    content_data = BookContent.objects.filter(book=book).values("chunks").first()
+    
+    if content_data and content_data.get("chunks"):
+        # Combine first 5 chunks to ensure we have enough text for 5 lines
+        # Then strip tags and take first 1000 characters
+        raw_text = " ".join(content_data["chunks"][:5])
+        book.bookcontent = strip_tags(raw_text)[:1000]
+    else:
+        book.bookcontent = ""
+
+    # 4. Related Books
+    related_books = (
+        Book.objects.select_related("genre")
+        .filter(is_published=True, genre=book.genre)
+        .exclude(id=book.id)
+        .annotate(
+            likes_count=Coalesce(Subquery(likes_sq, output_field=IntegerField()), 0),
+            read_count=Coalesce(Subquery(reads_sq, output_field=IntegerField()), 0),
+        )
+        .order_by("-uploaded_at")
+        .only("title", "slug", "cover_front", "genre", "uploaded_at")[:12]
+    )
+
+    # 5. User Flags
+    user_saved = False
+    if request.user.is_authenticated:
+        user_saved = ReadLater.objects.filter(user=request.user, book=book).exists()
+
+    return render(
+        request,
+        "bookDesc.html",
+        {
+            "title": book.title,
+            "book": book,
+            "related_books": related_books,
+            "user_saved": user_saved,
+        }
+    )
+  
 
 def library(request):
     #Categories
