@@ -271,73 +271,114 @@ def myBooks(request):
 
     return render(
         request,
-        "library.html",
+        "readlater.html",
         {
             "books": books,
             "title": "Your Wishlist",
         },
     )
 
+
+
+
 def searchbooks(request):
     book_query = request.GET.get("q", "").strip()
-    base_queryset = (
-        Book.objects
-        .only("id", "title", "slug", "author", "cover_front", "genre_id")
-        .annotate(
-            likes_count=Count("likes", distinct=True),
-            readby_count=Count("readbooks", distinct=True),
-        )
+    page_number = request.GET.get("page", 1)
+
+    cache_key = f"search_{book_query}_page_{page_number}"
+    context = cache.get(cache_key)
+
+    if context:
+        return render(request, "library.html", context)
+
+    likes_subquery = Subquery(
+        Book.objects.filter(id=OuterRef("id"))
+        .annotate(cnt=Count("likes"))
+        .values("cnt")[:1],
+        output_field=IntegerField()
+    )
+    
+    readby_subquery = Subquery(
+        Book.objects.filter(id=OuterRef("id"))
+        .annotate(cnt=Count("readbooks"))
+        .values("cnt")[:1],
+        output_field=IntegerField()
     )
 
-    books_list = base_queryset
+    books_queryset = Book.objects.select_related("genre").only(
+        "id", "title", "slug", "author", "cover_front", "genre__name", "uploaded_at"
+    )
+
     suggested_books = None
     no_results_found = False
 
     if book_query:
         # --- Trigram Search Logic ---
-        books_list = books_list.annotate(
+        books_queryset = books_queryset.annotate(
             similarity=(
                 TrigramSimilarity('title', book_query) * 1.0 +
                 TrigramSimilarity('author', book_query) * 0.7 +
-                TrigramSimilarity('slug', book_query) * 0.5
+                TrigramSimilarity('genre__name', book_query) * 0.6+
+                TrigramSimilarity('slug', book_query) * 0.4
             )
         ).filter(similarity__gt=0.1).order_by('-similarity', '-uploaded_at')
 
-        #  Zero Results Handling ---
-        if not books_list.exists():
+        # Attach the counts ONLY to the final filtered list
+        books_queryset = books_queryset.annotate(
+            likes_count=likes_subquery, 
+            readby_count=readby_subquery
+        )
+
+        paginator = Paginator(books_queryset, 30)
+        books = paginator.get_page(page_number)
+
+        # Check Python list length (No extra DB call)
+        if len(books) == 0:
             no_results_found = True
             
-            # --- Secure Logging Block ---
             try:
                 clean_query = book_query.lower().strip()[:200]
-
                 if clean_query:
-                    obj, created = SearchQueryLog.objects.get_or_create(query=clean_query)
-                    
-                    if not created:
-                        obj.count = F('count') + 1
-                        obj.save(update_fields=['count', 'last_searched'])
+                    SearchQueryLog.objects.update_or_create(
+                        query=clean_query,
+                        defaults={'count': F('count') + 1}
+                    )
             except Exception:
                 pass
-            suggested_books = base_queryset.order_by('-likes_count')[:12]
+
+            # Fetch suggestions only if needed
+            suggested_books = Book.objects.only(
+                "id", "title", "slug", "author", "cover_front"
+            ).annotate(
+                likes_count=likes_subquery
+            ).order_by('-likes_count')[:12]
+        
+        else:
+            suggested_books = Book.objects.only(
+                "id", "title", "slug", "author", "cover_front"
+            ).annotate(
+                likes_count=likes_subquery
+            ).order_by('-likes_count')[:12]
 
     else:
-        books_list = books_list.order_by("-uploaded_at")
+        # No Search - Just latest books
+        books_queryset = books_queryset.order_by("-uploaded_at").annotate(
+            likes_count=likes_subquery, 
+            readby_count=readby_subquery
+        )
+        paginator = Paginator(books_queryset, 30)
+        books = paginator.get_page(page_number)
 
-    paginator = Paginator(books_list, 30)
-    books = paginator.get_page(request.GET.get("page"))
+    context = {
+        "books": books,
+        "search": book_query,
+        "title": f"Results for '{book_query}'" if book_query else "All Books",
+        "no_results_found": no_results_found,
+        "suggested_books": suggested_books,
+    }
+    cache.set(cache_key, context, timeout=60 * 2)
 
-    return render(
-        request,
-        "library.html",
-        {
-            "books": books,
-            "search": book_query,
-            "title": f"Results for '{book_query}'" if book_query else "All Books",
-            "no_results_found": no_results_found,
-            "suggested_books": suggested_books,
-        },
-    )
+    return render(request, "library.html", context)
     
 # AJAX Search with Caching and Concurrency Control
 LOCK_TIMEOUT = 5

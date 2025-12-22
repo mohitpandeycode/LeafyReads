@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load socialaccount %}
 {% block title %}
 Community - LeafyReads
 {% endblock %}
@@ -43,7 +43,7 @@ Community - LeafyReads
 </div>
 {% endif %}
 
-{% if posts.number > 2 %}
+{% if posts.number > 3 %}
 
 <div class="refresh">
   <a href="{% url 'community' %}" class="refresh-btn">
@@ -123,7 +123,7 @@ Community - LeafyReads
         <div class="mentionedbook">
           <div class="search-container">
             <i data-lucide="search"></i>
-            <input type="text" placeholder="Search books to mention..." />
+            <input type="text" placeholder="Search books, category, author..." />
           </div>
 
           <div class="watched-section">
@@ -169,7 +169,7 @@ Community - LeafyReads
       </form>
       {% else %}
       <div class="login-reminder">
-        <p>🔒 <span>Log in</span> to share your thoughts with the world.</p>
+        <p>🔒 <a style="text-decoration: underline;color:#006c9d;font-weight:700;" href="{% provider_login_url 'google' %}?next={{request.path}}">Log in</a> to share your thoughts with the world.</p>
       </div>
       {% endif %}
     </div>

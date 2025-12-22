@@ -13,212 +13,194 @@
 {% block body %}
 {% include 'login.html' %}
 
-{% if not request.path == '/book/my-books/' %}
-  {% if categories %}
-  <div class="filter-section-wrapper">
+{% if categories %}
+<div class="filter-section-wrapper">
     <button class="scroll-btn left-scroll-btn" onclick="scrollFilters('left')"><i data-lucide="chevron-left"></i></button>
 
     <div class="filter-section" id="filter-scroll-container">
-      <a href="{% url 'library' %}" class="filter-item {% if not category %}active{% endif %}">All</a>
-      {% for cat in categories %}
-      <a href="{% url 'category' cat.slug %}" class="filter-item {% if category.slug == cat.slug %}active{% endif %}">{{cat.name }}</a>
-      {% endfor %}
+        <a href="{% url 'library' %}" class="filter-item {% if not category %}active{% endif %}">All</a>
+        {% for cat in categories %}
+        <a href="{% url 'category' cat.slug %}" class="filter-item {% if category.slug == cat.slug %}active{% endif %}">{{ cat.name }}</a>
+        {% endfor %}
     </div>
 
-    <button class="scroll-btn right-scroll-btn" onclick="scrollFilters('right')"><i
-        data-lucide="chevron-right"></i></button>
-  </div>
-  {% endif %}
+    <button class="scroll-btn right-scroll-btn" onclick="scrollFilters('right')"><i data-lucide="chevron-right"></i></button>
+</div>
 {% endif %}
 
 {% if user.is_authenticated %}
-  {% if request.path == '/book/library/' %}
-  <section class="recent-books-section">
-    <div class="container bookscontainer">
-      <h2 class="section-title">Recently Read Books</h2>
-      {% if recently_read_books %}
-      <div class="book-list">
-        {% for read_item in recently_read_books %}
-        {% with book=read_item.book %}
-        <a href="{% url 'book' book.slug %}" class="book-card">
-          <div class="book-wrapper">
-            {% if book.cover_front %}
-            <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover" />
-            {% else %}
-            <img src="{% static 'images/default_cover.png' %}" alt="No Cover" class="book-cover" />
-            {% endif %}
-            <div class="book-info-overlay">
-              <p class="book-title">{{ book.title }}</p>
-              <p class="book-author">{{ book.author }}</p>
+    {% if request.path == '/book/library/' %}
+    <section class="recent-books-section">
+        <div class="container bookscontainer">
+            <h2 class="section-title">Recently Read Books</h2>
+            {% if recently_read_books %}
+            <div class="book-list">
+                {% for read_item in recently_read_books %}
+                {% with book=read_item.book %}
+                <a href="{% url 'book' book.slug %}" class="book-card">
+                    <div class="book-wrapper">
+                        {% if book.cover_front %}
+                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover" />
+                        {% else %}
+                        <img src="{% static 'images/default_cover.png' %}" alt="No Cover" class="book-cover" />
+                        {% endif %}
+                        <div class="book-info-overlay">
+                            <p class="book-title">{{ book.title }}</p>
+                            <p class="book-author">{{ book.author }}</p>
+                        </div>
+                    </div>
+                </a>
+                {% endwith %}
+                {% endfor %}
             </div>
-          </div>
-        </a>
-        {% endwith %}
-        {% endfor %}
-      </div>
-      {% else %}
-      <p class="text-center">You haven't marked any books as read yet. Start reading and they'll appear here! 📚</p>
-      {% endif %}
-    </div>
-  </section>
-  {% endif %}
+            {% else %}
+            <p class="text-center">You haven't marked any books as read yet. Start reading and they'll appear here! 📚</p>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
 {% endif %}
 
 <section class="bg-white">
-  <div class="container bookscontainer">
+    <div class="container bookscontainer">
 
-    {% if search and no_results_found %}
-    <div class="fallback-modern">
-      <div class="fallback-card">
-        <img class="fallback-icon" src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" loading="lazy"
-          alt="No books" />
-        <h2>Oops! No books found.</h2>
-        <p>
-          We couldn’t find anything for <strong>"{{ search }}"</strong>. But don't worry, we've noted your request!
-        </p>
-      </div>
-    </div>
-    
-
-    {% if suggested_books %}
-    <div class="section-header" style="text-align: start;">
-      <h3>✨ Recommend for you</h3>
-      <p>Our most popular reads right now.</p>
-    </div>
-    <div class="books-grid">
-      {% for book in suggested_books %}
-      <div class="book-item" style="position: relative;">
-        <a href="{% url 'book' book.slug %}">
-          <img class="imgbook" src="{{ book.cover_front.url }}" alt="{{ book.title }}" loading="lazy"
-            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"
-            style="object-fit: cover;" />
-          <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;"
-            src="{% static 'images/framebook1.png' %}" alt="frame" />
-          <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
-            <div class="readby">
-              <h3 class="truncate">{{ book.title }}</h3>
-              <div class="views">
-                <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
-              </div>
+        {% if search and no_results_found %}
+        <div class="fallback-modern">
+            <div class="fallback-card">
+                <img class="fallback-icon" src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" loading="lazy" alt="No books" />
+                <h2>Oops! No books found.</h2>
+                <p>We couldn’t find anything for <strong>"{{ search }}"</strong>. But don't worry, we've noted your request!</p>
             </div>
-            <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
-              <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
-              <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
-                ❤️ {{ book.likes_count }}
-              </div>
+        </div>
+
+        {% elif not books and not search %}
+        <div class="fallback-modern">
+            <div class="fallback-card">
+                <img class="fallback-icon" src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" loading="lazy" alt="No books" />
+                <h2>Coming Soon...</h2>
+                <p>Looks like this category is still waiting for its first book.</p>
+                <a href="{% url 'library' %}" class="fallback-link">Explore Library</a>
             </div>
-          </div>
-        </a>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
+        </div>
 
-    {% elif not books and not search %}
-    <div class="fallback-modern">
-      <div class="fallback-card">
-        <img class="fallback-icon" src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" loading="lazy"
-          alt="No books" />
-        <h2>Coming Soon...</h2>
-        <p>Looks like this category is still waiting for its first book.</p>
-        <a href="{% url 'library' %}" class="fallback-link">Explore Library</a>
-      </div>
-    </div>
-
-    {% else %}
-    <div class="section-header">
-      {% if search %}
-      <h2 style="font-size: 1.8rem;">Search results for <u>{{ search }}</u></h2>
-      {% else %}
-      {% if title == 'Your Wishlist' %}
-      <h2 style="font-size: 1.8rem;">Your Saved Books</h2>
-      <p>Read anytime, anywhere.</p>
-      {% else %}
-      <h2 style="font-size: 1.7rem;padding-top: 0px;">Explore the Collection {{ category }}</h2>
-      <p>A vast range of books curated just for you.</p>
-      {% endif %}
-      {% endif %}
-    </div>
-
-    <div class="books-grid">
-      {% for book in books %}
-      {% if book.is_published %}
-      <div class="book-item" style="position: relative;">
-        <a href="{% url 'book' book.slug %}">
-          <img class="imgbook" src="{{ book.cover_front.url }}" alt="{{ book.title }}" loading="lazy"
-            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"
-            style="object-fit: cover;" />
-          <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;"
-            src="{% static 'images/framebook1.png' %}" alt="frame" />
-          <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
-            <div class="readby">
-              <h3 class="truncate">{{ book.title }}</h3>
-              <div class="views">
-                <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
-              </div>
-            </div>
-            <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
-              <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
-              <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
-                ❤️ {{ book.likes_count }}
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-      {% endif %}
-      {% endfor %}
-    </div>
-    {% endif %}
-  </div>
-
-  {% if books.paginator.num_pages > 1 %}
-      <div class="pagination">
-        {% if books.has_previous %}
-          <a href="?page={{ books.previous_page_number }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">Previous</a>
         {% else %}
-          <span class="page-btn disabled">Previous</span>
-        {% endif %}
+            <div class="section-header">
+                {% if search %}
+                <h2 style="font-size: 1.8rem;">Search results for <u>{{ search }}</u></h2>
+                {% else %}
+                <h2 style="font-size: 1.7rem;padding-top: 0px;">Explore the Collection {{ category }}</h2>
+                <p>A vast range of books curated just for you.</p>
+                {% endif %}
+            </div>
 
-        {% if books.number > 3 %}
-          <a href="?page=1{% if search %}&q={{ search }}{% endif %}" class="page-btn">1</a>
-          <span class="dots">...</span>
+            <div class="books-grid">
+                {% for book in books %}
+                {% if book.is_published %}
+                <div class="book-item" style="position: relative;">
+                    <a href="{% url 'book' book.slug %}">
+                        <img class="imgbook" src="{{ book.cover_front.url }}" alt="{{ book.title }}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" style="object-fit: cover;" />
+                        <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" src="{% static 'images/framebook1.png' %}" alt="frame" />
+                        <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
+                            <div class="readby">
+                                <h3 class="truncate">{{ book.title }}</h3>
+                                <div class="views">
+                                    <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
+                                </div>
+                            </div>
+                            <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
+                                <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
+                                <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
+                                    ❤️ {{ book.likes_count }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
         {% endif %}
-
-        {% for num in books.paginator.page_range %}
-          {% if num >= books.number|add:'-2' and num <= books.number|add:'2' %}
-            
-            {% if books.number == num %}
-              <span class="page-btn current">{{ num }}</span>
+        {% if books.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if books.has_previous %}
+            <a href="?page={{ books.previous_page_number }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">Previous</a>
             {% else %}
-              <a href="?page={{ num }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">{{ num }}</a>
+            <span class="page-btn disabled">Previous</span>
             {% endif %}
-            
-          {% endif %}
-        {% endfor %}
 
-        {% if books.number < books.paginator.num_pages|add:'-2' %}
-          <span class="dots">...</span>
-          <a href="?page={{ books.paginator.num_pages }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">{{ books.paginator.num_pages }}</a>
+            {% if books.number > 3 %}
+            <a href="?page=1{% if search %}&q={{ search }}{% endif %}" class="page-btn">1</a>
+            <span class="dots">...</span>
+            {% endif %}
+
+            {% for num in books.paginator.page_range %}
+            {% if num >= books.number|add:'-2' and num <= books.number|add:'2' %}
+                {% if books.number == num %}
+                <span class="page-btn current">{{ num }}</span>
+                {% else %}
+                <a href="?page={{ num }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">{{ num }}</a>
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% if books.number < books.paginator.num_pages|add:'-2' %}
+            <span class="dots">...</span>
+            <a href="?page={{ books.paginator.num_pages }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">{{ books.paginator.num_pages }}</a>
+            {% endif %}
+
+            {% if books.has_next %}
+            <a href="?page={{ books.next_page_number }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">Next</a>
+            {% else %}
+            <span class="page-btn disabled">Next</span>
+            {% endif %}
+        </div>
         {% endif %}
 
-        {% if books.has_next %}
-          <a href="?page={{ books.next_page_number }}{% if search %}&q={{ search }}{% endif %}" class="page-btn">Next</a>
-        {% else %}
-          <span class="page-btn disabled">Next</span>
+
+        {% if suggested_books %}
+        <div style="margin-top: 1rem; border-top: 1px solid #e5e7eb; padding-top: 2rem;">
+            <div class="section-header" style="text-align: start;">
+                <h3>✨ Recommend for you</h3>
+                <p>Our most popular reads right now.</p>
+            </div>
+            <div class="books-grid">
+                {% for book in suggested_books %}
+                <div class="book-item" style="position: relative;">
+                    <a href="{% url 'book' book.slug %}">
+                        <img class="imgbook" src="{{ book.cover_front.url }}" alt="{{ book.title }}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" style="object-fit: cover;" />
+                        <img loading="lazy" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" src="{% static 'images/framebook1.png' %}" alt="frame" />
+                        <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
+                            <div class="readby">
+                                <h3 class="truncate">{{ book.title }}</h3>
+                                <div class="views">
+                                    <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
+                                </div>
+                            </div>
+                            <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
+                                <p><span style="font-weight: 700;">by:</span> {{ book.author }}</p>
+                                <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
+                                    ❤️ {{ book.likes_count }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
         {% endif %}
-      </div>
-    {% endif %}
-  </section>
+
+    </div>
+</section>
 
 <script>
-  function scrollFilters(direction) {
-    const container = document.getElementById('filter-scroll-container')
-    const scrollDistance = 200
-    if (container) {
-      let scrollAmount = direction === 'left' ? -scrollDistance : scrollDistance
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    function scrollFilters(direction) {
+        const container = document.getElementById('filter-scroll-container')
+        const scrollDistance = 200
+        if (container) {
+            let scrollAmount = direction === 'left' ? -scrollDistance : scrollDistance
+            container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+        }
     }
-  }
 </script>
 {% endblock %}

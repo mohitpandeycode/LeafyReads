@@ -1,3 +1,4 @@
+{% load socialaccount %}
 <style>
     :root {
         --bg: #f2f4f8;
@@ -200,8 +201,11 @@
         </div>
         {% else %}
         <div class="input-area" style="display: flex;justify-content:center;">
-            <h5 style="display: flex;justify-content: center;align-items: center;gap:5px">Login to Post Comment <i
-                    data-lucide="traffic-cone"></i> </h5>
+            <a href="{% provider_login_url 'google' %}?next={{request.path}}">
+            <h5 style="display: flex;justify-content: center;align-items: center;gap:5px">
+                Login to Post Comment <i data-lucide="traffic-cone"></i>
+            </h5>
+            </a>
         </div>
         {% endif %}
     </div>

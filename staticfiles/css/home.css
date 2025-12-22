@@ -1125,8 +1125,8 @@ body.dark-mode .feature-icon.bg-purple {
 
 .testimonials-grid {
     display: grid;
-    gap: 2rem;
-    max-width: 56rem;
+    gap: 1rem;
+    max-width: 85rem;
     margin: 0 auto
 }
 
@@ -1287,7 +1287,7 @@ body.dark-mode .hero-bg {
     }
 
     .testimonials-grid {
-        grid-template-columns: repeat(2, 1fr)
+        grid-template-columns: repeat(3, 1fr)
     }
 
     .footer-grid {
