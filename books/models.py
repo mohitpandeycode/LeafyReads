@@ -260,6 +260,20 @@ class ReadBy(models.Model):
     def __str__(self):
         return f"{self.user.username} readed {self.book.title} "
     
-    
+
+
+class SearchQueryLog(models.Model):
+    query = models.CharField(max_length=255, unique=True, db_index=True)
+    count = models.PositiveIntegerField(default=1)
+    first_searched = models.DateTimeField(auto_now_add=True)
+    last_searched = models.DateTimeField(auto_now=True) 
+
+    class Meta:
+        ordering = ['-last_searched']
+        verbose_name = "Failed Search Term"
+        verbose_name_plural = "Failed Search Terms"
+
+    def __str__(self):
+        return f"{self.query} ({self.count} times)"
     
     

@@ -125,23 +125,23 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = 'LeafyReads.wsgi.application'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'LeafyReads',
-#         'USER': 'postgres',
-#         'PASSWORD': 'mohit@123@123', 
-#         'HOST': 'localhost',
-#         'PORT': '5433',
-#     }
-# }
-
-
-DATABASE_URL = env('DATABASE_URL')
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'LeafyReads',
+        'USER': 'postgres',
+        'PASSWORD': 'mohit@123@123', 
+        'HOST': 'localhost',
+        'PORT': '5433',
+    }
 }
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+
+
+# DATABASE_URL = env('DATABASE_URL')
+# DATABASES = {
+#     'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600)
+# }
+# SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 CACHES = {
     "default": {

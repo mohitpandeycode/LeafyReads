@@ -64,3 +64,5 @@ class ReadLaterAdmin(ModelAdmin):
 class ReadByAdmin(ModelAdmin):
     list_display = ('user', 'book', 'readed_at')
     search_fields = ('user__username', 'book__title')
+
+admin.site.register(SearchQueryLog)

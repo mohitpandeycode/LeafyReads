@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Library Fire</title>
+    <link rel="stylesheet" href="{% static 'css/error-styles.css' %}">
+</head>
+<body class="error-500"> <div class="particles">
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    </div>
+
+    <div class="error-container">
+        <div class="illustration-wrapper">
+            <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+                <ellipse class="shadow-zone" cx="100" cy="150" rx="70" ry="10" fill="#ef4444" opacity="0.3" />
+                <g class="floating-anim">
+                    <path d="M40,100 L160,100 L160,110 C160,115 155,120 140,120 L60,120 C45,120 40,115 40,110 Z" fill="#450a0a"/>
+                    <path d="M45,95 L155,95 L155,110 C155,110 140,115 100,115 C60,115 45,110 45,110 Z" fill="#7f1d1d"/>
+                    <path d="M100,115 L40,110 L20,40 L100,60 Z" fill="#b91c1c"/> 
+                    <path d="M100,115 L160,110 L180,40 L100,60 Z" fill="#dc2626"/> 
+                    <path d="M80,30 Q90,10 100,30 Q110,10 120,40" fill="none" stroke="#ef4444" stroke-width="4"/>
+                    <path d="M90,40 Q100,20 110,40" fill="none" stroke="#fca5a5" stroke-width="3"/>
+                </g>
+            </svg>
+        </div>
+
+        <h1 data-text="500">500</h1>
+        <h2>Code Red! The Library is on Fire!</h2>
+        <p>
+            <strong>CRITICAL FAILURE:</strong> Something broke on our shelves. 
+            The digital librarians are running around with fire extinguishers right now.
+        </p>
+        <a href="/" class="btn">Evacuate Home</a>
+    </div>
+</body>
+</html>

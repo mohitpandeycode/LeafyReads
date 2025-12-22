@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Prefetch, Count, F
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy
+from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy,SearchQueryLog
 from django.db.models import Count, OuterRef, Subquery, IntegerField
 from django.db import transaction
 from django.db.models import Exists, OuterRef,Subquery, Value
@@ -280,10 +280,8 @@ def myBooks(request):
 
 def searchbooks(request):
     book_query = request.GET.get("q", "").strip()
-
-    books_list = (
+    base_queryset = (
         Book.objects
-        # Fetch necessary fields to prevent extra DB calls
         .only("id", "title", "slug", "author", "cover_front", "genre_id")
         .annotate(
             likes_count=Count("likes", distinct=True),
@@ -291,26 +289,39 @@ def searchbooks(request):
         )
     )
 
+    books_list = base_queryset
+    suggested_books = None
+    no_results_found = False
+
     if book_query:
-        # Multi-Field Trigram Search
-        # calculate similarity for ALL 3 fields and sum them up.
+        # --- Trigram Search Logic ---
         books_list = books_list.annotate(
             similarity=(
-                TrigramSimilarity('title', book_query) * 1.0 +   # Highest weight
-                TrigramSimilarity('author', book_query) * 0.7 +  # Medium weight
-                TrigramSimilarity('slug', book_query) * 0.5      # Lower weight
+                TrigramSimilarity('title', book_query) * 1.0 +
+                TrigramSimilarity('author', book_query) * 0.7 +
+                TrigramSimilarity('slug', book_query) * 0.5
             )
-        )
-        
-        # Filter results that have ANY similarity (> 0.1 is very broad/permissive)
-        # This replaces the slow 'icontains' loop.
-        books_list = books_list.filter(similarity__gt=0.1)
-        
-        # Order by Best Match first, then by Newest
-        books_list = books_list.order_by('-similarity', '-uploaded_at')
+        ).filter(similarity__gt=0.1).order_by('-similarity', '-uploaded_at')
+
+        #  Zero Results Handling ---
+        if not books_list.exists():
+            no_results_found = True
+            
+            # --- Secure Logging Block ---
+            try:
+                clean_query = book_query.lower().strip()[:200]
+
+                if clean_query:
+                    obj, created = SearchQueryLog.objects.get_or_create(query=clean_query)
+                    
+                    if not created:
+                        obj.count = F('count') + 1
+                        obj.save(update_fields=['count', 'last_searched'])
+            except Exception:
+                pass
+            suggested_books = base_queryset.order_by('-likes_count')[:12]
 
     else:
-        # Default ordering
         books_list = books_list.order_by("-uploaded_at")
 
     paginator = Paginator(books_list, 30)
@@ -322,9 +333,9 @@ def searchbooks(request):
         {
             "books": books,
             "search": book_query,
-            "title": (
-                f"Search results for '{book_query}'" if book_query else "All Books"
-            ),
+            "title": f"Results for '{book_query}'" if book_query else "All Books",
+            "no_results_found": no_results_found,
+            "suggested_books": suggested_books,
         },
     )
     

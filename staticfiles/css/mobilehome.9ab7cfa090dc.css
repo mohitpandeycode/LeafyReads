@@ -141,6 +141,10 @@
         width: 100%;
     }
 
+    .header-content{
+        height: 40px;
+    }
+
     .search-input {
         font-size: 0.9rem;
         height: 44px;
@@ -148,7 +152,7 @@
 
     .btn.primary-btn {
         justify-content: center;
-        height: 44px;
+        height: 40px;
     }
 
     .searchb {
@@ -168,8 +172,7 @@
 
     /* CATEGORY SECTION - MOBILE */
     .section-header h2 {
-        font-size: 1.7rem;
-        padding-top: 3rem;
+        font-size: 1.2rem;
     }
 
     .section-header p {

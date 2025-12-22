@@ -183,8 +183,8 @@ body.dark-mode {
     margin: 0;
     position: absolute;
     top: 110%;
-    left: -25px;
-    min-width: 240px;
+    left: 0px;
+    min-width: 175px;
     z-index: 1000;
     background-color: var(--bg-color);
     border: 1px solid var(--border-color);

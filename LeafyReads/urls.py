@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('tryhardadmin/', admin.site.urls),
     path('accounts/', include('allauth.urls')), 
     path('', include('home.urls')),
     path('profile/', include('userSection.urls')),

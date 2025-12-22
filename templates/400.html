@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>400 - Gibberish</title>
+    <link rel="stylesheet" href="{% static 'css/error-styles.css' %}">
+</head>
+<body>
+    <div class="particles">
+        <div class="particle"></div><div class="particle"></div>
+    </div>
+
+    <div class="error-container">
+        <div class="illustration-wrapper">
+            <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+                <ellipse class="shadow-zone" cx="100" cy="150" rx="70" ry="10" fill="#22c55e" opacity="0.3" />
+                <g class="floating-anim">
+                    <path d="M60,120 C40,120 40,40 100,40 C160,40 160,120 140,120" stroke="#22c55e" fill="none" stroke-width="4" stroke-linecap="round"/>
+                    <text x="85" y="90" font-family="monospace" font-size="30" fill="#22c55e">?!#</text>
+                </g>
+            </svg>
+        </div>
+
+        <h1 data-text="400">400</h1>
+        <h2>We don't speak that language.</h2>
+        <p>
+            <strong>BAD REQUEST:</strong> Your browser sent a request that our library clerk couldn't understand. 
+            It sounded like gibberish to us.
+        </p>
+        <a href="/" class="btn">Try Again</a>
+    </div>
+</body>
+</html>
