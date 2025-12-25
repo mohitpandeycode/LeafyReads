@@ -16,40 +16,38 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="{% static 'css/mobilebook.css' %}" />
   <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark-dimmed.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
 
  <style>
     body {
-      background-image: url('{% static "images/back.png" %}');
+      min-height: 100vh;
+      position: relative;
+      margin: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image: url('{% static "images/back.webp" %}');
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
-      background-attachment: fixed;
+      will-change: transform; 
     }
-    body.dark-mode {
-      background-image: url('{% static "images/backdark.png" %}');
+
+    /* 3. Dark Mode now updates the pseudo-element */
+    body.dark-mode::before {
+      background-image: url('{% static "images/backdark.webp" %}');
     }
+
     .leafy-auth-container{
         max-width: 80%;
         padding: 1rem;
     }
-
-    /* Highlighter Styles */
-    .highlighted {
-        background-color: #ffeb3b;
-        color: #000;
-        border-radius: 2px;
-        padding: 0 2px;
-    }
-    body.dark-mode .highlighted {
-        background-color: #ff9800; /* Darker orange for dark mode */
-        color: #000;
-    }
-
-    /* Active State for Buttons (like Highlight Pen) */
     .tool-active {
         background-color: #f59e0b !important; /* Orange */
         color: white !important;
@@ -140,9 +138,9 @@
       <div class="co-header-content">
         <a href="/" class="logo">
           <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="logo">
-          <img class="logo-light" style="width: 105px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
+          <img class="logo-light" style="width: 105px; border-radius: 15px;" src="{% static 'images/leafylight.webp' %}"
             alt="LeafyReads">
-          <img class="logo-dark" style="width: 105px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}"
+          <img class="logo-dark" style="width: 105px; border-radius: 15px;" src="{% static 'images/leafyDark.webp' %}"
             alt="LeafyReads">
         </a>
         <div class="co-header-actions">
@@ -220,10 +218,6 @@
       </button>
       {% endif %}
 
-      <button id="highlightBtn" class="fab-btn mini-btn" title="Highlighter">
-        <i data-lucide="highlighter"></i>
-      </button>
-
       <button disabled id="play" class="fab-btn mini-btn" title="Listen">
         <i data-lucide="play"></i>
       </button>
@@ -274,39 +268,13 @@
 
   <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
   <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
-  <div id="shortcutsPanel" class="shortcuts-panel">
-    <div class="shortcuts-header">
-      <h2>Keyboard Shortcuts</h2>
-      <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
-    </div>
-    <ul>
-      <li>
-        <b>( ᖴ )</b> ☛ Fullscreen Mode
-      </li>
-      <li>
-        <b>( D )</b> ☛ Dark Mode/Light Mode
-      </li>
-      <li>
-        <b>( M )</b> ☛ Mute/Unmute
-      </li>
-      <li>
-        <b>( H )</b> ☛ Highlighter Pen
-      </li>
-      <li>
-        <b>(➡️)</b> ☛ Next Page
-      </li>
-      <li>
-        <b>(⬅️)</b> ☛ Previous Page
-      </li>
-    </ul>
-  </div>
   <script src="{% static 'js/loading.js' %}"></script>
   <script>
     // --- FAB Menu Toggle Logic ---
     const fabContainer = document.getElementById('fabContainer');
     const fabTrigger = document.getElementById('fabTrigger');
 
-    if (fabTrigger && fabContainer) {
+    if (fabTrigger && fabContainer) { 
       fabTrigger.addEventListener('click', () => {
         // Toggle the 'active' class on the container
         fabContainer.classList.toggle('active');
@@ -424,62 +392,6 @@
         });
       }
 
-      // --- 3. Highlighter Logic ---
-      // --- 3. Highlighter Logic ---
-      const highlightBtn = document.getElementById('highlightBtn');
-      const bookContainer = document.getElementById('container');
-      let isHighlightMode = false;
-
-      if (highlightBtn) {
-        highlightBtn.addEventListener('click', () => {
-          clicks.currentTime = 0; clicks.play();
-          isHighlightMode = !isHighlightMode;
-
-          // Toggle Active Visual Class
-          if (isHighlightMode) {
-            highlightBtn.classList.add('tool-active');
-            showToast('Highlighter ON - Select text to highlight');
-
-            // ENABLE SELECTION: Add the class that overrides user-select: none
-            bookContainer.classList.add('allow-selection');
-          } else {
-            highlightBtn.classList.remove('tool-active');
-            showToast('Highlighter OFF');
-
-            // DISABLE SELECTION: Remove the class
-            bookContainer.classList.remove('allow-selection');
-
-            // Clear any current selection so it doesn't look stuck
-            window.getSelection().removeAllRanges();
-          }
-        });
-      }
-
-      // Listen for text selection inside the book container
-      if (bookContainer) {
-        bookContainer.addEventListener('mouseup', () => {
-          if (!isHighlightMode) return;
-
-          const selection = window.getSelection();
-          // Ensure we have a selection and it's not empty
-          if (selection.rangeCount > 0 && !selection.isCollapsed) {
-            const range = selection.getRangeAt(0);
-
-            // Check if selection is inside the book container
-            if (bookContainer.contains(range.commonAncestorContainer)) {
-              try {
-                const span = document.createElement('span');
-                span.className = 'highlighted';
-                range.surroundContents(span);
-                selection.removeAllRanges(); // Deselect text after highlighting
-              } catch (e) {
-                showToast('Try selecting text within a single paragraph.');
-              }
-            }
-          }
-        });
-      }
-
       // --- Existing Functionality ---
 
       // Burst Likes Animation
@@ -490,7 +402,7 @@
           requestAnimationFrame(() => {
             const like = document.createElement('div');
             like.classList.add('like');
-            like.textContent = '👍';
+            like.textContent = '❤️';
             const size = Math.random() * 16 + 16;
             like.style.cssText = `
             font-size: ${size}px;
