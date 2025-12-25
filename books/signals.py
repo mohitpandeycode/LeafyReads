@@ -5,9 +5,6 @@ from django.db.models.signals import post_save, post_delete
 from django.core.cache import cache
 from books.models import Book, Genre, ReadBy
 
-@receiver(user_logged_in)
-def show_login_message(sender, request, user, **kwargs):
-    messages.success(request, f"Welcome back, {user.first_name or user.username}!")
 
 @receiver([post_save, post_delete], sender=Book)
 def invalidate_home_books(sender, instance, **kwargs):

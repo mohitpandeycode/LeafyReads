@@ -1,7 +1,8 @@
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.contrib import messages
-from django.db.models.signals import post_save, m2m_changed
+from django.db.models.signals import post_save, m2m_changed,post_delete
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from community.models import Post, Comment
 from home.models import Notification
@@ -13,7 +14,6 @@ def show_login_message(sender, request, user, **kwargs):
 
 
 # SIGNAL: User likes a Post
-# Output: "JohnDoe liked your post “Top 5 Fantasy Books” ❤️"
 @receiver(m2m_changed, sender=Post.likes.through)
 def notify_post_like(sender, instance, action, pk_set, **kwargs):
     # We only trigger this when a like is ADDED (not removed)
@@ -108,3 +108,36 @@ def notify_post_publish(sender, instance, created, **kwargs):
             content_object=instance,
             message=msg
         )
+        
+# 4. CLEANUP: When a Post is Deleted
+# Action: Removes all notifications (likes, comments, mentions) related to that post
+@receiver(post_delete, sender=Post)
+def cleanup_post_notifications(sender, instance, **kwargs):
+    # 1. Get the ContentType for the Post model
+    post_content_type = ContentType.objects.get_for_model(Post)
+    
+    # 2. Find and delete all notifications linked to this specific post
+    # This removes "User liked your post", "User commented...", etc.
+    Notification.objects.filter(
+        content_type=post_content_type, 
+        object_id=instance.id
+    ).delete()
+    
+    
+# 5. NOTIFY: Post Deleted
+@receiver(post_delete, sender=Post)
+def notify_post_delete(sender, instance, **kwargs):
+    post_preview = "Update"
+    if instance.book:
+        post_preview = instance.book.title
+    elif instance.content:
+        post_preview = instance.content[:30] + "..." if len(instance.content) > 30 else instance.content
+
+    msg = f"<strong>Your post “{post_preview}”</strong> has been deleted. 🗑️"
+    Notification.objects.create(
+        recipient=instance.author,
+        actor=instance.author,
+        notification_type='post_delete',
+        content_object=instance.author,  
+        message=msg
+    )

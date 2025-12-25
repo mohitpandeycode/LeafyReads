@@ -94,67 +94,25 @@ def community(request):
     }
     return render(request, "community.html", context)
 
-# def community(request):
-#     # Fetch posts with calculated counts instead of loading objects
-#     posts_qs = Post.objects.select_related('author', 'book').annotate(
-#         likes_count=Count('likes', distinct=True),
-#         comments_count=Count('comments', distinct=True)
-#     ).order_by('-created_at')
+@login_required
+@require_POST
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
 
-#     if request.user.is_authenticated:
-#         is_liked = Post.likes.through.objects.filter(
-#             post_id=OuterRef('pk'),
-#             user_id=request.user.id
-#         )
-#         posts_qs = posts_qs.annotate(has_liked=Exists(is_liked))
+    # Security Check
+    if post.author != request.user:
+        return JsonResponse({
+            'status': 'error', 
+            'message': 'You are not authorized to delete this post.'
+        }, status=403)
 
-#     # Prefetch images
-#     posts_qs = posts_qs.prefetch_related('images')
+    # Delete
+    post.delete()
 
-#     # Only fetch 10 posts at a time to keep the page fast
-#     paginator = Paginator(posts_qs, 20) 
-#     page_number = request.GET.get('page')
-#     posts_page = paginator.get_page(page_number)
-
-#     # Optimized watched book query
-#     books =[]
-#     if request.user.is_authenticated:
-#         books = ReadBy.objects.filter(user=request.user).select_related('book')[:5]
-
-#     # POST SUBMISSION LOGIC ---
-#     if request.method == "POST":
-#         content = request.POST.get("content", "").strip()
-#         book_slug = request.POST.get("book", "").strip()
-#         image_file = request.FILES.get("image", None)
-
-#         if not content and not book_slug and not image_file:
-#             messages.error(request, "Cannot create an empty post.")
-#             return redirect("community")
-
-#         book_obj = None
-#         if book_slug:
-#             book_obj = Book.objects.filter(slug=book_slug).first()
-
-#         # Create Post
-#         post = Post.objects.create(
-#             author=request.user,
-#             content=content,
-#             book=book_obj
-#         )
-
-#         # Handle Image
-#         if image_file:
-#             PostImage.objects.create(post=post, image=image_file)
-
-#         messages.success(request, "Your post has been published!")
-#         return redirect("community")
-
-#     context = {
-#         "posts": posts_page,
-#         "books": books,
-#     }
-#     return render(request, "community.html", context)
-
+    return JsonResponse({
+        'status': 'success', 
+        'message': 'Post has been deleted successfully.' 
+    })
 
 
 @login_required
