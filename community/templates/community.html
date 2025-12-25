@@ -56,7 +56,7 @@ Community - LeafyReads
 <!-- IMAGE POPUP MODAL -->
 <div id="imageModal" class="image-modal">
   <span id="closeImageModal" class="close-img-modal">&times;</span>
-  <img id="modalImage" class="modal-content-img" />
+  <img id="modalImage" class="modal-content-img" loading="lazy" alt="preview"/>
 </div>
 
 <!-- comment POPUP MODAL -->
@@ -93,7 +93,7 @@ Community - LeafyReads
     <div class="create-post-card">
       <div class="post-header" style="margin-bottom: 16px;">
         <div class="avatar">
-          <img class="profileimage" src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar">
+          <img class="profileimage" src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" loading="lazy">
         </div>
         <span class="username">Share what's on your mind</span>
       </div>
@@ -110,7 +110,7 @@ Community - LeafyReads
             </div>
 
             <div id="imagePreviewContainer" class="attachment-row image-row" style="display: none;">
-              <img id="imagePreview" src="" alt="Preview">
+              <img id="imagePreview" loading="lazy" alt="Preview">
               <button type="button" class="close-btn" id="removeImage">✕</button>
             </div>
 
@@ -135,7 +135,7 @@ Community - LeafyReads
                 <p class="flexDA" style="font-size: 14px;">
                   <i data-lucide="history"></i>
                   <img style="border-radius: 5px;width:30px;height:35px" src="{{ book.book.cover_front.url }}"
-                    alt="bimg">
+                    alt="bimg" loading="lazy">
                   {{ book.book.title }} By {{ book.book.author }}
                 </p>
               </div>
@@ -181,7 +181,7 @@ Community - LeafyReads
         <div class="post-header">
           <div class="avatar">
             <img class="profileimage" src="https://i.pravatar.cc/150?u={{ post.author.username }}"
-              alt="{{ post.author.username }}">
+              alt="{{ post.author.username }}" loading="lazy">
           </div>
           <div style="display: flex;flex-direction: column;">
             <span class="username">{{ post.author.get_full_name }}</span>
@@ -200,11 +200,11 @@ Community - LeafyReads
           <div class="post-images">
 
             {% if post.book %}
-            <img src="{{ post.book.cover_front.url }}" class="post-image" alt="book cover">
+            <img src="{{ post.book.cover_front.url }}" class="post-image" alt="book cover" loading="lazy">
             {% endif %}
 
             {% for image in post.images.all %}
-            <img src="{{ image.image.url }}" class="post-image" alt="post image">
+            <img src="{{ image.image.url }}" class="post-image" alt="post image" loading="lazy">
             {% endfor %}
             
           </div>
@@ -724,7 +724,7 @@ function loadComments(postId) {
                 commentOwner.innerHTML = `
                     <div style="display: flex; gap: 10px; align-items: flex-start;">
                         <div class="avatar">
-                            <img class="profileimage" style="border: 3px solid green;" src="${data.post.avatar}" alt="ownerimg">
+                            <img class="profileimage" style="border: 3px solid green;" src="${data.post.avatar}" alt="ownerimg" loading="lazy">
                         </div>
                         <div style="display: flex; flex-direction: column; justify-content: center; width: 100%;">
                             <div style="display:flex; align-items:center; gap:10px">
@@ -759,7 +759,7 @@ function loadComments(postId) {
                 list.innerHTML += `
                     <div class="comment-card">
                         <div class="avatar">
-                            <img class="profileimage" src="${c.avatar}" alt="profile" />
+                            <img class="profileimage" src="${c.avatar}" alt="profile" loading="lazy" />
                         </div>
                         <div class="comment-lines" style="margin-top:0">
                             <div style="font-weight:600;font-size:15px">

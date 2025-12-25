@@ -551,7 +551,7 @@ body.dark-mode .page-number {
 
 .page-wrapper {
     border-radius: 20px;
-    filter: drop-shadow(4px 4px 12px rgb(0 0 0 / .445))
+    filter: drop-shadow(2px 4px 8px rgba(15, 15, 15, 0.607))
 }
 
 .fullscreen-button {
@@ -602,8 +602,7 @@ body.dark-mode #container {
 }
 
 body.dark-mode .flipbook .page {
-    /* background: #2f2f2f; */
-    background: #1d2125;
+    background: #313131;
     color: #d7d7d7;
     border: 1px solid rgb(255 255 255 / .1);
     box-shadow: none !important
@@ -630,7 +629,7 @@ body.dark-mode #spine-illusion {
 
 body.dark-mode .page-wrapper {
     border-radius: 20px;
-    filter: drop-shadow(4px 6px 12px rgb(120 120 120 / .285))
+    filter: drop-shadow(2px px 8px rgba(176, 176, 176, 0.596))
 }
 
 .nav-button {

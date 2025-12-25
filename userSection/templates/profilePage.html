@@ -25,9 +25,9 @@ My Dashboard - LeafyReads
         </div>
         <div class="user-greeting">
             {% if profile.avatar %}
-            <img src="{{ profile.avatar.url }}" alt="User Avatar" class="profile-avatar-header">
+            <img src="{{ profile.avatar.url }}" alt="User Avatar" class="profile-avatar-header" loading="lazy">
             {% else %}
-            <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" class="profile-avatar-header">
+            <img src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar" class="profile-avatar-header" loading="lazy">
             {% endif %}
 
             <div class="greeting-info">
@@ -104,7 +104,7 @@ My Dashboard - LeafyReads
                 <a href="{% url 'book' book.slug %}" class="book-card">
                     {% if book.cover_front %}
                     <div class="book-wrapper">
-                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover">
+                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover" loading="lazy">
                         <div class="book-info-overlay">
                             <p class="book-title">{{ book.title }}</p>
                             <p class="book-author">{{ book.author }}</p>
@@ -112,7 +112,7 @@ My Dashboard - LeafyReads
                     </div>
                     {% else %}
                     <div class="book-wrapper">
-                        <img src="{% static 'images/default_cover.png' %}" alt="No Cover Available" class="book-cover">
+                        <img src="{% static 'images/default_cover.png' %}" alt="No Cover Available" class="book-cover" loading="lazy">
                         <div class="book-info-overlay">
                             <p class="book-title">{{ book.title }}</p>
                             <p class="book-author">{{ book.author }}</p>
@@ -139,7 +139,7 @@ My Dashboard - LeafyReads
                 <a href="{% url 'book' book.slug %}" class="book-card">
                     {% if book.cover_front %}
                     <div class="book-wrapper">
-                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover">
+                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover" loading="lazy">
                         <div class="book-info-overlay">
                             <p class="book-title">{{ book.title }}</p>
                             <p class="book-author">{{ book.author }}</p>
@@ -147,7 +147,7 @@ My Dashboard - LeafyReads
                     </div>
                     {% else %}
                     <div class="book-wrapper">
-                        <img src="{% static 'images/default_cover.png' %}" alt="No Cover Available" class="book-cover">
+                        <img src="{% static 'images/default_cover.png' %}" alt="No Cover Available" class="book-cover" loading="lazy">
                         <div class="book-info-overlay">
                             <p class="book-title">{{ book.title }}</p>
                             <p class="book-author">{{ book.author }}</p>

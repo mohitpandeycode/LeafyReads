@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import Post, PostImage, Comment, Notification
+from .models import Post, PostImage, Comment
 
 class PostImageInline(admin.TabularInline):
     model = PostImage
@@ -58,19 +58,3 @@ class CommentAdmin(ModelAdmin):
         return obj.number_of_likes()
     number_of_likes.short_description = 'Likes'
 
-
-# --- Notification Admin ---
-@admin.register(Notification)
-class NotificationAdmin(ModelAdmin):
-    list_display = ('recipient', 'sender', 'verb', 'read', 'timestamp', 'target_info')
-    search_fields = ('recipient__username', 'sender__username', 'verb')
-    list_filter = ('read', 'verb', 'timestamp')
-    
-    readonly_fields = ('timestamp', 'content_type', 'object_id')
-
-    # Custom method to display the target object
-    def target_info(self, obj):
-        if obj.target:
-            return str(obj.target)
-        return 'N/A'
-    target_info.short_description = 'Target Object'

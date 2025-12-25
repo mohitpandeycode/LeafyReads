@@ -357,7 +357,7 @@
                 } else {
                     results.forEach(book => {
                         const link = document.createElement('a');
-                        link.href = `/book/library/open/${book.slug}`;
+                        link.href = `/book/library/book-details/${book.slug}`;
                         link.className = 'history-item';
 
                         link.innerHTML = `

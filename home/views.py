@@ -5,7 +5,6 @@ from books.models import *
 from django.db.models import Count
 from django.core.cache import cache
 from django.db import connection
-import time
 
 def home(request):
     categories = cache.get("home_categories") 

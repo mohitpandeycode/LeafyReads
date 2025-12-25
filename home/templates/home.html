@@ -53,7 +53,8 @@ LeafyReads - Your Digital Bookshelf
         <p class="animate-fade-in delay-1">We believe that for every emotion you feel, there is a story waiting to match
           it. LeafyReads helps you explore, enjoy, and connect with a community of passionate readers.</p>
 
-        <form class="hero-search-form animate-fade-in delay-2" action="{% url 'searchbooks' %}" method="get" data-ajax-url="{% url 'ajax_search' %}">
+        <form class="hero-search-form animate-fade-in delay-2" action="{% url 'searchbooks' %}" method="get"
+          data-ajax-url="{% url 'ajax_search' %}">
           <div class="search-wrapper">
             <input type="text" class="search-input" placeholder=" " name="q" />
             <span class="static-placeholder">Search for</span>
@@ -73,11 +74,10 @@ LeafyReads - Your Digital Bookshelf
 
       <div class="hero-visual animate-float">
         <div class="glass-box">
-          <img src="{% static 'images/landing.png' %}" alt="An open book with illustrations"
-            class="book-image light-image" />
-          <img src="{% static 'images/darklanding.png' %}" alt="An open book with illustrations (dark mode)"
-            class="book-image dark-image" />
-
+          <img src="{% static 'images/landing.webp' %}" alt="book illustrations"
+            class="book-image light-image" fetchpriority="high" decoding="async"/>
+          <img src="{% static 'images/darklanding.webp' %}" alt="book illustrations"
+            class="book-image dark-image" fetchpriority="high" decoding="async"/>
           <div class="hero-light"></div>
         </div>
       </div>
@@ -96,8 +96,7 @@ LeafyReads - Your Digital Bookshelf
         <a href="{% url 'category' cat.slug %}" class="category-card"
           style="background: var(--color-card-bg); border: 1px solid var(--color-card-border); border-radius: 0.75rem; padding: 2rem 1rem; text-align: center; color: var(--color-logo-dark); transition: 0.3s;"
           data-index="{{ forloop.counter }}">
-          <i data-lucide="{{ cat.lucidicon }}"
-            style="width:2rem;height:2rem;color:#149585;margin-bottom:0.5rem;"></i>
+          <i data-lucide="{{ cat.lucidicon }}" style="width:2rem;height:2rem;color:#149585;margin-bottom:0.5rem;"></i>
           <div>{{ cat.name }}</div>
         </a>
         {% endfor %}
@@ -216,7 +215,8 @@ LeafyReads - Your Digital Bookshelf
           </div>
         </div>
         <div class="testimonial-card">
-          <p>“LeafyReads makes reading feel effortless and fun. The personalized recommendations are spot-on, and I love seeing my reading streak grow. It’s become part of my daily routine.”</p>
+          <p>“LeafyReads makes reading feel effortless and fun. The personalized recommendations are spot-on, and I love
+            seeing my reading streak grow. It’s become part of my daily routine.”</p>
           <div class="testimonial-author">
             <img src="https://i.pravatar.cc/150?img=5" loading="lazy" alt="Avatar of Michael B." />
             <div>
@@ -228,7 +228,168 @@ LeafyReads - Your Digital Bookshelf
       </div>
     </div>
   </section>
+  <section class="faq-section">
+    <div class="section-header">
+      <h2>Frequently Asked Questions</h2>
+      <p>Everything you need to know about LeafyReads.</p>
+    </div>
+
+    <div class="faq-grid">
+
+      <div class="faq-item">
+        <div class="faq-icon">
+          <i data-lucide="help-circle"></i>
+        </div>
+        <div class="faq-content">
+          <button class="faq-question">
+            <h3>Is LeafyReads completely free?</h3>
+            <span class="arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes! You can browse, read, and track your personal library completely for free.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-icon">
+          <i data-lucide="smartphone"></i>
+        </div>
+        <div class="faq-content">
+          <button class="faq-question">
+            <h3>Can I read on my mobile device?</h3>
+            <span class="arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely. LeafyReads is optimized for mobile, tablet, and desktop, so your library travels with you.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-icon">
+          <i data-lucide="book-open"></i>
+        </div>
+        <div class="faq-content">
+          <button class="faq-question">
+            <h3>How do I track my reading progress?</h3>
+            <span class="arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            <p>Once you open a book, we automatically track your progress.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-icon">
+          <i data-lucide="upload-cloud"></i>
+        </div>
+        <div class="faq-content">
+          <button class="faq-question">
+            <h3>Can I upload my own books?</h3>
+            <span class="arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            <p>Currently, the library is curated by our team to ensure quality. However, you can submit book requests
+              via your profile.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-icon">
+          <i data-lucide="shield-check"></i>
+        </div>
+        <div class="faq-content">
+          <button class="faq-question">
+            <h3>Is my data safe on LeafyReads?</h3>
+            <span class="arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Yes. LeafyReads uses modern security practices to protect your reading
+              data and personal information. Your activity is private and never shared
+              with third parties.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-icon">
+          <i data-lucide="users"></i>
+        </div>
+        <div class="faq-content">
+          <button class="faq-question">
+            <h3>Do I need to create an account to start reading?</h3>
+            <span class="arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              You can explore and preview books without an account, but creating a free
+              account lets you save your library, track reading progress, join the
+              LeafyReads community, share recommendations, and connect with other
+              readers across devices.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-wrapper">
+
+        <div class="cta-image">
+          <div class="cta-blob"></div>
+          <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=1000&auto=format&fit=crop"
+            alt="Cozy reading environment" loading="lazy" />
+        </div>
+
+        <div class="cta-content">
+          <h3 class="cta-title">
+            Build Your <span class="text-highlight">Dream Library</span> Today
+          </h3>
+          <p class="cta-description">
+            Stop losing track of the books you love. With LeafyReads, organize your collection, track your reading
+            streaks, and discover hidden gems recommended by a community of readers just like you.
+          </p>
+
+          <ul class="cta-features">
+            <li>
+              <i data-lucide="check-circle-2" class="cta-icon"></i> Unlimited digital bookshelf
+            </li>
+            <li>
+              <i data-lucide="check-circle-2" class="cta-icon"></i> Personalized reading stats
+            </li>
+            <li>
+              <i data-lucide="check-circle-2" class="cta-icon"></i> Ad-free reading experience
+            </li>
+          </ul>
+
+          <div class="cta-buttons">
+            <a href="{% provider_login_url 'google' %}?next={{request.path}}" class="btn primary-btn">Start Reading Now
+              <i data-lucide="sparkles"></i></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
 </main>
+
+<script>
+  document.querySelectorAll(".faq-item").forEach(question => {
+    question.addEventListener("click", () => {
+      question.closest(".faq-item").classList.toggle("active");
+    });
+  });
+
+  lucide.createIcons();
+</script>
+
 
 
 {% endblock %}

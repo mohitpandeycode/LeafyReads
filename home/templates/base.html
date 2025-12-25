@@ -24,128 +24,132 @@
     .desktop-nav a.active {
       color: #149546 !important;
     }
+
     /* ---------------------------------- */
-/* Tablet (<= 1024px)                 */
-/* ---------------------------------- */
-@media (max-width: 1024px) {
+    /* Tablet (<= 1024px)                 */
+    /* ---------------------------------- */
+    @media (max-width: 1024px) {
 
-  .header-content {
-    gap: 20px;
-  }
+      .header-content {
+        gap: 20px;
+      }
 
-  .desktop-nav a {
-    font-size: 0.95rem;
-    padding: 6px 10px;
-  }
+      .desktop-nav a {
+        font-size: 0.95rem;
+        padding: 6px 10px;
+      }
 
-  .nav-search-wrapper {
-    width: 180px;
-  }
+      .nav-search-wrapper {
+        width: 180px;
+      }
 
-  .nav-search-input {
-    font-size: 0.9rem;
-  }
+      .nav-search-input {
+        font-size: 0.9rem;
+      }
 
-  .header-actions .btn,
-  .theme-toggle-btn {
-    padding: 6px;
-  }
+      .header-actions .btn,
+      .theme-toggle-btn {
+        padding: 6px;
+      }
 
-  .logo-light, .logo-dark {
-    width: 110px !important;
-  }
-}
-
-
-/* ---------------------------------- */
-/* Mobile (<= 768px)                  */
-/* ---------------------------------- */
-@media (max-width: 768px) {
-
-  .header-content {
-    justify-content: space-between;
-  }
-  .navcontainer{
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* Hide desktop links */
-  .desktop-nav a,
-  .desktop-nav form,
-  .nav-results {
-    display: none !important;
-  }
-
-  /* Use a hamburger for mobile (you can hook JS later) */
-  .mobile-menu-btn {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-  }
+      .logo-light,
+      .logo-dark {
+        width: 110px !important;
+      }
+    }
 
 
-  .logo-light, .logo-dark {
-    width: 105px !important;
-  }
+    /* ---------------------------------- */
+    /* Mobile (<= 768px)                  */
+    /* ---------------------------------- */
+    @media (max-width: 768px) {
 
-  /* Header Actions on mobile */
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+      .header-content {
+        justify-content: space-between;
+      }
 
-  .theme-toggle-btn {
-    padding: 6px;
-      display: none;
-  }
+      .navcontainer {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+      }
 
-  #dropdown-button {
-    font-size: 0.85rem;
-    padding: 6px 10px;
-  }
-}
+      /* Hide desktop links */
+      .desktop-nav a,
+      .desktop-nav form,
+      .nav-results {
+        display: none !important;
+      }
+
+      /* Use a hamburger for mobile (you can hook JS later) */
+      .mobile-menu-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+      }
 
 
-/* ---------------------------------- */
-/* Small Mobile (<= 480px)            */
-/* ---------------------------------- */
-@media (max-width: 480px) {
+      .logo-light,
+      .logo-dark {
+        width: 105px !important;
+      }
 
-  .header {
-    padding: 5px;
-  }
+      /* Header Actions on mobile */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-  .header-actions {
-    gap: 8px;
-  }
+      .theme-toggle-btn {
+        padding: 6px;
+        display: none;
+      }
 
-  #dropdown-button {
-    font-size: 0.78rem;
-  }
+      #dropdown-button {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+      }
+    }
 
-  .theme-toggle-btn i,
-  .header-actions i {
-    width: 18px;
-    height: 18px;
-    display: none;
-  }
 
-  /* Optional: reduce bell spacing */
-  .notify-dot {
-    width: 6px;
-    height: 6px;
-    top: 3px;
-    right: 3px;
-  }
-}
+    /* ---------------------------------- */
+    /* Small Mobile (<= 480px)            */
+    /* ---------------------------------- */
+    @media (max-width: 480px) {
+
+      .header {
+        padding: 5px;
+      }
+
+      .header-actions {
+        gap: 8px;
+      }
+
+      #dropdown-button {
+        font-size: 0.78rem;
+      }
+
+      .theme-toggle-btn i,
+      .header-actions i {
+        width: 18px;
+        height: 18px;
+        display: none;
+      }
+
+      /* Optional: reduce bell spacing */
+      .notify-dot {
+        width: 6px;
+        height: 6px;
+        top: 3px;
+        right: 3px;
+      }
+    }
 
 
     .nav-history-item {
@@ -199,9 +203,9 @@
           <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
             alt="logo" />
           <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
-            alt="logo" />
+            alt="LeafyReads" />
           <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}"
-            alt="logo" />
+            alt="LeafyReads" />
         </a>
         <nav class="desktop-nav" style="position: relative;">
           <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
@@ -228,11 +232,62 @@
           </div>
         </nav>
         <div class="header-actions">
-          <button style="position: relative;" aria-label="notification" class="theme-toggle-btn"><i
-              data-lucide="bell"></i>
-            <p class="notify-dot"></p>
-          </button>
-          <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn theme-toggle-handler"><i data-lucide="sun"></i></button>
+          <!-- Notification Pannel -->
+          {% if user.is_authenticated %}
+          <div class="notification-wrapper" style="position: relative; display: inline-block;">
+            <button style="position: relative;" onclick="toggleNotifications()" aria-label="notification"
+              class="notif-btn theme-toggle-btn"><i data-lucide="bell"></i>
+              <p class="notify-dot"></p>
+            </button>
+            <div class="notification-box glass-panel" id="notificationBox">
+              <div class="notif-header">
+                <h3>Notifications</h3>
+                <button class="mark-read-text">Mark all read</button>
+              </div>
+
+              <div class="notif-list">
+                {% if notifications %}
+                {% for notif in notifications %}
+                <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
+                  <div class="notif-icon-box bg-teal">
+                    🔔
+                  </div>
+                  <div class="notif-content">
+                    <p>{{ notif.message|safe }}</p>
+                    <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+                  </div>
+                  {% if not notif.is_read %}
+                  <div class="unread-dot"></div>
+                  {% endif %}
+                </div>
+                {% endfor %}
+                {% else %}
+                <div style="padding: 1.5rem; text-align: center; color: #94a3b8; font-size: 0.85rem;">
+                  <p>No new updates</p>
+                </div>
+                {% endif %}
+                <div class="notif-item unread">
+                  <div class="notif-icon-box bg-teal">
+                    <i data-lucide="sparkles"></i>
+                  </div>
+                  <div class="notif-content">
+                    <p><strong>Welcome to LeafyReads!</strong> 🌿 Discover new books and begin your reading journey
+                      today.
+                    </p>
+                    <span class="notif-time">{{ user.date_joined|timesince }} ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="notif-footer">
+                <a href="#">View All History</a>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+
+          <button id="theme-toggle" aria-label="darklight" class="theme-toggle-btn theme-toggle-handler"><i
+              data-lucide="sun"></i></button>
           {% if user.is_authenticated %}
           <div class="dropdown">
             <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i
@@ -263,7 +318,7 @@
               </li>
               <a href="{% url 'aboutUs' %}">
                 <li class="dropdown-item">
-                  <i data-lucide="info"></i>  
+                  <i data-lucide="info"></i>
                   <span>About Us</span>
                 </li>
               </a>
@@ -300,7 +355,8 @@
       <div class="footer-grid">
         <div class="footer-about">
           <div class="logo" style="margin-bottom: 1rem;">
-            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="" />
+            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="logo"
+              loading="lazy" />
             <span style="color: white">LeafyReads</span>
           </div>
           <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
@@ -362,6 +418,19 @@
   <script src="{% static 'js/home.js' %}"></script>
   <script src="{% static 'js/navsearch.js' %}"></script>
   <script>
+    function toggleNotifications() {
+      const box = document.getElementById('notificationBox');
+      box.classList.toggle('active');
+    }
+
+    // Close when clicking outside
+    document.addEventListener('click', function (event) {
+      const box = document.getElementById('notificationBox');
+      const btn = document.querySelector('.notif-btn');
+      if (box && btn && !box.contains(event.target) && !btn.contains(event.target)) {
+        box.classList.remove('active');
+      }
+    });
     const startlogin = document.getElementById('startlogin')
     const loginSection = document.getElementById('loginSection')
     const closelogin = document.getElementById('closelogin')
@@ -424,113 +493,113 @@
       }
     })
   </script>
-  
-<script>
-    ; (function () {
+
+  <script>
+      ; (function () {
         'use strict';
 
         // Tracks the current active request for cancellation
         let currentController = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Nav Search Bar Elements ---
-            const navSearchForm = document.getElementById('navSearch');
-            const navSearchInput = document.getElementById('navSearchInput');
-            const navResultsBox = document.querySelector('.nav-results');
-            const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null;
+          // --- Nav Search Bar Elements ---
+          const navSearchForm = document.getElementById('navSearch');
+          const navSearchInput = document.getElementById('navSearchInput');
+          const navResultsBox = document.querySelector('.nav-results');
+          const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null;
 
-            if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
+          if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
 
-                // --- 1. Fetch Logic ---
-                const fetchNavResults = async (query) => {
-                    // Cancel previous request
-                    if (currentController) currentController.abort();
-                    currentController = new AbortController();
+            // --- 1. Fetch Logic ---
+            const fetchNavResults = async (query) => {
+              // Cancel previous request
+              if (currentController) currentController.abort();
+              currentController = new AbortController();
 
-                    try {
-                        const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
-                            signal: currentController.signal
-                        });
+              try {
+                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+                  signal: currentController.signal
+                });
 
-                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-                        const data = await response.json();
-                        const results = data.results;
+                const data = await response.json();
+                const results = data.results;
 
-                        // Render results
-                        navHistoryContainer.innerHTML = '';
-                        const fragment = document.createDocumentFragment();
+                // Render results
+                navHistoryContainer.innerHTML = '';
+                const fragment = document.createDocumentFragment();
 
-                        const titleEl = document.createElement('div');
-                        titleEl.className = 'nav-search-history-title';
-                        titleEl.textContent = `Results for "${query}"`;
-                        fragment.appendChild(titleEl);
+                const titleEl = document.createElement('div');
+                titleEl.className = 'nav-search-history-title';
+                titleEl.textContent = `Results for "${query}"`;
+                fragment.appendChild(titleEl);
 
-                        if (!results || results.length === 0) {
-                            const noResultEl = document.createElement('div');
-                            noResultEl.className = 'nav-history-item';
-                            noResultEl.innerHTML = `
+                if (!results || results.length === 0) {
+                  const noResultEl = document.createElement('div');
+                  noResultEl.className = 'nav-history-item';
+                  noResultEl.innerHTML = `
                                 <i data-lucide="search"></i>
                                 <div class="nav-history-item-info">
                                     <span class="nav-history-item-title">No results found</span>
                                 </div>`;
-                            fragment.appendChild(noResultEl);
-                        } else {
-                            results.forEach((book) => {
-                                const link = document.createElement('a');
-                                link.href = `/book/library/open/${book.slug}`;
-                                link.className = 'nav-history-item';
+                  fragment.appendChild(noResultEl);
+                } else {
+                  results.forEach((book) => {
+                    const link = document.createElement('a');
+                    link.href = `/book/library/book-details/${book.slug}`;
+                    link.className = 'nav-history-item';
 
-                                // XSS Safe Rendering
-                                link.innerHTML = `
+                    // XSS Safe Rendering
+                    link.innerHTML = `
                                     <i data-lucide="notebook"></i>  
                                     <div class="nav-history-item-info">
                                         <span class="nav-history-item-title">${escapeHtml(book.title)}</span>
                                         <span class="nav-history-item-author">by ${escapeHtml(book.author)}</span>
                                     </div>
                                 `;
-                                fragment.appendChild(link);
-                            });
-                        }
+                    fragment.appendChild(link);
+                  });
+                }
 
-                        navHistoryContainer.appendChild(fragment);
-                        
-                        // OPTIMIZATION: Scan only the new container
-                        if (window.lucide) {
-                            lucide.createIcons({
-                                root: navHistoryContainer,
-                                nameAttr: 'data-lucide'
-                            });
-                        }
+                navHistoryContainer.appendChild(fragment);
 
-                    } catch (err) {
-                        if (err.name === 'AbortError') return; // Ignore user cancellation
+                // OPTIMIZATION: Scan only the new container
+                if (window.lucide) {
+                  lucide.createIcons({
+                    root: navHistoryContainer,
+                    nameAttr: 'data-lucide'
+                  });
+                }
 
-                        console.error('Nav search error:', err);
-                        navHistoryContainer.innerHTML = `
+              } catch (err) {
+                if (err.name === 'AbortError') return; // Ignore user cancellation
+
+                console.error('Nav search error:', err);
+                navHistoryContainer.innerHTML = `
                             <div class="nav-search-history-title">Error</div>
                             <div class="nav-history-item">
                                 <span class="nav-history-item-title">Could not load results</span>
                             </div>`;
-                    }
-                };
+              }
+            };
 
-                // --- 2. Input Listener (Debounce + Skeleton) ---
-                let navTypingTimer;
-                const navDebounceDelay = 300;
+            // --- 2. Input Listener (Debounce + Skeleton) ---
+            let navTypingTimer;
+            const navDebounceDelay = 300;
 
-                navSearchInput.addEventListener('input', () => {
-                    clearTimeout(navTypingTimer);
-                    const query = navSearchInput.value.trim();
+            navSearchInput.addEventListener('input', () => {
+              clearTimeout(navTypingTimer);
+              const query = navSearchInput.value.trim();
 
-                    if (query.length > 1) { // Trigger after 2 chars
-                        // Show Box & Styling
-                        navResultsBox.style.display = 'block';
-                        navSearchForm.classList.add('results-open');
-                        navSearchForm.style.borderRadius = '15px 15px 0 0';
+              if (query.length > 1) { // Trigger after 2 chars
+                // Show Box & Styling
+                navResultsBox.style.display = 'block';
+                navSearchForm.classList.add('results-open');
+                navSearchForm.style.borderRadius = '15px 15px 0 0';
 
-                        // Show Skeleton Immediately
-                        const skeletonHTML = `
+                // Show Skeleton Immediately
+                const skeletonHTML = `
                             <div class="skeleton-item">
                                 <div class="skeleton-icon"></div>
                                 <div class="skeleton-text-col">
@@ -538,57 +607,58 @@
                                     <div class="skeleton-line short"></div>
                                 </div>
                             </div>`;
-                        
-                        navHistoryContainer.innerHTML = `
+
+                navHistoryContainer.innerHTML = `
                             <div class="nav-search-history-title">Searching...</div>
                             ${skeletonHTML}
                             ${skeletonHTML}
                             ${skeletonHTML}
                         `;
 
-                        navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
+                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
 
-                    } else {
-                        // Hide Box
-                        navResultsBox.style.display = 'none';
-                        navSearchForm.classList.remove('results-open');
-                        navSearchForm.style.borderRadius = '15px';
-                        if (currentController) currentController.abort();
-                    }
-                });
+              } else {
+                // Hide Box
+                navResultsBox.style.display = 'none';
+                navSearchForm.classList.remove('results-open');
+                navSearchForm.style.borderRadius = '15px';
+                if (currentController) currentController.abort();
+              }
+            });
 
-                // --- 3. UI Helpers ---
-                document.addEventListener('click', (e) => {
-                    if (!navSearchForm.contains(e.target)) {
-                        navResultsBox.style.display = 'none';
-                        navSearchForm.style.borderRadius = '15px';
-                        navSearchForm.classList.remove('results-open');
-                    }
-                });
+            // --- 3. UI Helpers ---
+            document.addEventListener('click', (e) => {
+              if (!navSearchForm.contains(e.target)) {
+                navResultsBox.style.display = 'none';
+                navSearchForm.style.borderRadius = '15px';
+                navSearchForm.classList.remove('results-open');
+              }
+            });
 
-                navSearchInput.addEventListener('focus', () => {
-                    const query = navSearchInput.value.trim();
-                    if (query.length > 1) {
-                        navResultsBox.style.display = 'block';
-                        navSearchForm.classList.add('results-open');
-                        navSearchForm.style.borderRadius = '15px 15px 0 0';
-                    }
-                });
-                
-                // Helper for XSS Security
-                const escapeHtml = (unsafe) => {
-                    if (!unsafe) return "Unknown";
-                    return unsafe
-                        .replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/"/g, "&quot;")
-                        .replace(/'/g, "&#039;");
-                };
-            }
+            navSearchInput.addEventListener('focus', () => {
+              const query = navSearchInput.value.trim();
+              if (query.length > 1) {
+                navResultsBox.style.display = 'block';
+                navSearchForm.classList.add('results-open');
+                navSearchForm.style.borderRadius = '15px 15px 0 0';
+              }
+            });
+
+            // Helper for XSS Security
+            const escapeHtml = (unsafe) => {
+              if (!unsafe) return "Unknown";
+              return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+            };
+          }
         });
-    })();
-</script>
+      })();
+  </script>
+
 </body>
 
 </html>

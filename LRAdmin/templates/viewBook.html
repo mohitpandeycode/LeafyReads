@@ -58,9 +58,9 @@
         <div class="co-header-content">
            <a href="/" class="co-logo" style="background-color: white;border-radius: 15px;">
             <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
-            alt="logo" />
+            alt="logo" loading="lazy" />
           <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}"
-            alt="logo" />
+            alt="logo" loading="lazy"/>
           </a>
 
           <nav class="co-desktop-nav">
@@ -111,8 +111,8 @@
 
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
-            <img src="{% static 'images/framebook1.png' %}" class="cover-image" style="position: absolute;" alt="forntFrame">
-            <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" />
+            <img src="{% static 'images/framebook1.png' %}" class="cover-image" style="position: absolute;" alt="forntFrame" loading="lazy">
+            <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" loading="lazy" />
           </article>
 
           <article class="page">

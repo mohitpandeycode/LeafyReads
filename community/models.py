@@ -86,19 +86,3 @@ class Comment(models.Model):
     def number_of_likes(self):
         return self.likes.count()
         
-class Notification(models.Model):
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications')
-    verb = models.CharField(max_length=255)
-    read = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(default=timezone.now)
-
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    target = GenericForeignKey('content_type', 'object_id')
-
-    class Meta:
-        ordering = ['-timestamp']
-
-    def __str__(self):
-        return f'Notification for {self.recipient.username}: {self.sender.username} {self.verb}'

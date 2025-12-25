@@ -23,7 +23,7 @@
     
   <style>
     body {
-      background-image: url('{% static "images/backk.jpg" %}');
+      background-image: url('{% static "images/back.png" %}');
       width: 100%;
       background-repeat: no-repeat;
       background-position: center center;
@@ -31,7 +31,7 @@
       background-attachment: fixed;
     }
     body.dark-mode {
-  background-image: url('{% static "images/backdark1.png" %}');
+  background-image: url('{% static "images/backdark.png" %}');
 }
 
     .nav-history-item{
@@ -102,11 +102,11 @@
         <button class="close-btn" id="closelogin">&times;</button>
         <div class="login-logo" style="display: flex; align-items: center; justify-content: center;">
         <!-- common small logo -->
-        <img style="width: 60px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" loading="lazy" alt="">
+        <img style="width: 60px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" loading="lazy" alt="logo">
         <!-- light theme image -->
-        <img class="login-leafy-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" loading="lazy" alt="">
+        <img class="login-leafy-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" loading="lazy" alt="LeafyReads">
         <!-- dark theme image -->
-        <img class="login-leafy-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}" loading="lazy" alt="">
+        <img class="login-leafy-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}" loading="lazy" alt="LeafyReads">
       </div>
         <h3 style="margin: 0;">Create Your Account</h3>
         <div class="leafy-sub-text">
@@ -148,11 +148,11 @@
         <div class="co-header-content">
           <a href="/" class="logo">
             <!-- common logo part -->
-            <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="">
+            <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="logo">
             <!-- light theme image -->
-            <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" alt="">
+            <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.png' %}" alt="LeafyReads">
             <!-- dark theme image -->
-            <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}" alt="">
+            <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.png' %}" alt="LeafyReads">
           </a>
 
           <nav class="co-desktop-nav" style="position: relative;">
@@ -591,7 +591,7 @@
                 } else {
                   results.forEach((book) => {
                     const link = document.createElement('a');
-                    link.href = `/book/library/open/${book.slug}`;
+                    link.href = `/book/library/book-details/${book.slug}`;
                     link.className = 'nav-history-item';
 
                     const icon = document.createElement('i')

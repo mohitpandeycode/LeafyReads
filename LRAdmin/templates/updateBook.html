@@ -85,10 +85,10 @@ Update Book - LeafyReads Admin
             <label>Front Cover</label>
             <div class="image-upload">
                 {% if book.cover_front %}
-                    <img id="preview" src="{{ book.cover_front.url }}" alt="Cover Front">
+                    <img id="preview" src="{{ book.cover_front.url }}" alt="Cover Front" loading="lazy">
                     <input type="hidden" id="original_cover" value="{{ book.cover_front.url }}">
                 {% else %}
-                    <img id="preview" src="https://via.placeholder.com/250x150?text=No+Cover" alt="Cover Front">
+                    <img loading="lazy" id="preview" src="https://via.placeholder.com/250x150?text=No+Cover" alt="Cover Front">
                     <input type="hidden" id="original_cover" value="https://via.placeholder.com/250x150?text=No+Cover">
                 {% endif %}
 

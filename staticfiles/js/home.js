@@ -200,19 +200,7 @@ themeToggleBtns.forEach(btn => {
                 if (animationFrameId) cancelAnimationFrame(animationFrameId);
             };
 
-            // Only run animation when hero section is visible
-            const heroSection = document.querySelector('.hero-bg');
-            if (heroSection) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) startAnimation();
-                        else stopAnimation();
-                    });
-                });
-                observer.observe(heroSection);
-            } else {
-                startAnimation(); // Fallback if no hero section found
-            }
+            startAnimation(); // Fallback if no hero section found
 
             // Resize handler
             let resizeTimer;
@@ -288,7 +276,7 @@ themeToggleBtns.forEach(btn => {
                     } else {
                         results.forEach((book) => {
                             const link = document.createElement('a');
-                            link.href = `book/library/open/${book.slug}`; // Consider passing this base URL via data attr too
+                            link.href = `/book/library/book-details/${book.slug}`;
                             link.className = 'history-item';
                             // Simple text escaping
                             const safeTitle = book.title.replace(/[&<>"']/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m] });
