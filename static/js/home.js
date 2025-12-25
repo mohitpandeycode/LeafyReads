@@ -1,91 +1,98 @@
-lucide.createIcons();
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // ==========================================
+    // 1. GLOBAL THEME & ICONS LOGIC
+    // ==========================================
+    
+    // Initialize icons immediately
+    if (window.lucide) lucide.createIcons();
 
-const themeToggleBtns = document.querySelectorAll(".theme-toggle-handler");
-const body = document.body;
+    const themeToggleBtns = document.querySelectorAll(".theme-toggle-handler");
+    const body = document.body;
 
-const setTheme = (theme) => {
-    // 1. Apply the dark-mode class to the body
-    if (theme === "dark") {
-        body.classList.add("dark-mode");
+    const setTheme = (theme) => {
+        // Apply class
+        if (theme === "dark") {
+            body.classList.add("dark-mode");
+        } else {
+            body.classList.remove("dark-mode");
+        }
+
+        // Update buttons
+        themeToggleBtns.forEach(btn => {
+            if (theme === "dark") {
+                btn.innerHTML = '<i data-lucide="moon"></i>';
+            } else {
+                btn.innerHTML = '<i data-lucide="sun"></i>';
+            }
+            btn.classList.toggle("toggled", theme === "dark");
+        });
+
+        // Re-render icons
+        if (window.lucide) lucide.createIcons();
+    };
+
+    // Apply saved theme on load
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+        setTheme(savedTheme);
     } else {
-        body.classList.remove("dark-mode");
+        setTheme("light");
     }
 
-    // 2. Update the icon and toggle class for ALL theme buttons
+    // Add click listeners
     themeToggleBtns.forEach(btn => {
-        if (theme === "dark") {
-            btn.innerHTML = '<i data-lucide="moon"></i>';
-        } else {
-            btn.innerHTML = '<i data-lucide="sun"></i>';
-        }
-        btn.classList.toggle("toggled", theme === "dark");
+        btn.addEventListener("click", () => {
+            if (body.classList.contains("dark-mode")) {
+                setTheme("light");
+                localStorage.setItem("theme", "light");
+            } else {
+                setTheme("dark");
+                localStorage.setItem("theme", "dark");
+            }
+        });
     });
-    
-    // Re-create lucide icons for the newly set icons
-    lucide.createIcons(); 
-};
 
-// Check for saved theme and apply it
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme) {
-    setTheme(savedTheme);
-} else {
-    setTheme("light");
-}
 
-// Add event listener to ALL theme buttons
-themeToggleBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-        if (body.classList.contains("dark-mode")) {
-            setTheme("light");
-            localStorage.setItem("theme", "light");
-        } else {
-            setTheme("dark");
-            localStorage.setItem("theme", "dark");
-        }
-    });
-});
+    // ==========================================
+    // 2. HOME PAGE LOGIC (Optimized)
+    // ==========================================
+    (function () {
+        'use strict';
 
-// home page js 
-
-(function () {
-    'use strict';
-
-    // --- Particle Class ---
-    class Particle {
-        constructor(width, height, ctx) {
-            this.width = width;
-            this.height = height;
-            this.ctx = ctx;
-            this.reset();
-        }
-        reset() {
-            this.x = Math.random() * this.width;
-            this.y = Math.random() * this.height;
-            this.radius = Math.random() * 3 + 1;
-            this.speedX = (Math.random() - 0.5) * 0.4;
-            this.speedY = (Math.random() - 0.5) * 0.4;
-            this.color = `hsla(${Math.random() * 360}, 70%, 60%, 0.3)`;
-        }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            // Wrap around screen
-            if (this.x < -50 || this.x > this.width + 50 || this.y < -50 || this.y > this.height + 50) {
+        // --- Optimized Particle Class ---
+        class Particle {
+            constructor(width, height, ctx) {
+                this.width = width;
+                this.height = height;
+                this.ctx = ctx;
                 this.reset();
             }
+            reset() {
+                this.x = Math.random() * this.width;
+                this.y = Math.random() * this.height;
+                this.radius = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                // OPTIMIZATION: Increased opacity slightly since we removed shadow glow
+                this.color = `hsla(${Math.random() * 360}, 70%, 60%, 0.5)`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < -50 || this.x > this.width + 50 || this.y < -50 || this.y > this.height + 50) {
+                    this.reset();
+                }
+            }
+            draw() {
+                this.ctx.beginPath();
+                this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = this.color;
+                // PERFORMANCE FIX: Removed shadowBlur. This makes it smooth on mobile.
+                this.ctx.fill();
+            }
         }
-        draw() {
-            this.ctx.beginPath();
-            this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            this.ctx.fillStyle = this.color;
-            this.ctx.shadowColor = this.color;
-            this.ctx.shadowBlur = 15;
-            this.ctx.fill();
-        }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
         // --- Cache DOM elements ---
         const errorDiv = document.querySelector('.error');
         const glassBox = document.querySelector('.glass-box');
@@ -96,10 +103,9 @@ themeToggleBtns.forEach(btn => {
         const resultsBox = document.querySelector('.results');
         const searchForm = document.querySelector('.hero-search-form');
         const dynamicSpan = document.querySelector('.dynamic-placeholder');
-        // Handle case where resultsBox might not exist yet
         const historyContainer = resultsBox ? resultsBox.querySelector('.search-history') : null;
 
-        // --- 1. Error Message Handler ---
+        // --- Error Message Handler ---
         if (errorDiv) {
             const closeButton = errorDiv.querySelector('.error__close');
             if (closeButton) {
@@ -115,28 +121,31 @@ themeToggleBtns.forEach(btn => {
             }
         }
 
-        // --- 2. Glass Box Tilt (OPTIMIZED with RequestAnimationFrame) ---
+        // --- Glass Box Tilt (HIGHLY OPTIMIZED) ---
         if (glassBox) {
             const getActiveImage = () => [...glassBox.querySelectorAll('.book-image')].find((img) => getComputedStyle(img).display !== 'none');
-            let ticking = false;
+            
+            // FIX: We calculate the box size ONLY when the mouse enters, not every time it moves.
+            let rect = glassBox.getBoundingClientRect();
+            
+            glassBox.addEventListener('mouseenter', () => {
+                rect = glassBox.getBoundingClientRect();
+            });
 
             glassBox.addEventListener('mousemove', (e) => {
-                if (!ticking) {
-                    window.requestAnimationFrame(() => {
-                        const rect = glassBox.getBoundingClientRect();
-                        const rotateX = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
-                        const rotateY = ((e.clientX - rect.left) / rect.width - 0.5) * -10;
-                        
-                        const activeImg = getActiveImage();
-                        if (activeImg) {
-                            activeImg.style.transition = 'transform 0.1s ease-out';
-                            activeImg.style.setProperty('--tilt-x', `${rotateY}deg`);
-                            activeImg.style.setProperty('--tilt-y', `${rotateX}deg`);
-                        }
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
+                // Use requestAnimationFrame for smooth 60fps
+                window.requestAnimationFrame(() => {
+                    // Calculate relative to the cached 'rect'
+                    const rotateX = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
+                    const rotateY = ((e.clientX - rect.left) / rect.width - 0.5) * -10;
+                    
+                    const activeImg = getActiveImage();
+                    if (activeImg) {
+                        activeImg.style.transition = 'transform 0.1s ease-out';
+                        activeImg.style.setProperty('--tilt-x', `${rotateY}deg`);
+                        activeImg.style.setProperty('--tilt-y', `${rotateX}deg`);
+                    }
+                });
             });
 
             glassBox.addEventListener('mouseleave', () => {
@@ -149,7 +158,7 @@ themeToggleBtns.forEach(btn => {
             });
         }
 
-        // --- 3. Category Cards Toggle ---
+        // --- Category Cards Toggle ---
         if (categoryCards.length && categoryToggleBtn) {
             let showingAll = false;
             const btnText = categoryToggleBtn.querySelector('div');
@@ -158,8 +167,10 @@ themeToggleBtns.forEach(btn => {
             const updateView = () => {
                 categoryCards.forEach((card, i) => (card.style.display = showingAll || i < 17 ? 'inline-block' : 'none'));
                 if (btnText) btnText.textContent = showingAll ? 'Show Less' : 'Other';
-                if (btnIcon) btnIcon.setAttribute('data-lucide', showingAll ? 'circle-chevron-up' : 'circle-chevron-down');
-                if (window.lucide) lucide.createIcons();
+                if (btnIcon) {
+                    btnIcon.setAttribute('data-lucide', showingAll ? 'circle-chevron-up' : 'circle-chevron-down');
+                    if (window.lucide) lucide.createIcons({ root: categoryToggleBtn });
+                }
             };
 
             categoryToggleBtn.addEventListener('click', () => {
@@ -169,15 +180,17 @@ themeToggleBtns.forEach(btn => {
             updateView();
         }
 
-        // --- 4. Animated Canvas (OPTIMIZED with IntersectionObserver) ---
+        // --- Animated Canvas (Optimized) ---
         if (canvas) {
             const ctx = canvas.getContext('2d');
             let width = (canvas.width = window.innerWidth);
             let height = (canvas.height = window.innerHeight);
-            const particles = Array.from({ length: 120 }, () => new Particle(width, height, ctx));
+            
+            // Reduce particle count on small screens for better performance
+            const particleCount = window.innerWidth < 768 ? 60 : 120;
+            const particles = Array.from({ length: particleCount }, () => new Particle(width, height, ctx));
             
             let animationFrameId = null;
-            let isAnimating = false;
 
             const animate = () => {
                 ctx.clearRect(0, 0, width, height);
@@ -188,26 +201,15 @@ themeToggleBtns.forEach(btn => {
                 animationFrameId = requestAnimationFrame(animate);
             };
 
-            const startAnimation = () => {
-                if (!isAnimating) {
-                    isAnimating = true;
-                    animate();
-                }
-            };
-
-            const stopAnimation = () => {
-                isAnimating = false;
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            };
-
-            startAnimation(); // Fallback if no hero section found
+            // Only run animation
+            animate(); 
 
             // Resize handler
             let resizeTimer;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(() => {
-                    stopAnimation();
+                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
                     width = canvas.width = window.innerWidth;
                     height = canvas.height = window.innerHeight;
                     particles.forEach((p) => {
@@ -215,15 +217,13 @@ themeToggleBtns.forEach(btn => {
                         p.height = height;
                         p.reset();
                     });
-                    startAnimation();
+                    animate();
                 }, 100);
             });
         }
 
-        // --- 5. AJAX Search ---
+        // --- AJAX Search (Unchanged) ---
         if (searchInput && resultsBox && searchForm && dynamicSpan && historyContainer) {
-            
-            // Dynamic Placeholder Animation
             const words = ['"Books"', '"Authors"', '"Genres"', '"Categories"', '"Stories"', '"Novels"'];
             let wordIdx = 0;
             
@@ -238,23 +238,17 @@ themeToggleBtns.forEach(btn => {
             };
             setInterval(changeWord, 3000);
             
-            // Search Logic
             let abortController;
-            const searchUrl = searchForm.getAttribute('data-ajax-url'); // Get URL from HTML
+            const searchUrl = searchForm.getAttribute('data-ajax-url');
 
             const fetchResults = async (query) => {
                 if (abortController) abortController.abort();
                 abortController = new AbortController();
 
                 try {
-                    // Use dynamic URL
-                    const targetUrl = searchUrl ? 
-                        `${searchUrl}?q=${encodeURIComponent(query)}` : 
-                        `/book/ajax/search/?q=${encodeURIComponent(query)}`;
-
+                    const targetUrl = searchUrl ? `${searchUrl}?q=${encodeURIComponent(query)}` : `/book/ajax/search/?q=${encodeURIComponent(query)}`;
                     const response = await fetch(targetUrl, { signal: abortController.signal });
                     if (!response.ok) throw new Error('Network response was not ok');
-                    
                     const data = await response.json();
                     const results = data.results;
 
@@ -269,33 +263,22 @@ themeToggleBtns.forEach(btn => {
                     if (!results || results.length === 0) {
                         const noResult = document.createElement('div');
                         noResult.className = 'history-item';
-                        noResult.innerHTML = `
-                            <i data-lucide="search"></i>
-                            <div class="history-item-info"><span class="history-item-title">No results found</span></div>`;
+                        noResult.innerHTML = `<i data-lucide="search"></i><div class="history-item-info"><span class="history-item-title">No results found</span></div>`;
                         fragment.appendChild(noResult);
                     } else {
                         results.forEach((book) => {
                             const link = document.createElement('a');
                             link.href = `/book/library/book-details/${book.slug}`;
                             link.className = 'history-item';
-                            // Simple text escaping
-                            const safeTitle = book.title.replace(/[&<>"']/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m] });
-                            const safeAuthor = book.author.replace(/[&<>"']/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m] });
-                            
-                            link.innerHTML = `
-                                <i data-lucide="notebook"></i> 
-                                <div class="history-item-info">
-                                    <span class="history-item-title">${safeTitle}</span>
-                                    <span class="history-item-author">by ${safeAuthor}</span>
-                                </div>`;
+                            const safeTitle = book.title.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m]));
+                            const safeAuthor = book.author.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m]));
+                            link.innerHTML = `<i data-lucide="notebook"></i><div class="history-item-info"><span class="history-item-title">${safeTitle}</span><span class="history-item-author">by ${safeAuthor}</span></div>`;
                             fragment.appendChild(link);
                         });
                     }
-                    
                     historyContainer.appendChild(fragment);
                     resultsBox.style.display = 'block';
                     if (window.lucide) lucide.createIcons({ root: historyContainer, nameAttr: 'data-lucide' });
-
                 } catch (err) {
                     if (err.name === 'AbortError') return;
                     console.error(err);
@@ -309,15 +292,8 @@ themeToggleBtns.forEach(btn => {
                 if (query.length > 1) {
                     resultsBox.style.display = 'block';
                     searchForm.style.borderRadius = '0.875rem 0.875rem 0 0';
-                    
-                    // Skeleton Loader
-                    const skeletonItem = `
-                        <div class="skeleton-item">
-                            <div class="skeleton-icon"></div>
-                            <div class="skeleton-text-col"><div class="skeleton-line long"></div><div class="skeleton-line short"></div></div>
-                        </div>`;
+                    const skeletonItem = `<div class="skeleton-item"><div class="skeleton-icon"></div><div class="skeleton-text-col"><div class="skeleton-line long"></div><div class="skeleton-line short"></div></div></div>`;
                     historyContainer.innerHTML = `<div class="search-history-title">Searching...</div>${skeletonItem.repeat(3)}`;
-                    
                     typingTimer = setTimeout(() => fetchResults(query), 300);
                 } else {
                     resultsBox.style.display = 'none';
@@ -325,7 +301,6 @@ themeToggleBtns.forEach(btn => {
                 }
             });
 
-            // Hide on outside click
             document.addEventListener('click', (e) => {
                 if (!searchForm.contains(e.target)) {
                     resultsBox.style.display = 'none';
@@ -333,7 +308,6 @@ themeToggleBtns.forEach(btn => {
                 }
             });
             
-            // Show on focus
             searchInput.addEventListener('focus', () => {
                 if (searchInput.value.trim().length > 1) {
                     resultsBox.style.display = 'block';
@@ -341,5 +315,7 @@ themeToggleBtns.forEach(btn => {
                 }
             });
         }
-    });
-})();
+
+    })(); // End of Home Page IIFE
+
+}); // End of DOMContentLoaded
