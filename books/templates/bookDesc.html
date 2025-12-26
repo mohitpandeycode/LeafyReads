@@ -44,7 +44,7 @@
                 {% with saved_label=user_saved|yesno:"✔ Saved,➕ Add to Read Later" %}
                 <button class="btn-chip">{{ saved_label }}</button>
                 {% endwith %}
-                <button class="btn-chip">🔗 Share</button>
+                <button style="cursor: pointer;" class="btn-chip" onclick="shareLink()">🔗 Share</button>
                 {% if book.audio_file %}
                 <button class="btn-chip">🎧 Listen Audio</button>
                 {% endif %}
@@ -145,4 +145,33 @@
     </section>
 
 </main>
+<script>
+    async function shareLink() {
+  // Define what you want to share
+  const shareData = {
+    title: document.title,
+    text: 'Check out this Book published on LeafyReads!',
+    url: window.location.href 
+  };
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      console.log('Shared successfully');
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  } else {
+    copyToClipboard(shareData.url);
+  }
+}
+
+// Helper function for the fallback
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Link copied to clipboard!');
+  }).catch(err => {
+    console.error('Failed to copy:', err);
+  });
+}
+</script>
 {% endblock %}
