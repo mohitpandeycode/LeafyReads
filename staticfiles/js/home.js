@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             link.className = 'history-item';
                             const safeTitle = book.title.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m]));
                             const safeAuthor = book.author.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m]));
-                            link.innerHTML = `<i data-lucide="notebook"></i><div class="history-item-info"><span class="history-item-title">${safeTitle}</span><span class="history-item-author">by ${safeAuthor}</span></div>`;
+                            link.innerHTML = `<i style="width:40px;" data-lucide="notebook"></i><div style="text-align: start;" class="history-item-info"><span class="history-item-title">${safeTitle}</span><span class="history-item-author"> by ${safeAuthor}</span></div>`;
                             fragment.appendChild(link);
                         });
                     }

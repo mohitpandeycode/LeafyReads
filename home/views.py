@@ -4,15 +4,20 @@ from django.contrib import messages
 from books.models import *
 from django.db.models import Count
 from django.core.cache import cache
-from django.db import connection
+import random
 
 def home(request):
-    categories = cache.get("home_categories") 
+        
+    categories = cache.get("home_categories")
+
     if categories is None:
         categories = list(
-                Genre.objects.only("id", "name", "slug", "lucidicon").order_by("pk")
-            )
+            Genre.objects.only("id", "name", "slug", "lucidicon")
+        )
         cache.set("home_categories", categories, timeout=60 * 60 * 24)
+
+    categories = categories[:]
+    random.shuffle(categories)
 
     # Fetch Books (Cache for 15 minutes) ---
     books = cache.get("home_books")

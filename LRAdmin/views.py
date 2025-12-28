@@ -1,13 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from books.models import *
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import BookContentForm,BookForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from books.models import Book
 
 # Create your views here.
 
@@ -115,10 +114,6 @@ def updateBook(request, slug):
             if content_form.has_changed():
                 content = content_form.save(commit=False)
                 content._updated_by = request.user
-
-                # CRITICAL FIX: Removed 'update_fields'.
-                # We MUST run a full save() so that the 'chunks' field 
-                # (calculated in models.py) gets written to the DB.
                 content.save() 
 
             # Handle redirection

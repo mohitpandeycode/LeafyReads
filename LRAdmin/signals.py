@@ -20,8 +20,7 @@ def log_book_save(sender, instance, created, **kwargs):
         action=action,
         message=f"Book '{instance.title}' was {'created' if created else 'updated'}."
     )
-    # Run cleanup after saving a new log
-    cleanup_old_logs() 
+    cleanup_old_logs()
 
 @receiver(pre_delete, sender=Book)
 def log_book_delete(sender, instance, **kwargs):
@@ -31,16 +30,17 @@ def log_book_delete(sender, instance, **kwargs):
         action="delete",
         message=f"Book '{instance.title}' was deleted."
     )
-    # Run cleanup here too (optional, but good for consistency)
     cleanup_old_logs()
 
 @receiver(post_save, sender=BookContent)
 def log_content_update(sender, instance, created, **kwargs):
+    user = getattr(instance, "_updated_by", None) 
+    if not user:
+        user = getattr(instance.book, "_updated_by", None)
+
     BookLog.objects.create(
-        user=getattr(instance.book, "_updated_by", None),
+        user=user,
         book=instance.book,
         action="content_update",
         message=f"Book content for '{instance.book.title}' was {'created' if created else 'updated'}."
     )
-    # Run cleanup
-    cleanup_old_logs()

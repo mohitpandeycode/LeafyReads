@@ -34,6 +34,7 @@ gTTS==2.5.4
 gunicorn==23.0.0
 idna==3.10
 kombu==5.5.4
+MarkupSafe==3.0.3
 packaging==25.0
 pillow==12.0.0
 prompt_toolkit==3.0.52

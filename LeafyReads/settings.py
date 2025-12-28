@@ -139,10 +139,14 @@ WSGI_APPLICATION = 'LeafyReads.wsgi.application'
 
 
 DATABASE_URL = env('DATABASE_URL')
+db_config = dj_database_url.config(default=DATABASE_URL, conn_max_age=0)
+db_config['DISABLE_SERVER_SIDE_CURSORS'] = True
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL,conn_max_age=600)
+    'default': db_config
 }
+
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+
 
 CACHES = {
     "default": {
@@ -160,6 +164,12 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://leafyreads.com", 
+#     "https://www.leafyreads.com",
+#     "https://3.108.52.246" 
+# ]
 
 
 # Password validation

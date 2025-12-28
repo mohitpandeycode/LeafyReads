@@ -194,7 +194,7 @@
         justify-content: center;
     }
 
-    @media (min-width: 769px) {
+    @media (min-width: 900px) {
         .mobile-bottom-nav {
             display: none;
         }
@@ -361,7 +361,7 @@
                         link.className = 'history-item';
 
                         link.innerHTML = `
-                            <i data-lucide="notebook"></i>  
+                            <i style="width:40px;" data-lucide="notebook"></i>  
                             <div class="history-item-info">
                                 <span class="history-item-title">${escapeHtml(book.title)}</span>
                                 <span class="history-item-author">by ${escapeHtml(book.author)}</span>

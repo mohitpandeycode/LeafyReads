@@ -128,7 +128,7 @@
   .fallback-card h2 {
       font-size: 1.3rem;
       font-weight: 600;
-      color: #1f2937;
+      color: inherit;
       margin-bottom: 0.5rem;
   }
 

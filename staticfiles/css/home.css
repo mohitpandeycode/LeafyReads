@@ -1093,7 +1093,7 @@ body.dark-mode .dark-image {
 }
 
 /* Large desktops */
-@media (min-width: 1024px) {
+@media (min-width: 1240px) {
     .books-grid {
         grid-template-columns: repeat(7, 1fr);
     }
@@ -1715,7 +1715,8 @@ body.dark-mode .hero-bg {
 
 }
 
-@media (min-width:768px) {
+
+@media (min-width:900px) {
     .desktop-nav {
         display: flex
     }

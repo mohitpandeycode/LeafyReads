@@ -1,19 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, Prefetch, Count, F
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy,SearchQueryLog
-from django.db.models import Count, OuterRef, Subquery, IntegerField
 from django.db import transaction
-from django.db.models import Exists, OuterRef,Subquery, Value
-from django.db.models.functions import Substr, Coalesce
-from django.views.decorators.cache import cache_page
+from django.db.models import Q, Count, F, OuterRef, Subquery, IntegerField, Exists
+from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.contrib.postgres.search import TrigramSimilarity
 from django.utils.html import strip_tags
 import hashlib
-import time
+import random
+from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy, SearchQueryLog
 
 def home(request, slug):
     book_qs = Book.objects.select_related("content")
@@ -147,9 +144,13 @@ def openBook(request, slug):
 def library(request):
     #Categories
     categories = cache.get("library_categories")
+
     if categories is None:
-        categories = list(Genre.objects.all().order_by("name"))
+        categories = list(Genre.objects.all())
         cache.set("library_categories", categories, timeout=60 * 60 * 24)
+
+    categories = categories[:]
+    random.shuffle(categories)
 
     #Main Books List (Paginated Cache: 15 mins) ---
     # We must include the page number in the cache key!
@@ -158,7 +159,7 @@ def library(request):
     
     books = cache.get(books_cache_key)
     if books is None:
-        # Your existing complex query logic
+        # complex query logic
         likes_subquery = Subquery(
             Book.objects.filter(id=OuterRef("id"))
             .annotate(count=Count("likes"))
@@ -279,18 +280,18 @@ def myBooks(request):
     )
 
 
-
-
 def searchbooks(request):
     book_query = request.GET.get("q", "").strip()
     page_number = request.GET.get("page", 1)
 
+    # 1. Full Page Cache Check
     cache_key = f"search_{book_query}_page_{page_number}"
     context = cache.get(cache_key)
 
     if context:
         return render(request, "library.html", context)
 
+    # 2. Define Subqueries
     likes_subquery = Subquery(
         Book.objects.filter(id=OuterRef("id"))
         .annotate(cnt=Count("likes"))
@@ -304,8 +305,23 @@ def searchbooks(request):
         .values("cnt")[:1],
         output_field=IntegerField()
     )
+    
+    # 3. Cached Suggestions
+    cached_suggestions = cache.get("popular_books_sidebar")
+    
+    if not cached_suggestions:
+        cached_suggestions = list(
+            Book.objects.filter(is_published=True).only(
+                "id", "title", "slug", "author", "cover_front"
+            ).annotate(
+                likes_count=likes_subquery,
+                readby_count=readby_subquery 
+            ).order_by('-likes_count')[:12]
+        )
+        cache.set("popular_books_sidebar", cached_suggestions, 3600)
 
-    books_queryset = Book.objects.select_related("genre").only(
+    # 4. Main Query Setup
+    books_queryset = Book.objects.filter(is_published=True).select_related("genre").only(
         "id", "title", "slug", "author", "cover_front", "genre__name", "uploaded_at"
     )
 
@@ -318,12 +334,17 @@ def searchbooks(request):
             similarity=(
                 TrigramSimilarity('title', book_query) * 1.0 +
                 TrigramSimilarity('author', book_query) * 0.7 +
-                TrigramSimilarity('genre__name', book_query) * 0.6+
-                TrigramSimilarity('slug', book_query) * 0.4
+                TrigramSimilarity('slug', book_query) * 0.5 +
+                TrigramSimilarity('genre__name', book_query) * 0.5
             )
-        ).filter(similarity__gt=0.1).order_by('-similarity', '-uploaded_at')
+        ).filter(
+            # Allow EITHER good similarity OR exact substring match
+            Q(similarity__gt=0.1) | 
+            Q(slug__icontains=book_query) | 
+            Q(title__icontains=book_query)
+        ).order_by('-similarity', '-uploaded_at')
 
-        # Attach the counts ONLY to the final filtered list
+        # Attach counts
         books_queryset = books_queryset.annotate(
             likes_count=likes_subquery, 
             readby_count=readby_subquery
@@ -332,7 +353,6 @@ def searchbooks(request):
         paginator = Paginator(books_queryset, 30)
         books = paginator.get_page(page_number)
 
-        # Check Python list length (No extra DB call)
         if len(books) == 0:
             no_results_found = True
             
@@ -346,22 +366,13 @@ def searchbooks(request):
             except Exception:
                 pass
 
-            # Fetch suggestions only if needed
-            suggested_books = Book.objects.only(
-                "id", "title", "slug", "author", "cover_front"
-            ).annotate(
-                likes_count=likes_subquery
-            ).order_by('-likes_count')[:12]
+            suggested_books = cached_suggestions
         
         else:
-            suggested_books = Book.objects.only(
-                "id", "title", "slug", "author", "cover_front"
-            ).annotate(
-                likes_count=likes_subquery
-            ).order_by('-likes_count')[:12]
+            suggested_books = cached_suggestions
 
     else:
-        # No Search - Just latest books
+        # No Search
         books_queryset = books_queryset.order_by("-uploaded_at").annotate(
             likes_count=likes_subquery, 
             readby_count=readby_subquery
@@ -376,77 +387,66 @@ def searchbooks(request):
         "no_results_found": no_results_found,
         "suggested_books": suggested_books,
     }
+    
     cache.set(cache_key, context, timeout=60 * 2)
 
     return render(request, "library.html", context)
-    
+
+
 # AJAX Search with Caching and Concurrency Control
-LOCK_TIMEOUT = 5
-WAIT_DELAY = 0.1
 
 def ajax_search(request):
-    query = request.GET.get("q", "").strip().lower()
+    query = request.GET.get("q", "").strip()[:100].lower()
     
-    if not query:
+    # 2 ensure the user typed at least 3 chars.
+    if len(query) < 3:
         return JsonResponse({"results": []})
         
+    # 3. Cache Check Fastest Path
     safe_query = hashlib.md5(query.encode('utf-8')).hexdigest()
-    cache_key = f"search_results_{safe_query}"
-    lock_key = f"{cache_key}_lock"
-
-    # 1. Try to fetch results from Redis cache
+    cache_key = f"ajax_search_{safe_query}"
     cached_results = cache.get(cache_key)
-    if cached_results is not None:
+    
+    if cached_results:
         return JsonResponse({"results": cached_results})
 
-    # 2. CACHE MISS! Attempt to acquire a lock (Concurrency control)
-    if cache.add(lock_key, 'true', timeout=LOCK_TIMEOUT):
-        
-        results = []
-        try:
-            # Build the query
-            keywords = query.split()
-            q_obj = Q()
-            for kw in keywords:
-                q_obj |= (
-                    Q(title__icontains=kw)
-                    | Q(author__icontains=kw)
-                    | Q(genre__name__icontains=kw)
-                    | Q(slug__icontains=kw)
-                )
+    # 4. Or quary Keeps user attention by showing partial matches
+    keywords = query.split()
+    q_obj = Q()
+    for kw in keywords:
+        q_obj |= (
+            Q(title__icontains=kw)
+            | Q(author__icontains=kw)
+            | Q(genre__name__icontains=kw) 
+        )
 
-            books = (
-                Book.objects.filter(q_obj)
-                .only("id", "title", "slug", "author", "genre_id") 
-                .select_related("genre") 
-                [:8]
-            )
+    # 5. Fetch 20 items
+    books = list(
+        Book.objects.filter(q_obj, is_published=True)
+        .only("id", "title", "author", "slug", "cover_front") 
+        .order_by('-uploaded_at')[:20] 
+    )
 
-            # Serialize results
-            for b in books:
-                results.append({
-                    "id": b.id,
-                    "title": b.title,
-                    "author": b.author,
-                    "slug": b.slug,
-                })
-            
-            # Populate cache and return
-            cache.set(cache_key, results, timeout=120)
-            return JsonResponse({"results": results})
-        finally:
-            # Release the lock
-            cache.delete(lock_key)
-            
-    else:
-        # 3. LOCK UNAVAILABLE: Wait and retry cache lookup
-        time.sleep(WAIT_DELAY) 
-        final_results = cache.get(cache_key)
-        
-        if final_results is not None:
-            return JsonResponse({"results": final_results})
-        else:
-            return JsonResponse({"results": []})
+    # 6. Sorting If the title starts exactly with the query, put it at the TOP.
+    books.sort(key=lambda x: x.title.lower().startswith(query), reverse=True)
+
+    # 7. Serialize Top 8
+    results = [
+        {
+            "id": b.id,
+            "title": b.title,
+            "author": b.author,
+            "slug": b.slug,
+        }
+        for b in books[:8]
+    ]
+    
+    # 8. Set Cache 5 Minutes
+    cache.set(cache_key, results, timeout=300)
+    
+    return JsonResponse({"results": results})
+
+
 
 @login_required
 def toggle_read_later(request, book_slug):

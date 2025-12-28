@@ -1,6 +1,4 @@
-from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
-from django.contrib import messages
 from django.db.models.signals import post_save, post_delete
 from django.core.cache import cache
 from books.models import Book, Genre, ReadBy
