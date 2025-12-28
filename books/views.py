@@ -416,6 +416,7 @@ def ajax_search(request):
     for kw in keywords:
         q_obj |= (
             Q(title__icontains=kw)
+            | Q(slug__icontains=kw)
             | Q(author__icontains=kw)
             | Q(genre__name__icontains=kw) 
         )
