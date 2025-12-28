@@ -108,6 +108,19 @@ body.dark-mode .logo-dark { display: inline-block; }
 }
 .btn:hover { background-color: var(--color-primary-hover); }
 
+blockquote {
+    border-left: 6px solid #2563eb;
+    margin: 1.2rem 0;
+    font-style: italic;
+    color: #4a5568;
+    background: #F7FAEE;
+    border-radius: .5rem;
+    height: 30px;
+    align-items: center;
+    display: flex;
+    padding: 0 5px;
+}
+
 .dropdown-menu {
   position: absolute;
   top: 120%;
