@@ -394,15 +394,15 @@ def searchbooks(request):
 
 
 # AJAX Search with Caching and Concurrency Control
-
 def ajax_search(request):
+    # 1. Clean the input
     query = request.GET.get("q", "").strip()[:100].lower()
-    
-    # 2 ensure the user typed at least 3 chars.
+
+    # 2. LIMIT CHECK: If length is less than 3, return empty (Safety)
     if len(query) < 3:
         return JsonResponse({"results": []})
         
-    # 3. Cache Check Fastest Path
+    # 3. Cache Check
     safe_query = hashlib.md5(query.encode('utf-8')).hexdigest()
     cache_key = f"ajax_search_{safe_query}"
     cached_results = cache.get(cache_key)
@@ -410,7 +410,7 @@ def ajax_search(request):
     if cached_results:
         return JsonResponse({"results": cached_results})
 
-    # 4. Or quary Keeps user attention by showing partial matches
+    # 4. Build Query
     keywords = query.split()
     q_obj = Q()
     for kw in keywords:
@@ -420,17 +420,17 @@ def ajax_search(request):
             | Q(genre__name__icontains=kw) 
         )
 
-    # 5. Fetch 20 items
+    # 5. Fetch from DB
     books = list(
         Book.objects.filter(q_obj, is_published=True)
-        .only("id", "title", "author", "slug", "cover_front") 
+        .only("id", "title", "author", "slug") 
         .order_by('-uploaded_at')[:20] 
     )
 
-    # 6. Sorting If the title starts exactly with the query, put it at the TOP.
+    # 6. Smart Sorting (Exact matches first)
     books.sort(key=lambda x: x.title.lower().startswith(query), reverse=True)
 
-    # 7. Serialize Top 8
+    # 7. Serialize
     results = [
         {
             "id": b.id,
@@ -440,12 +440,10 @@ def ajax_search(request):
         }
         for b in books[:8]
     ]
-    
-    # 8. Set Cache 5 Minutes
+    # 8. Set Cache
     cache.set(cache_key, results, timeout=300)
     
     return JsonResponse({"results": results})
-
 
 
 @login_required
