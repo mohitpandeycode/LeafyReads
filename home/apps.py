@@ -6,4 +6,4 @@ class HomeConfig(AppConfig):
     name = 'home'
 
     def ready(self):
-        pass
+        import home.signals
