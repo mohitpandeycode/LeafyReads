@@ -4,6 +4,7 @@ from django.utils import timezone
 from books.models import Book
 from cloudinary.models import CloudinaryField
 from django.utils.text import slugify
+import uuid
 
 
 def post_folder(instance):
@@ -27,6 +28,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     mentioned_users = models.ManyToManyField(User, related_name='mentioned_in_posts', blank=True)
+    slug = models.SlugField(max_length=255, null=True, blank=True, unique=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -41,6 +43,14 @@ class Post(models.Model):
     
     def number_of_comments(self):
         return self.comments.count()
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_content = self.content[:50] if self.content else "post"
+            slug_candidate = slugify(base_content)
+            short_uuid = str(uuid.uuid4())[:10]
+            self.slug = f"{slug_candidate}-{short_uuid}"
+        super().save(*args, **kwargs)
 
 # NEW MODEL to handle multiple images per post
 class PostImage(models.Model):

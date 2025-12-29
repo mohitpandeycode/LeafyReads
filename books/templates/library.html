@@ -40,7 +40,7 @@
                 <a href="{% url 'book' book.slug %}" class="book-card">
                     <div class="book-wrapper">
                         {% if book.cover_front %}
-                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover" loading="lazy" />
+                        <img src="{{ book.cover_front.url }}?q=auto&f_auto" alt="{{ book.title }} Cover" class="book-cover" loading="lazy" />
                         {% else %}
                         <img src="{% static 'images/default_cover.png' %}" alt="No Cover" class="book-cover" loading="lazy" />
                         {% endif %}

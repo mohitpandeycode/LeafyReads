@@ -2,7 +2,7 @@
 {% load static %}
 {% load socialaccount %}
 {% block title %}
-Community - LeafyReads
+Community | LeafyReads
 {% endblock %}
 
 {% block css %}
@@ -214,11 +214,11 @@ Community - LeafyReads
           <div class="post-images">
 
             {% if post.book %}
-            <img src="{{ post.book.cover_front.url }}" class="post-image" alt="book cover" loading="lazy">
+            <img src="{{ post.book.cover_front.url }}?q=auto&f_auto" class="post-image" alt="book cover" loading="lazy">
             {% endif %}
 
             {% for image in post.images.all %}
-            <img src="{{ image.image.url }}" class="post-image" alt="post image" loading="lazy">
+            <img src="{{ image.image.url }}?w=500&q=auto&f_auto" class="post-image" alt="post image" loading="lazy">
             {% endfor %}
 
           </div>
@@ -240,9 +240,9 @@ Community - LeafyReads
         </div>
       </article>
       {% endfor %}
-      {% if posts.has_next %}
+      {% if has_next %}
       <div class="pagination-container">
-        <a href="?page={{ posts.next_page_number }}" class="see-more-btn">
+        <a href="?page={{ next_page_number }}" class="see-more-btn">
           See More Posts
           <i data-lucide="chevron-down"></i>
         </a>
@@ -298,6 +298,21 @@ Community - LeafyReads
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    // Handle page refresh to new community
+    if (window.history.replaceState) {
+        // Get the current URL
+        const url = new URL(window.location.href);
+
+        // Check if the 'page' parameter exists (e.g., ?page=3)
+        if (url.searchParams.has('page')) {
+            
+            // Remove the 'page' parameter
+            url.searchParams.delete('page');
+
+            // Update the URL bar immediately without reloading
+            window.history.replaceState({}, '', url.pathname);
+        }
+    }
 
     //----------------------------------------------------------
     // 1. HANDLE MESSAGES / ERROR ALERTS (Only if they exist)

@@ -1,0 +1,627 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}
+View Post - Community | LeafyReads
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/community.css' %}" />
+<link rel="stylesheet" href="{% static 'css/mobilehome.css' %}" />
+{% endblock %}
+
+{% block body %}
+{% if not user.is_authenticated %}
+{% include 'login.html' %}
+{% endif %}
+
+{% if messages %}
+<div style="z-index: 99; bottom: 10px;left: 5px; top:auto;"
+  class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start"
+  role="alert">
+  <div class="error__icon mr-3">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z"
+        clip-rule="evenodd"></path>
+    </svg>
+  </div>
+  <div class="error__title grow">
+    <ul class="messages">
+      {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="error__close ml-4 cursor-pointer">
+    <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+      class="text-gray-700 hover:text-gray-900 transition-colors">
+      <path
+        d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
+      </path>
+    </svg>
+  </div>
+</div>
+{% endif %}
+
+<div class="comunitycontainer">
+  <aside class="sidebar left-sidebar">
+    <div class="sidebar-card">
+      <h3>📚 Trending Books</h3>
+      <ul class="trending-list">
+        <li><span class="rank">#1</span> Atomic Habits</li>
+        <li><span class="rank">#2</span> The Psychology of Money</li>
+        <li><span class="rank">#3</span> Deep Work</li>
+        <li><span class="rank">#4</span> Sapiens</li>
+        <li><span class="rank">#5</span> Think Again</li>
+      </ul>
+    </div>
+    <div class="sidebar-card">
+      <h3>🏷️ Popular Tags</h3>
+      <div class="tags">
+        <span class="tag">#fiction</span>
+        <span class="tag">#selfhelp</span>
+        <span class="tag">#thriller</span>
+        <span class="tag">#romance</span>
+        <span class="tag">#scifi</span>
+        <span class="tag">#biography</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div id="postsFeed" class="posts-feed">
+      {% if post %}
+      <article class="post-card" data-post-id="{{ post.id }}">
+        <div class="post-header">
+          <div class="avatar">
+            <img class="profileimage" src="https://i.pravatar.cc/150?u={{ post.author.username }}"
+              alt="{{ post.author.username }}" loading="lazy">
+          </div>
+          <div style="display: flex;flex-direction: column;">
+            <span class="username">{{ post.author.get_full_name }}</span>
+            <span class="post-meta">{{ post.created_at|timesince }} ago</span>
+          </div>
+
+          <div class="menu-wrapper" style="margin-left: auto; position: relative;">
+            <i class="threedot" style="cursor: pointer;" data-lucide="ellipsis-vertical"></i>
+
+            {% if post.author == request.user %}
+            <a href="#" class="postoption deletepost" data-url="{% url 'delete_post' post.id %}"><i style="width: 14px;"
+                data-lucide="trash-2"></i> Delete Post</a>
+            {% else %}
+            <a href="#" class="postoption"><i style="width: 14px;" data-lucide="flag"></i> Report Post</a>
+            {% endif %}
+          </div>
+
+        </div>
+        <p class="post-content" data-full="{{ post.content }}">{{ post.content }}</p>
+        {% if post.book %}
+        <a href="{% url 'book' post.book.slug %}" class="book-mention">
+          <span style="font-size: 20px;padding: 0px 0 6px 0;">📖</span> {{ post.book.title }}
+        </a>
+        {% endif %}
+        {% if post.images.all.exists or post.book %}
+        <div class="contentbox">
+          <div class="post-images">
+
+            {% if post.book %}
+            <img src="{{ post.book.cover_front.url }}?w=500&q=auto&f_auto" class="post-image" alt="book cover" loading="lazy">
+            {% endif %}
+
+            {% for image in post.images.all %}
+            <img src="{{ image.image.url }}?w=500&q=auto&f_auto" class="post-image" alt="post image" loading="lazy">
+            {% endfor %}
+
+          </div>
+        </div>
+        {% endif %}
+        <div class="post-actions">
+          <button class="action-btn {% if post.has_liked %}liked{% endif %}" data-post-id="{{ post.id }}"
+            onclick="toggleLike(this)" {% if not request.user.is_authenticated %}disabled{% endif %}>
+            <span class="heart">{% if post.has_liked %}❤️{% else %}🤍{% endif %}</span>
+            <span class="count">{{ post.likes_count }}</span>
+            Like
+          </button>
+
+          <button class="action-btn" onclick="openComments(this)">
+            <span>💬</span>
+            <span class="count">{{ post.comments_count }}</span>
+            Comment
+          </button>
+        </div>
+        <div class="comment-overlay" style="display:none;"></div>
+        <div class="openpost">
+          {% include 'comment.html' %}
+        </div>
+      </article>
+
+      {% else %}
+      <article class="post-card">
+      <div class="no-posts">
+        <span>📚</span>
+        <p>This post is unavailable or may have been deleted! :(</p>
+      </div>
+      </article>
+      {% endif %}
+    </div>
+    
+    <div class="pagination-container">
+        <a href="{% url 'community' %}" class="see-more-btn">
+          Go to Community
+          <i data-lucide="chevron-right"></i>
+        </a>
+    </div>
+  </main>
+
+  <aside class="sidebar right-sidebar">
+    <div class="sidebar-card">
+      <h3>👥 Active Readers</h3>
+      <div class="active-users">
+        <div class="user-item">
+          <div class="avatar small"><i data-lucide="user-round-check"></i></div>
+          <span>Megha Jain</span>
+          <span class="online-dot"></span>
+        </div>
+        <div class="user-item">
+          <div class="avatar small"><i data-lucide="user-round-check"></i></div>
+          <span>Boby Singh</span>
+          <span class="online-dot"></span>
+        </div>
+        <div class="user-item">
+          <div class="avatar small"><i data-lucide="user-round-check"></i></div>
+          <span>Mohit Pandey</span>
+          <span class="online-dot"></span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <h3>📅 Upcoming Events</h3>
+      <div class="events-list">
+        <div class="event-item">
+          <div class="event-date">
+            <span class="day">15</span>
+            <span class="month">Jan</span>
+          </div>
+          <div class="event-info">
+            <h4>Official Launch</h4>
+            <p>Welcome to our Platform</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div id="imageModal" class="modal" style="display:none; position:fixed; z-index:100; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center;">
+    <span id="closeImageModal" style="position:absolute; top:20px; right:35px; color:#f1f1f1; font-size:40px; font-weight:bold; cursor:pointer;">&times;</span>
+    <img class="modal-content" id="modalImage" style="margin:auto; display:block; width:80%; max-width:700px;">
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    //----------------------------------------------------------
+    // 1. HANDLE MESSAGES / ERROR ALERTS
+    //----------------------------------------------------------
+    const errorCloseBtn = document.querySelector('.error__close');
+    const errorBox = document.querySelector('.error');
+
+    if (errorCloseBtn && errorBox) {
+      errorCloseBtn.addEventListener('click', () => {
+        errorBox.style.display = "none";
+      });
+    }
+  });
+
+  //----------------------------------------------------
+  // Post delete or report action
+  //----------------------------------------------------
+  
+  // --- 1. CSRF Token Helper ---
+  const getCookie = (name) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  };
+  const csrftoken = getCookie('csrftoken');
+
+
+  // --- 2. Custom Toast Function ---
+  const showNotification = (message) => {
+    const existingToast = document.querySelector('.js-toast-message');
+    if (existingToast) existingToast.remove();
+
+    const toast = document.createElement('div');
+    toast.className = "js-toast-message error max-w-md w-full fixed bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start";
+    toast.style.cssText = `
+            z-index: 99; 
+            bottom: 10px; 
+            left: 5px; 
+            top: auto; 
+            position: fixed; 
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        `;
+
+    toast.innerHTML = `
+            <div class="error__icon mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-green-500" fill="currentColor">
+                    <path fill-rule="evenodd" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <div class="error__title grow">
+                <ul class="messages" style="list-style:none; padding:0; margin:0;">
+                    <li>${message}</li>
+                </ul>
+            </div>
+            <div class="error__close ml-4 cursor-pointer">
+                <svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-gray-700 hover:text-gray-900 transition-colors">
+                    <path d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path>
+                </svg>
+            </div>
+        `;
+
+    toast.querySelector('.error__close').addEventListener('click', () => {
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 500);
+    });
+
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.style.opacity = "1";
+      toast.style.transform = "translateY(0)";
+    });
+
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(20px)";
+        setTimeout(() => toast.remove(), 500);
+      }
+    }, 4000);
+  };
+
+
+  // --- 3. Main Event Listener (Toggle + Delete) ---
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+
+    // A. Toggle Menu
+    const dotBtn = target.closest('.threedot');
+    if (dotBtn) {
+      e.stopPropagation();
+      const wrapper = dotBtn.closest('.menu-wrapper');
+      const menu = wrapper.querySelector('.postoption');
+
+      document.querySelectorAll('.postoption').forEach(el => {
+        if (el !== menu) el.style.display = 'none';
+      });
+
+      if (menu) {
+        menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+      }
+      return;
+    }
+
+    // B. Close Menu
+    if (!target.closest('.postoption')) {
+      document.querySelectorAll('.postoption').forEach(el => el.style.display = 'none');
+    }
+
+    // C. DELETE POST ACTION
+    const deleteBtn = target.closest('.deletepost');
+    if (deleteBtn) {
+      e.preventDefault();
+      if (!confirm("Are you sure you want to delete this post?")) return;
+
+      const url = deleteBtn.getAttribute('data-url');
+      const postCard = deleteBtn.closest('.post-card');
+      const originalText = deleteBtn.textContent;
+      
+      deleteBtn.textContent = 'Deleting...';
+      deleteBtn.style.opacity = '0.7';
+
+      fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json'
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            showNotification(data.message);
+            // Redirect to home after delete since we are on the detail page
+            setTimeout(() => {
+                 window.location.href = "{% url 'community' %}"; 
+            }, 1000);
+          } else {
+            showNotification(data.message || "Error deleting post");
+            deleteBtn.textContent = originalText;
+            deleteBtn.style.opacity = '1';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showNotification("Something went wrong.");
+          deleteBtn.textContent = originalText;
+          deleteBtn.style.opacity = '1';
+        });
+    }
+  });
+
+
+  //----------------------------------------------------------
+  //  post caption see more option
+  //----------------------------------------------------------
+  document.addEventListener("DOMContentLoaded", () => {
+    const MAX_CHARS = 1000;
+
+    document.querySelectorAll(".post-content").forEach(contentEl => {
+      const fullText = contentEl.dataset.full.trim();
+      if (fullText.length <= MAX_CHARS) return;
+
+      const shortText = fullText.substring(0, MAX_CHARS) + "...";
+      const readMore = document.createElement("span");
+      readMore.className = "read-more-btn";
+      readMore.innerText = " Read more";
+
+      contentEl.innerText = shortText;
+      contentEl.appendChild(readMore);
+
+      let expanded = false;
+
+      readMore.addEventListener("click", () => {
+        if (!expanded) {
+          contentEl.innerText = fullText + " ";
+          readMore.innerText = " Read less";
+          contentEl.appendChild(readMore);
+          expanded = true;
+        } else {
+          contentEl.innerText = shortText;
+          readMore.innerText = " Read more";
+          contentEl.appendChild(readMore);
+          expanded = false;
+        }
+      });
+    });
+  });
+
+  //----------------------------------------------------------
+  //  REAL-TIME LIKE SYSTEM (AJAX)
+  //----------------------------------------------------------
+  function toggleLike(btn) {
+    const postId = btn.dataset.postId;
+    const heartSpan = btn.querySelector('.heart');
+    const countSpan = btn.querySelector('.count');
+    const isCurrentlyLiked = btn.classList.contains('liked');
+    let currentCount = parseInt(countSpan.innerText);
+
+    if (isCurrentlyLiked) {
+      btn.classList.remove('liked');
+      heartSpan.innerText = '🤍';
+      countSpan.innerText = Math.max(0, currentCount - 1);
+    } else {
+      btn.classList.add('liked');
+      heartSpan.innerText = '❤️';
+      countSpan.innerText = currentCount + 1;
+    }
+
+    const formData = new FormData();
+    formData.append('post_id', postId);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch('{% url "like_post" %}', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.is_liked) {
+          btn.classList.add('liked');
+          heartSpan.innerText = '❤️';
+        } else {
+          btn.classList.remove('liked');
+          heartSpan.innerText = '🤍';
+        }
+        countSpan.innerText = data.likes_count;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Revert on error
+        if (isCurrentlyLiked) {
+          btn.classList.add('liked');
+          heartSpan.innerText = '❤️';
+          countSpan.innerText = currentCount;
+        } else {
+          btn.classList.remove('liked');
+          heartSpan.innerText = '🤍';
+          countSpan.innerText = currentCount;
+        }
+      });
+  }
+
+  //----------------------------------------------------------
+  //  REAL-TIME COMMENT SYSTEM (AJAX)
+  //----------------------------------------------------------
+  let activePostId = null;
+
+  function openComments(btn) {
+    const postCard = btn.closest(".post-card");
+    activePostId = postCard.dataset.postId;
+
+    document.querySelector(".comment-overlay").style.display = "block";
+    document.getElementById("commentModal").style.display = "block";
+    document.body.style.overflow = "hidden";
+
+    loadComments(activePostId);
+  }
+
+  function loadComments(postId) {
+    const list = document.getElementById("commentList");
+    const commentOwner = document.getElementById("commentOwner");
+
+    commentOwner.innerHTML = "";
+    list.innerHTML = `
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+    `;
+
+    fetch(`/community/comment/${postId}/`)
+      .then(res => res.json())
+      .then(data => {
+        list.innerHTML = "";
+
+        // 1. RENDER POST OWNER INFO
+        if (data.post) {
+          commentOwner.innerHTML = `
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div class="avatar">
+                    <img class="profileimage" style="border: 3px solid green;" src="${data.post.avatar}" alt="ownerimg" loading="lazy">
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; width: 100%;">
+                    <div style="display:flex; align-items:center; gap:10px">
+                        <span class="username" style="font-weight:bold;">${data.post.author}</span>
+                        <span class="post-meta" style="font-size:12px; color:#666;">${data.post.created} ago</span>
+                    </div>
+                    <p class="ownertext">${data.post.content}</p>
+                </div>
+            </div>
+            `;
+        }
+
+        // 2. CHECK FOR COMMENTS
+        if (!data.comments || data.comments.length === 0) {
+          list.innerHTML = `
+            <div style="text-align:center; padding:40px 10px; color:var(--text-muted); font-size:15px;">
+                <i data-lucide="message-circle" style="width:38px;height:38px;margin-bottom:8px;"></i>
+                <div>No comments yet</div>
+                <div style="font-size:14px;">Be the first to comment!</div>
+            </div>
+            `;
+          if (window.lucide) lucide.createIcons();
+          return;
+        }
+
+        // 3. RENDER COMMENTS
+        data.comments.forEach(c => {
+          list.innerHTML += `
+            <div class="comment-card">
+                <div class="avatar">
+                    <img class="profileimage" src="${c.avatar}" alt="profile" loading="lazy" />
+                </div>
+                <div class="comment-lines" style="margin-top:0">
+                    <div style="font-weight:600;font-size:15px">
+                        ${c.author}
+                    </div>
+                    <div style="font-size:14px;line-height:1.5">
+                        ${c.content}
+                    </div>
+                    <div style="display:flex;gap:16px;margin-top:6px">
+                        <span style="font-size:13px;color:var(--text-muted);">${c.created}</span>
+                        <span style="font-size:13px;color:var(--accent);cursor:pointer">Like</span>
+                        <span style="font-size:13px;color:var(--accent);cursor:pointer">Reply</span>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+      })
+      .catch(err => {
+        console.error("Error loading comments:", err);
+        list.innerHTML = `<div style="text-align:center;">Unable to load comments</div>`;
+      });
+  }
+
+  // Add Comment Button Logic
+  const sendCommentBtn = document.getElementById("sendCommentBtn");
+  if (sendCommentBtn) {
+    sendCommentBtn.addEventListener("click", () => {
+      const text = document.getElementById("commentInput").value.trim();
+      if (!text) return;
+
+      const formData = new FormData();
+      formData.append("post_id", activePostId);
+      formData.append("content", text);
+      
+      const tokenInput = document.querySelector("input[name=csrfmiddlewaretoken]");
+      if (tokenInput) formData.append("csrfmiddlewaretoken", tokenInput.value);
+
+      fetch("/community/comment/add/", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(() => {
+        document.getElementById("commentInput").value = "";
+        loadComments(activePostId);
+        // Update Count on UI
+        const postCard = document.querySelector(`.post-card[data-post-id="${activePostId}"]`);
+        if (postCard) {
+            const countSpan = postCard.querySelector('button[onclick="openComments(this)"] .count');       
+            if (countSpan) {
+                let currentCount = parseInt(countSpan.innerText) || 0;
+                countSpan.innerText = currentCount + 1;
+            }
+        }
+      });
+    });
+  }
+
+  const closeComment = document.getElementById("closeComment");
+  if (closeComment) {
+    closeComment.addEventListener('click', () => {
+      document.getElementById("commentModal").style.display = "none";
+      document.querySelector(".comment-overlay").style.display = "none";
+      document.body.style.overflow = "auto";
+    });
+  }
+
+  // -------------------------------------------------
+  // Show image on full size when click on post images
+  // -------------------------------------------------
+  document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    const closeBtn = document.getElementById("closeImageModal");
+
+    document.querySelectorAll(".post-image").forEach(img => {
+      img.addEventListener("click", () => {
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+        document.body.style.overflow = "hidden";
+      });
+    });
+
+    closeBtn.onclick = () => {
+      modal.style.display = "none";
+      document.body.style.overflow = "auto";
+    };
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+    });
+  });
+</script>
+{% endblock %}

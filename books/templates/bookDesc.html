@@ -18,7 +18,7 @@
 
         <aside class="book-sidebar">
             <div class="cover-container">
-                <img src="{{ book.cover_front.url }}" alt="{{ book.title }}" class="book-cover" loading="lazy"
+                <img src="{{ book.cover_front.url }}?q=auto&f_auto" alt="{{ book.title }}" class="book-cover" loading="lazy"
                     onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';">
                 <div class="badge-overlay">
                     {% if book.level %}Level {{ book.level }}{% endif %}

@@ -11,56 +11,74 @@ from django.shortcuts import get_object_or_404
 from django.utils.timesince import timesince
 from django.template.defaultfilters import truncatechars
 from django.core.cache import cache
+from django.contrib.contenttypes.models import ContentType
+
+
 
 def community(request):
-    # --- 1. FETCH SHARED FEED (CACHED) ---
     page_number = request.GET.get('page', '1')
     feed_cache_key = f"community_feed:page:{page_number}"
-    posts_page = cache.get(feed_cache_key)
-
-    if not posts_page:
-        posts_qs = Post.objects.select_related('author', 'book').annotate(
-            likes_count=Count('likes', distinct=True),
-            comments_count=Count('comments', distinct=True)
-        ).prefetch_related('images').order_by('-created_at')
+    cached_data = cache.get(feed_cache_key)
+    if cached_data is None:
+        posts_qs = (
+            Post.objects
+            .select_related('author', 'book')
+            .annotate(
+                likes_count=Count('likes', distinct=True),
+                comments_count=Count('comments', distinct=True),
+            )
+            .order_by('-created_at')
+        )
 
         paginator = Paginator(posts_qs, 20)
-        posts_page = paginator.get_page(page_number)
-        
-        # Save to Redis for 15 minutes
-        cache.set(feed_cache_key, posts_page, timeout=900)
+        page = paginator.get_page(page_number)
 
-    # --- 2. PERSONALIZE FEED ---
+        # Serialize data for caching:
+        posts_list = list(page.object_list.prefetch_related('images'))
+        
+        cached_data = {
+            'posts': posts_list,
+            'has_next': page.has_next(),
+            'next_page_number': page.next_page_number() if page.has_next() else None,
+        }
+
+        cache.set(feed_cache_key, cached_data, 900)
+
+    # Unpack the data
+    posts = cached_data['posts']
+    has_next = cached_data['has_next']
+    next_page_number = cached_data['next_page_number']
+
+    #2. PERSONALIZATION ---
     if request.user.is_authenticated:
-        # Get the IDs of the ~20 posts on this page
-        visible_post_ids = [p.id for p in posts_page.object_list]
-        
-        # Efficiently fetch which of THESE posts the user liked
-        liked_post_ids = set(Post.likes.through.objects.filter(
-            user_id=request.user.id,
-            post_id__in=visible_post_ids
-        ).values_list('post_id', flat=True))
-        
-        # Attach the status to the post objects
-        for post in posts_page:
+        liked_post_ids = set(
+            Post.likes.through.objects.filter(
+                user_id=request.user.id,
+                post_id__in=[p.id for p in posts],
+            ).values_list('post_id', flat=True)
+        )
+
+        for post in posts:
             post.has_liked = post.id in liked_post_ids
 
-    # --- 3. FETCH SIDEBAR (USER CACHED) ---
+    # --- 3. SIDEBAR ---
     books = []
     if request.user.is_authenticated:
         sidebar_key = f"user_sidebar:{request.user.id}"
         books = cache.get(sidebar_key)
-        
-        if not books:
-            # Fetch and cache user's watched books for 30 mins
-            books = list(ReadBy.objects.filter(user=request.user).select_related('book')[:5])
-            cache.set(sidebar_key, books, timeout=1800)
+
+        if books is None:
+            books = list(
+                ReadBy.objects.filter(user=request.user)
+                .select_related('book')[:5]
+            )
+            cache.set(sidebar_key, books, 1800) # Cache for 30 mins
 
     # --- 4. POST SUBMISSION LOGIC ---
     if request.method == "POST":
         content = request.POST.get("content", "").strip()
         book_slug = request.POST.get("book", "").strip()
-        image_file = request.FILES.get("image", None)
+        image_file = request.FILES.get("image")
 
         if not content and not book_slug and not image_file:
             messages.error(request, "Cannot create an empty post.")
@@ -70,7 +88,6 @@ def community(request):
         if book_slug:
             book_obj = Book.objects.filter(slug=book_slug).first()
 
-        # Create Post
         post = Post.objects.create(
             author=request.user,
             content=content,
@@ -79,6 +96,8 @@ def community(request):
 
         if image_file:
             PostImage.objects.create(post=post, image=image_file)
+
+        # Invalidate Cache on new post so users see it immediately
         try:
             cache.delete_pattern("community_feed:page:*")
         except AttributeError:
@@ -88,10 +107,35 @@ def community(request):
         return redirect("community")
 
     context = {
-        "posts": posts_page,
+        "posts": posts,
         "books": books,
+        "has_next": has_next, 
+        "next_page_number": next_page_number,
     }
     return render(request, "community.html", context)
+
+
+
+def viewPost(request, slug):
+    queryset = Post.objects.select_related('author', 'book').annotate(
+        likes_count=Count('likes', distinct=True),
+        comments_count=Count('comments', distinct=True)
+    ).prefetch_related('images')
+
+    post = get_object_or_404(queryset, slug=slug)
+
+    if request.user.is_authenticated:
+        post.has_liked = post.likes.filter(id=request.user.id).exists()
+        post_type = ContentType.objects.get_for_model(Post)
+
+        request.user.notifications.filter(
+            content_type=post_type,
+            object_id=post.id, 
+            is_read=False
+        ).update(is_read=True)
+
+    return render(request, 'viewpost.html', {'post': post})
+
 
 @login_required
 @require_POST

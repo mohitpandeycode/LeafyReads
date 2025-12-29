@@ -248,32 +248,50 @@
               <div class="notif-list">
                 {% if notifications %}
                 {% for notif in notifications %}
-                <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
+
+                {% if notif.notification_type == 'post_delete' %}
+                <div class="notif-item" style="cursor: default;">
                   <div class="notif-icon-box bg-teal">
-                    🔔
+                    🗑️
                   </div>
                   <div class="notif-content">
                     <p>{{ notif.message|safe }}</p>
                     <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
                   </div>
-                  {% if not notif.is_read %}
-                  <div class="unread-dot"></div>
-                  {% endif %}
                 </div>
+                {% else %}
+                <a href="{% url 'post_view' notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
+                  <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
+                    <div class="notif-icon-box bg-teal">
+                      {% if notif.notification_type == 'like' %}❤️
+                      {% elif notif.notification_type == 'comment' %}💬
+                      {% elif notif.notification_type == 'book_mention' %}📚
+                      {% else %}🔔{% endif %}
+                    </div>
+                    <div class="notif-content">
+                      <p>{{ notif.message|safe }}</p>
+                      <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+                    </div>
+                    {% if not notif.is_read %}
+                    <div class="unread-dot"></div>
+                    {% endif %}
+                  </div>
+                </a>
+                {% endif %}
+
                 {% endfor %}
                 {% else %}
                 <div style="padding: 1.5rem; text-align: center; color: #94a3b8; font-size: 0.85rem;">
                   <p>No new updates</p>
                 </div>
                 {% endif %}
-                <div class="notif-item unread">
+
+                <div class="notif-item">
                   <div class="notif-icon-box bg-teal">
                     <i data-lucide="sparkles"></i>
                   </div>
                   <div class="notif-content">
-                    <p><strong>Welcome to LeafyReads!</strong> 🌿 Discover new books and begin your reading journey
-                      today.
-                    </p>
+                    <p><strong>Welcome to LeafyReads!</strong> 🌿 Discover new books...</p>
                     <span class="notif-time">{{ user.date_joined|timesince }} ago</span>
                   </div>
                 </div>
@@ -308,6 +326,7 @@
                   <span>Profile</span>
                 </li>
               </a>
+              
               <li class="dropdown-item">
                 <i data-lucide="gem"></i>
                 <span>Go Pro</span>

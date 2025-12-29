@@ -47,7 +47,6 @@ def notify_post_like(sender, instance, action, pk_set, **kwargs):
                 )
                 
 # 1. NOTIFY: New Comment
-# Output: "Priya Sharma commented on your post “Top 5 Fantasy Books” 💬"
 @receiver(post_save, sender=Comment)
 def notify_new_comment(sender, instance, created, **kwargs):
     if created:
@@ -72,7 +71,6 @@ def notify_new_comment(sender, instance, created, **kwargs):
             )
 
 # 2. NOTIFY: Book Mention in Post
-# Output: "Daniel Lee mentioned your book “The Silent Forest” in a discussion 📚"
 @receiver(post_save, sender=Post)
 def notify_book_mention(sender, instance, created, **kwargs):
     if created and instance.book:
@@ -92,7 +90,6 @@ def notify_book_mention(sender, instance, created, **kwargs):
                 )
 
 # 3. NOTIFY: Post Published (Self-Notification)
-# Output: "Your post “Building a Reading Habit” has been published to the community 📢"
 @receiver(post_save, sender=Post)
 def notify_post_publish(sender, instance, created, **kwargs):
     if created:
@@ -110,7 +107,6 @@ def notify_post_publish(sender, instance, created, **kwargs):
         )
         
 # 4. CLEANUP: When a Post is Deleted
-# Action: Removes all notifications (likes, comments, mentions) related to that post
 @receiver(post_delete, sender=Post)
 def cleanup_post_notifications(sender, instance, **kwargs):
     # 1. Get the ContentType for the Post model
