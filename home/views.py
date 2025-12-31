@@ -28,7 +28,7 @@ def home(request):
             .annotate(likes_count=Count("likes"))
             .annotate(readby_count=Count("readbooks"))
             .defer("pdf_file", "audio_file", "price", "isbn", "updated_at")
-            .order_by("-uploaded_at")[:12]
+            .order_by("-uploaded_at")[:28]
         )
         cache.set("home_books", books, timeout=60 * 15)
 
