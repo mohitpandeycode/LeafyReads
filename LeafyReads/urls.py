@@ -27,6 +27,7 @@ urlpatterns = [
     path('copyright-policy/', TemplateView.as_view(template_name="copyrightPolicy.html"), name='copyright-policy'),
     path('terms-of-service/', TemplateView.as_view(template_name="terms_of_service.html"), name='terms-of-service'),
     path('privacy-policy/', TemplateView.as_view(template_name="privacy_policy.html"), name='privacy-policy'),
+    path('robots.txt',TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),),
 
 ]
 if settings.DEBUG:
