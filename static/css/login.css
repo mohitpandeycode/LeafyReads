@@ -23,9 +23,9 @@
   background-color: #fff;
   color: #0e0e1cfa;
   font-family: 'Segoe UI', sans-serif;
-  width: 420px;
+  width: 430px;
   max-width: 90%;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 16px;
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
   opacity: 0;
@@ -96,9 +96,6 @@ body.dark-mode .login-leafy-dark {
    color: #544949;
  }
 
- body.dark-mode .github img {
-   filter: invert();
- }
 
  body.dark-mode .apple img {
    filter: invert();

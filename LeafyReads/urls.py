@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from books.sitemaps import StaticViewSitemap, BookSitemap 
+from django.views.generic import TemplateView
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -23,6 +24,9 @@ urlpatterns = [
     path("ckeditor5/", include('django_ckeditor_5.urls')),
     path('ht/', include('health_check.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('copyright-policy/', TemplateView.as_view(template_name="copyrightPolicy.html"), name='copyright-policy'),
+    path('terms-of-service/', TemplateView.as_view(template_name="terms_of_service.html"), name='terms-of-service'),
+    path('privacy-policy/', TemplateView.as_view(template_name="privacy_policy.html"), name='privacy-policy'),
 
 ]
 if settings.DEBUG:
