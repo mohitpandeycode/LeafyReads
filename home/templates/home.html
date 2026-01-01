@@ -5,6 +5,17 @@
 {% block title %}
 LeafyReads - Your Digital Bookshelf
 {% endblock %}
+{% block social_tags %}
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+
+<meta property="og:title" content="LeafyReads - Your Digital Bookshelf" />
+
+<meta property="og:description" content="LeafyReads is your personal reading sanctuary. Discover thousands of books, track your reading progress, and connect with a community of book lovers." />
+
+<meta property="og:image" content="{% static 'images/favicon.png' %}" />
+
+<meta property="og:type" content="website" />
+{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/mobilehome.css' %}" />

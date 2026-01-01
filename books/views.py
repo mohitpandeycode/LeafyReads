@@ -77,6 +77,7 @@ def home(request, slug):
             "page_obj": pagination_context,
             "saved": getattr(book, "is_saved", False),
             "liked": getattr(book, "is_liked", False),
+            "title":book.title
         },
     )
 

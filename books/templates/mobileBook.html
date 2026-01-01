@@ -5,15 +5,19 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description"
-    content="LeafyReads - read, search, and explore books online with a fast and smooth experience." />
-
-  <title>Book</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/lucide@latest"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Read {{ title }} by {{ book.author }} online. {{ bookcontent|truncatewords:25 }}" />
+    <link rel="canonical" href="{{ request.build_absolute_uri }}" />
+    <title>{{ title }} - By {{ book.author }} | LeafyReads</title>
+    <meta property="og:type" content="book" />
+    <meta property="og:title" content="{{ title }} - By {{ book.author }}" />
+    <meta property="og:description" content="Read {{ title }} online at LeafyReads." />
+    <meta property="og:image" content="{{ book.cover_front.url }}" /> <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="{% static 'css/mobilebook.css' %}" />
   <link rel="stylesheet" href="{% static 'css/login.css' %}" />
 
@@ -54,6 +58,7 @@
         transform: scale(1.1);
     }
   </style>
+  {% include 'book_detail.html' %}
 </head>
 
 <body>
@@ -109,8 +114,8 @@
       </a>
 
       <button class="leafy-auth-button github">
-        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" loading="lazy" alt="GitHub icon" />
-        Sign in with GitHub
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" loading="lazy" alt="Facebook icon" />
+        Sign in with Facebook
       </button>
 
       <button class="leafy-auth-button apple">

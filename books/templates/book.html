@@ -3,13 +3,18 @@
   {% load static %}
   {% load socialaccount %}
 
-  <!-- loginpage -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="LeafyReads - read, search, and explore books online with a fast and smooth experience." />
+    <meta name="description" content="Read {{ title }} by {{ book.author }} online. {{ bookcontent|truncatewords:25 }}" />
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}" />
+    <title>{{ title }} - By {{ book.author }} | LeafyReads</title>
+    <meta property="og:type" content="book" />
+    <meta property="og:title" content="{{ title }} - By {{ book.author }}" />
+    <meta property="og:description" content="Read {{ title }} online at LeafyReads." />
+    <meta property="og:image" content="{{ book.cover_front.url }}" /> <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 
-    <title>Book</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -71,6 +76,7 @@
     <script src="{% static 'js/loading.js' %}"></script>
     <!-- Full version, works with turn.js -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    {% include 'book_detail.html' %}
   </head>
 
   <body>
@@ -120,8 +126,8 @@
         </a>
 
         <button class="leafy-auth-button github">
-          <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" loading="lazy" alt="GitHub icon" />
-          Sign in with GitHub
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" loading="lazy" alt="Facebook icon" />
+          Sign in with Facebook
         </button>
 
         <button class="leafy-auth-button apple">
@@ -178,6 +184,76 @@
             </div>
           </nav>
           <div class="co-header-actions">
+            <!-- Notification Pannel -->
+          {% if user.is_authenticated %}
+          <div class="notification-wrapper" style="position: relative; display: inline-block;">
+            <button style="position: relative;" onclick="toggleNotifications()" aria-label="notification"
+              class="notif-btn theme-toggle-btn"><i data-lucide="bell"></i>
+              <p class="notify-dot"></p>
+            </button>
+            <div class="notification-box glass-panel" id="notificationBox">
+              <div class="notif-header">
+                <h3>Notifications</h3>
+                <button class="mark-read-text">Mark all read</button>
+              </div>
+
+              <div class="notif-list">
+                {% if notifications %}
+                {% for notif in notifications %}
+
+                {% if notif.notification_type == 'post_delete' %}
+                <div class="notif-item" style="cursor: default;">
+                  <div class="notif-icon-box bg-teal">
+                    🗑️
+                  </div>
+                  <div class="notif-content">
+                    <p>{{ notif.message|safe }}</p>
+                    <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+                  </div>
+                </div>
+                {% else %}
+                <a href="{% url 'post_view' notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
+                  <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
+                    <div class="notif-icon-box bg-teal">
+                      {% if notif.notification_type == 'like' %}❤️
+                      {% elif notif.notification_type == 'comment' %}💬
+                      {% elif notif.notification_type == 'book_mention' %}📚
+                      {% else %}🔔{% endif %}
+                    </div>
+                    <div class="notif-content">
+                      <p>{{ notif.message|safe }}</p>
+                      <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+                    </div>
+                    {% if not notif.is_read %}
+                    <div class="unread-dot"></div>
+                    {% endif %}
+                  </div>
+                </a>
+                {% endif %}
+
+                {% endfor %}
+                {% else %}
+                <div style="padding: 1.5rem; text-align: center; color: #94a3b8; font-size: 0.85rem;">
+                  <p>No new updates</p>
+                </div>
+                {% endif %}
+
+                <div class="notif-item">
+                  <div class="notif-icon-box bg-teal">
+                    <i data-lucide="sparkles"></i>
+                  </div>
+                  <div class="notif-content">
+                    <p><strong>Welcome to LeafyReads!</strong> 🌿 Discover new books...</p>
+                    <span class="notif-time">{{ user.date_joined|timesince }} ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="notif-footer">
+                <a href="#">View All History</a>
+              </div>
+            </div>
+          </div>
+          {% endif %}
             {% if user.is_authenticated %}
               <div class="dropdown">
                 <button id="dropdown-button" class="btn">Welcome {{ user.first_name }} <i data-lucide="arrow-big-down-dash"></i></button>
@@ -319,6 +395,7 @@
     <script src="{% static 'js/navsearch.js' %}"></script>
     {% if book.audio_file %}
     <script>
+      
   // Audio Play/Pause Logic
   let audioFile = new Audio('{{ book.audio_file.url }}');
   const playBtn = document.getElementById('play');
@@ -339,6 +416,19 @@
 {% endif %}
 
 <script>
+  function toggleNotifications() {
+      const box = document.getElementById('notificationBox');
+      box.classList.toggle('active');
+    }
+
+    // Close when clicking outside
+    document.addEventListener('click', function (event) {
+      const box = document.getElementById('notificationBox');
+      const btn = document.querySelector('.notif-btn');
+      if (box && btn && !box.contains(event.target) && !btn.contains(event.target)) {
+        box.classList.remove('active');
+      }
+    });
   const clicks = new Audio('/static/sounds/click.mp3');
 
   document.addEventListener('DOMContentLoaded', () => {

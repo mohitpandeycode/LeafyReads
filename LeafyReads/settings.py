@@ -10,16 +10,14 @@ Env.read_env()
 
 ENVIRONMENT = env('ENVIRONMENT', default='production')
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret
+
 SECRET_KEY = env('SECRET_KEY')
-# SECURITY WARNING: don't run with debug turned on in production!
+
 
 if ENVIRONMENT == 'development':
     DEBUG = True
@@ -27,8 +25,8 @@ if ENVIRONMENT == 'development':
 else:
     DEBUG = False
     ALLOWED_HOSTS = [
-        "leafyreads.com",         
-        "www.leafyreads.com", 
+        "leafyreads.com",
+        "www.leafyreads.com",
         "15.206.60.20",            
         "127.0.0.1",               
         "localhost",               
@@ -67,6 +65,7 @@ INSTALLED_APPS = [
     'health_check.storage',
     'django_extensions',
     'django_user_agents',
+    'django.contrib.sitemaps'
     
 ]
 
@@ -166,11 +165,6 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "https://leafyreads.com", 
-#     "https://www.leafyreads.com",
-#     "https://3.108.52.246" 
-# ]
 
 
 # Password validation
@@ -244,16 +238,24 @@ CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = lambda user: user.is_staff
 CKEDITOR_5_IMAGE_BACKEND = "pillow"
 
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://leafyreads.com", 
+    "https://www.leafyreads.com",
+]
+
+
 if ENVIRONMENT != 'development':
+
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_SECONDS = 31536000  
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_SSL_REDIRECT = False
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-
+    SECURE_SSL_REDIRECT = True          
+    SESSION_COOKIE_SECURE = True        
+    CSRF_COOKIE_SECURE = True 
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

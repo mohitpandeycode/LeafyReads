@@ -1,0 +1,20 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "name": "{{ book.title|escapejs }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ book.author|escapejs }}"
+  },
+  {% if book.cover_front %}
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ book.cover_front.url }}",
+  {% endif %}
+  "url": "{{ request.build_absolute_uri }}",
+  "inLanguage": "en",
+  {% if book.uploaded_at %}
+  "datePublished": "{{ book.uploaded_at|date:'Y-m-d' }}", 
+  {% endif %}
+  "genre": "{{ book.category|escapejs }}"
+}
+</script>

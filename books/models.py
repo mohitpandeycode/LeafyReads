@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
 import re
+from django.urls import reverse
 from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
 from django.contrib.postgres.indexes import GinIndex
@@ -136,6 +137,9 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('book', args=[self.slug])
 
 
 

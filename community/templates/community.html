@@ -1,9 +1,24 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load socialaccount %}
-{% block title %}
-Community | LeafyReads
+
+{% block meta_description %}
+Join the LeafyReads community. Connect with fellow book lovers, share reviews, discuss your favorite novels, and find your next great read together.
 {% endblock %}
+
+{% block social_tags %}
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+
+<meta property="og:title" content="Community - Join the Discussion | LeafyReads" />
+
+<meta property="og:description" content="Connect with book lovers, share thoughts, and discuss your favorite stories on LeafyReads." />
+
+<meta property="og:image" content="{% static 'images/favicon.png' %}" />
+
+<meta property="og:type" content="website" />
+{% endblock %}
+
+{% block title %}Community - Connect with Readers | LeafyReads{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/community.css' %}" />

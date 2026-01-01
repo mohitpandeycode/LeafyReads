@@ -2,7 +2,14 @@
 {% load static %}
 
 {% block title %}
-{{ title }}- Discover & Read Your Favorite Books
+{{ title }} - By {{ book.author }} | LeafyReads
+{% endblock %}
+{% block meta_description %}{{ book.content|truncatewords:25 }} | {% endblock %}
+{% block social_tags %}
+<meta property="og:title" content="{{ book.title }} - By {{ book.author }}" />
+<meta property="og:description" content="Read {{ book.title }} online. {{ book.bookcontent|truncatewords:20 }}" />
+<meta property="og:image" content="{{ book.cover_front.url }}" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
 {% endblock %}
 
 {% block css %}
