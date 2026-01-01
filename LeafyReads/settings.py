@@ -27,10 +27,11 @@ if ENVIRONMENT == 'development':
 else:
     DEBUG = False
     ALLOWED_HOSTS = [
-        "127.0.0.1", 
-        "localhost", 
-        "3.108.52.246",
-        "ec2-3-108-52-246.ap-south-1.compute.amazonaws.com",
+        "leafyreads.com",         
+        "www.leafyreads.com", 
+        "15.206.60.20",            
+        "127.0.0.1",               
+        "localhost",               
     ]
 
 
