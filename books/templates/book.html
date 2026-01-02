@@ -336,7 +336,7 @@
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
             <img src="{% static 'images/framebook1.png' %}" loading="lazy" class="cover-image" style="position: absolute;    left: -2px;width: 101%;top: -2px;height: 101%;" alt="forntFrame" />
-            <img src="{{ book.cover_front.url }}?q_auto,f_auto" loading="lazy" style="object-fit: cover;" alt="Cover Image" class="cover-image" />
+            <img src="{{ book.cover_front.url }}?q_auto,f_auto" style="object-fit: cover;" alt="Cover Image" class="cover-image" />
             <div class="bookinfocover">
               <h4 style="margin: 0;">{{book.title}}</h4>
               <p style="font-size:16px;margin: 0;">By: {{book.author}}</p>

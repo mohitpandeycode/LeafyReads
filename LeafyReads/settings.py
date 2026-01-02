@@ -212,12 +212,7 @@ CLOUDINARY_STORAGE = {
     'API_KEY': env('CLOUDINARY_API_KEY'),
     'API_SECRET': env('CLOUDINARY_API_SECRET'),
     'UPLOAD_OPTIONS': {
-        'overwrite': True,
-        'transformation': [
-            {'width': 1200, 'height': 1200, 'crop': 'limit'},
-            {"quality": "auto:low"},
-            
-        ]
+        'upload_preset': 'django_auto_compress'
     }
 }
 
