@@ -304,6 +304,24 @@
         width: 45px;
         height: 45px;
     }
+    .filter-section-wrapper {
+    padding: 5px 0 !important;
+    }
+    .scroll-btn {
+    padding: 0px 5px;
+    font-size: 1rem;
+    height: 35px;
+    }
+    .filter-item {
+    padding: 8px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    }
+    .fiilter-section {
+    padding: 0 5px;
+    gap: 5px
+    }
+
 
     .author-title {
         font-size: 0.8rem;
