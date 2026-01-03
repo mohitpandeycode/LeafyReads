@@ -113,13 +113,20 @@ blockquote {
     margin: 1.2rem 0;
     font-style: italic;
     color: #4a5568;
-    background: #F7FAEE;
+    background: #e8f6ff;
     border-radius: .5rem;
-    height: 30px;
-    align-items: center;
-    display: flex;
     padding: 0 5px;
 }
+body.dark-mode blockquote{
+  background: #000000b8;
+}
+blockquote h1,
+blockquote h2,
+blockquote h3, 
+blockquote h4 {
+  margin: 0;
+}
+
 
 .dropdown-menu {
   position: absolute;
@@ -200,15 +207,15 @@ blockquote {
 
 /* --- 6. Book Content --- */
 #container-wrapper {
-  display: flex; align-items: center; justify-content: center;
-  min-height: 100vh; padding-top: 50px;
+  display: flex;justify-content: center;
+  min-height: 85vh; padding-top: 50px;
 }
 
 #container {
-  width: 100vw; border-radius: 5px; padding: 10px; margin: 2px;
+  width: 100vw; height: 80vh; border-radius: 5px; padding: 10px; margin: 2px;
   background: rgba(255, 250, 224, 0.5);
   backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);overflow-y: auto;
 }
 #container p { font-size: 15px; line-height: 22px; }
 figure { margin: 0; }

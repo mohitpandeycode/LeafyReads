@@ -613,7 +613,7 @@ ul {
     padding: 8px 0;
     gap: 0px;
     bottom:4%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(140, 11, 144, 0.51));
+    background: linear-gradient(to top, rgb(29 29 29), rgb(248 10 255 / 51%));
     width: 88%;
     left: 7%;
 }
@@ -727,7 +727,7 @@ ul {
     margin: 1.2rem 0;
     font-style: italic;
     color: #4a5568;
-    background: #f7fafc;
+    background: #e8f6ff;
     border-radius: .5rem;
     height: 40px;
     align-items: center;
@@ -1318,5 +1318,5 @@ body.dark-mode #commentInput {
 
 body.dark-mode blockquote {
     color: #202020;
-    background: #ffffffb8
+    background: #000000b8;
 }
