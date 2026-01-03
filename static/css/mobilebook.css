@@ -118,7 +118,8 @@ blockquote {
     padding: 0 5px;
 }
 body.dark-mode blockquote{
-  background: #000000b8;
+  color: #8fa6cd;
+  background: #191919b8;
 }
 blockquote h1,
 blockquote h2,
