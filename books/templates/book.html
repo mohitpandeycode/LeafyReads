@@ -28,7 +28,7 @@
     
   <style>
     body {
-      background-image: url('{% static "images/back.webp" %}');
+      background-image: url('{% static "images/lightback.webp" %}');
       width: 100%;
       background-repeat: no-repeat;
       background-position: center center;
@@ -315,6 +315,11 @@
         <button id="highlightBtn" class="control-button fullscreen-button" style="top: 230px; padding: 8px" title="Highlighter">🖍️</button>
         <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
         <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
+        <div class="goto-page-box">
+          <h6 class="pagesinfo">Loading...</h6>
+            <input type="number" id="pageInput" placeholder="Page..." min="1" />
+            <button id="goBtn">Go</button>
+        </div>
         {% if user.is_authenticated %}
           <button id="likeBtn" class="control-button fullscreen-button {% if liked %}like-active{% endif %}" style="top: 530px; padding: 8px;" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
           <button id="saveBtn" class="control-button fullscreen-button {% if saved %}save-active{% endif %}" style="top: 580px; padding: 8px;" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
@@ -358,6 +363,7 @@
       <div id="progress-bar-container" aria-label="Page Progress">
         <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
       </div>
+      
     </main>
 
     <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>

@@ -50,6 +50,44 @@ $(function () {
     $flipbook.append(endPage);
   }
 
+  // === Go to Page Logic ===
+  const $pageInput = $("#pageInput");
+  const $goBtn = $("#goBtn");
+
+  function goToPage() {
+    // 1. Get the page number the user typed
+    let pageNumber = parseInt($pageInput.val());
+    const totalPages = $flipbook.turn("pages");
+
+    // 2. Validation: Ensure it's a real page
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      
+      // 3. Auto flip to that pageq to the pge number
+      $flipbook.turn("page", pageNumber);
+      
+      // Play sound
+      click.currentTime = 0;
+      click.play();
+      
+      // Clear input and remove focus
+      $pageInput.val('');
+      $pageInput.blur();
+      
+    } else {
+      
+      alert(`Please enter a page between 1 and ${totalPages}`);
+    }
+  }
+
+  // Event Listener: Click "Go" button
+  $goBtn.on("click", goToPage);
+
+  // Event Listener: Press "Enter" key inside input
+  $pageInput.on("keypress", function (e) {
+    if (e.which === 13) { // 13 is the Enter key
+      goToPage();
+    }
+  });
   // === Initialize flipbook plugin ===
   $flipbook.turn({
     width: currentWidth,
@@ -71,16 +109,29 @@ $(function () {
         lastPage = page;
         $spine.attr("hidden", true);
       },
+      // UPDATED SECTION
       turned(e, page) {
         const total = $flipbook.turn("pages");
         $spine.toggle(page > 1 && page < total);
+        
+        // Progress Bar
         const percent = (page / total) * 100;
         const bar = document.getElementById("progress-bar");
         bar.style.width = `${percent}%`;
         bar.setAttribute("aria-valuenow", percent.toFixed(0));
+
+        // Page Number Update
+        $(".pagesinfo").text(`Page ( ${page} / ${total} )`);
       },
     },
   });
+
+  // INITIALIZE TEXT ON LOAD
+  const startPage = $flipbook.turn("page");
+  const startTotal = $flipbook.turn("pages");
+  $(".pagesinfo").text(`Page ( ${startPage} / ${startTotal} )`);
+
+
 
   // === Navigation buttons ===
   $("#prevBtn").click(() => $flipbook.turn("previous"));
