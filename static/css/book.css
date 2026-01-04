@@ -647,7 +647,9 @@ ul {
     border: 1px solid rgb(0 0 0 / .1);
     background: rgb(81 81 81 / 6%);
     backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px)
+    -webkit-backdrop-filter: blur(5px);
+    transition: transform 0.1s ease-out;
+    transform-origin: center;
 }
 
 .flipbook {
@@ -782,11 +784,107 @@ body.dark-mode .page-number {
     filter: drop-shadow(2px 4px 8px rgba(15, 15, 15, 0.607))
 }
 
-.fullscreen-button {
+
+.pagesinfo{
+    margin: 0 0 10px 0;
+    border: 1px solid #878787;
+    padding: 2px 5px;
+    text-align: center;
+    border-radius: 5px;
+    background: #7474743b;
+    color: #090909;
+}
+
+body.dark-mode .pagesinfo{
+    border: 1px solid #5f5f5f;
+    background: #63636396;
+    color: #ffffff;
+}
+
+.goto-page-box {
+    position: absolute;
+    bottom: 2%; 
+    right: 1%;  
+    background: rgb(255 255 255 / 29%);
+    backdrop-filter: blur(10px);
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(42, 42, 42, 0.2);
+    z-index: 100;
+}
+
+body.dark-mode .goto-page-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.goto-page-box:hover{
+    z-index: 9999;
+}
+
+.goto-page-box input {
+    width: 40px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgb(46 46 46 / 30%);
+    background: rgb(255 255 255 / 20%);
+    color: rgb(21, 21, 21);
+    outline: none;
+    font-size: 14px;
+}
+
+body.dark-mode .goto-page-box input{
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.goto-page-box button {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #149546;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.goto-page-box button:hover {
+    background: #0f7a38;
+}
+
+/* Hide styling for clean number input */
+.goto-page-box input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.action-btn{
     position: absolute;
     top: 80px;
     right: 20px;
     z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
+    height: 36vw;
+}
+
+.nonsocialaction{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.socialaction{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.fullscreen-button {
     padding: 8px 12px;
     font-size: 20px;
     background-color: #2c3e50;
@@ -889,14 +987,14 @@ body.dark-mode .page-wrapper {
 
 .nav-button.prev {
     position: absolute;
-    left: 10%;
+    left: 8%;
     top: 50%;
     z-index: 9999
 }
 
 .nav-button.next {
     position: absolute;
-    right: 10%;
+    right: 8%;
     top: 50%;
     z-index: 9999
 }
@@ -961,76 +1059,6 @@ body.dark-mode #progress-bar-container {
 body.dark-mode #progress-bar {
     background: linear-gradient(to right, #00c6ff, #0072ff)
 }
-.pagesinfo{
-    margin: 0 0 10px 0;
-    border: 1px solid #878787;
-    padding: 2px 5px;
-    text-align: center;
-    border-radius: 5px;
-    background: #7474743b;
-    color: #090909;
-}
-
-body.dark-mode .pagesinfo{
-    border: 1px solid #5f5f5f;
-    background: #63636396;
-    color: #cccccc;
-}
-
-.goto-page-box {
-    position: absolute;
-    bottom: 2%; 
-    left: 1%;  
-    background: rgb(255 255 255 / 29%);
-    backdrop-filter: blur(10px);
-    padding: 8px;
-    border-radius: 12px;
-    border: 1px solid rgba(42, 42, 42, 0.2);
-    z-index: 100;
-}
-
-body.dark-mode .goto-page-box {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.goto-page-box input {
-    width: 40px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: 1px solid rgb(46 46 46 / 30%);
-    background: rgb(255 255 255 / 20%);
-    color: rgb(21, 21, 21);
-    outline: none;
-    font-size: 14px;
-}
-
-body.dark-mode .goto-page-box input{
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
-}
-
-.goto-page-box button {
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: none;
-    background: #149546;
-    color: white;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.2s;
-}
-
-.goto-page-box button:hover {
-    background: #0f7a38;
-}
-
-/* Hide styling for clean number input */
-.goto-page-box input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
 
 #page-number {
     color: #fff;
@@ -1043,11 +1071,12 @@ body.dark-mode .goto-page-box input{
 
 .alert-container {
     position: absolute;
+    overflow: hidden;
     z-index: 999;
     bottom: 15px;
-    right: 1%;
+    left: 1%;
     width: 23%;
-    background-color: #3498db;
+    background-color: #044578;
     color: #fff;
     padding: 10px 10px;
     border-radius: 12px;
@@ -1059,10 +1088,24 @@ body.dark-mode .goto-page-box input{
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
     animation: fadeIn 0.5s ease-out forwards
 }
+.alert-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background-color: #f59e0b;
+    width: 100%;
+    animation: countdown 10s linear forwards;
+}
+
+@keyframes countdown {
+    from { width: 100%; }
+    to { width: 0%; }
+}
 
 .alert-message {
     flex-grow: 1;
-    font-size: 1.1rem;
+    font-size: 1rem;
     line-height: 1.5;
     font-weight: 500
 }
@@ -1118,8 +1161,8 @@ body.dark-mode .goto-page-box input{
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #2c3e50df;
-    color: white;
+    background-color: #053a6e;
+    color: #ffffff;
     padding: 12px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

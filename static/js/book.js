@@ -53,7 +53,13 @@ $(function () {
   // === Go to Page Logic ===
   const $pageInput = $("#pageInput");
   const $goBtn = $("#goBtn");
-
+  const toast = document.getElementById('toast-notification');
+  const toastMessage = document.getElementById('toast-message');
+  function showToast(message) {
+      toastMessage.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+  }
   function goToPage() {
     // 1. Get the page number the user typed
     let pageNumber = parseInt($pageInput.val());
@@ -74,8 +80,7 @@ $(function () {
       $pageInput.blur();
       
     } else {
-      
-      alert(`Please enter a page between 1 and ${totalPages}`);
+      showToast(`That page does not exist. Please enter 1 to ${totalPages}.`);
     }
   }
 
@@ -277,7 +282,7 @@ function hideAlert() {
     { once: true }
   );
 }
-setTimeout(hideAlert, 4000);
+setTimeout(hideAlert, 10000);
 closeButton?.addEventListener("click", hideAlert);
 
 // === Shortcuts panel toggle ===

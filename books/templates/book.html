@@ -301,30 +301,36 @@
 
     <div class="actionbtns">
       <div id="myAlert" class="alert-container">
-        <span class="alert-message">Tip : Press "F" for batter expirence.</span>
+        <span class="alert-message"><strong>Tip:</strong> Scroll mouse wheel to Zoom In/Out the Book!</span>
         <button class="alert-close-btn" aria-label="Close alert">
           <svg viewBox="0 0 24 24">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
           </svg>
         </button>
+        <div class="alert-progress"></div>
       </div>
-      <div>
-        <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
-        <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 130px; padding: 8px" title="Dark Mode">🌙</button>
-        <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;" title="listen book"><i data-lucide="play"></i></button>
-        <button id="highlightBtn" class="control-button fullscreen-button" style="top: 230px; padding: 8px" title="Highlighter">🖍️</button>
-        <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
-        <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
-        <div class="goto-page-box">
+      <div class="goto-page-box">
           <h6 class="pagesinfo">Loading...</h6>
             <input type="number" id="pageInput" placeholder="Page..." min="1" />
             <button id="goBtn">Go</button>
+      </div>
+
+      <div class="action-btn">
+        <div class="nonsocialaction">
+          <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
+          <button id="darkModeBtn" class="control-button fullscreen-button" title="Dark Mode">🌙</button>
+          <button disabled id="play" class="control-button fullscreen-button" title="listen book"><i data-lucide="play"></i></button>
+          <button id="highlightBtn" class="control-button fullscreen-button" title="Highlighter">🖍️</button>
+          <button id="shortcutsBtn" class="control-button fullscreen-button" title="Keyboard Shortcuts">⌨️</button>
+          <button id="muteBtn" class="control-button fullscreen-button" title="Mute/Unmute Audio">🔊</button>     
         </div>
         {% if user.is_authenticated %}
-          <button id="likeBtn" class="control-button fullscreen-button {% if liked %}like-active{% endif %}" style="top: 530px; padding: 8px;" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
-          <button id="saveBtn" class="control-button fullscreen-button {% if saved %}save-active{% endif %}" style="top: 580px; padding: 8px;" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
-          <a href="{% url 'community' %}" id="comment" class="control-button fullscreen-button" style="top: 630px; padding: 8px" title="community"><i data-lucide="messages-square"></i></a>
-        {% endif %}
+        <div class="socialaction">
+            <button id="likeBtn" class="control-button fullscreen-button {% if liked %}like-active{% endif %}" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
+            <button id="saveBtn" class="control-button fullscreen-button {% if saved %}save-active{% endif %}" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
+            <a href="{% url 'community' %}" id="comment" class="control-button fullscreen-button" title="community"><i data-lucide="messages-square"></i></a>
+        </div>
+        {% endif %} 
         <div id="toast-notification" class="toast">
           <span id="toast-message"></span>
         </div>
@@ -458,7 +464,7 @@
         requestAnimationFrame(() => {
           const like = document.createElement('div');
           like.classList.add('like');
-          like.textContent = '👍';
+          like.textContent = '❤️';
           const size = Math.random() * 16 + 16;
           like.style.cssText = `
             font-size: ${size}px;
@@ -764,6 +770,36 @@
         });
       })();
   </script>
+  <script>
+    // book zoom-in and zoom-out
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('container');
+        let scale = 1; // Default scale is 1 (100%)
+        const zoomSpeed = 0.01; // How fast it zooms (lower is smoother)
+        const minScale = 0.5;   // Minimum zoom (50%)
+        const maxScale = 2.0;   // Maximum zoom (300%)
+
+        if (container) {
+            container.addEventListener('wheel', (e) => {
+                //Prevent the page from scrolling up/down while zooming the book
+                e.preventDefault();
+
+                // Check scroll direction
+                if (e.deltaY < 0) {
+                    scale += zoomSpeed;
+                } else {
+                    scale -= zoomSpeed;
+                }
+
+                //Enforce Min/Max limits so it doesn't disappear or get too huge
+                scale = Math.min(Math.max(minScale, scale), maxScale);
+
+                // Apply the CSS transform
+                container.style.transform = `scale(${scale})`;
+            }, { passive: false }); // used to preventDefault()
+        }
+    });
+</script>
 
   </body>
 </html>
