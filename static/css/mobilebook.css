@@ -240,10 +240,10 @@ body.dark-mode #container { background: rgba(74, 74, 74, 0.34); }
 }
 
 .goto-page-box {
-    width: 50%;
+    width: 60%;
     position: absolute;
     top: 10%;
-    left: 23vw;
+    left: 16vw;
     display: flex;
     background: rgb(255 255 255 / 69%);
     backdrop-filter: blur(10px);
@@ -265,7 +265,7 @@ body.dark-mode .goto-page-box {
 }
 
 .goto-page-box input {
-    width: 50%;
+    width: 60%;
     padding: 6px 10px;
     border-radius: 8px;
     border: 1px solid rgb(46 46 46 / 30%);

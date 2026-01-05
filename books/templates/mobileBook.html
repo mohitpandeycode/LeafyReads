@@ -202,7 +202,7 @@
   </header>
   <div id="overlaysearch"></div>
   <div class="goto-page-box" id="gotobox">
-      <input type="number" id="pageInput" placeholder="Page No..." min="1" max="{{ page_obj.paginator.num_pages }}" data-total="{{ page_obj.paginator.num_pages }}" />
+      <input type="number" id="pageInput" placeholder="Go to page 1 to {{ page_obj.paginator.num_pages }}....." min="1" max="{{ page_obj.paginator.num_pages }}" data-total="{{ page_obj.paginator.num_pages }}" />
       <button id="goBtn">Go <i style="width: 20px;" data-lucide="scan-search"></i> </button> 
   </div>
   <div class="fab-container" id="fabContainer">
