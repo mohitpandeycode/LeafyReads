@@ -1,7 +1,7 @@
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.contrib import messages
-from django.db import IntegrityError
+from django.db import transaction, IntegrityError
 from django.db.models.signals import post_save, m2m_changed,post_delete
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
@@ -130,21 +130,26 @@ def cleanup_post_notifications(sender, instance, **kwargs):
 # 5. NOTIFY: Post Deleted
 @receiver(post_delete, sender=Post)
 def notify_post_delete(sender, instance, **kwargs):
+    # Logic to create the message preview
     post_preview = "Update"
     if instance.book:
         post_preview = instance.book.title
     elif instance.content:
+        # Safely slice content
         post_preview = instance.content[:30] + "..." if len(instance.content) > 30 else instance.content
 
     msg = f"<strong>Your post “{post_preview}”</strong> has been deleted. 🗑️"
+
+    # Try to notify, but ignore if the user is already delete.
     try:
-        Notification.objects.create(
-            recipient=instance.author,
-            actor=instance.author,
-            notification_type='post_delete',
-            content_object=instance.author,  
-            message=msg
-        )
+        with transaction.atomic():
+            Notification.objects.create(
+                recipient=instance.author,
+                actor=instance.author,
+                notification_type='post_delete',
+                content_object=instance.author,  
+                message=msg
+            )
     except IntegrityError:
         pass
     
