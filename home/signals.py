@@ -177,7 +177,7 @@ def send_welcome_email_thread(user_email, first_name):
         html_message = render_to_string('emails/welcome_email.html', context)
         
         # Plain text fallback
-        plain_message = f"Welcome to LeafyReads, {first_name}! We are glad you are here."
+        plain_message = f"Welcome to LeafyReads, {first_name}! Thank you for creating an account. Please explore our library and track your reading progress."
         
         send_mail(
             subject,
