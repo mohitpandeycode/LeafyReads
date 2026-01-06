@@ -130,28 +130,36 @@ def cleanup_post_notifications(sender, instance, **kwargs):
 # 5. NOTIFY: Post Deleted
 @receiver(post_delete, sender=Post)
 def notify_post_delete(sender, instance, **kwargs):
-    # Logic to create the message preview
+    # 1. Prepare the data we need
+    author_id = instance.author.id
+    
     post_preview = "Update"
     if instance.book:
         post_preview = instance.book.title
     elif instance.content:
-        # Safely slice content
         post_preview = instance.content[:30] + "..." if len(instance.content) > 30 else instance.content
 
     msg = f"<strong>Your post “{post_preview}”</strong> has been deleted. 🗑️"
 
-    # Try to notify, but ignore if the user is already delete.
-    try:
-        with transaction.atomic():
+    # 2. Define the creation task
+    def create_notification_safely():
+        try:
+            # We fetch the user Freshly. 
+            # If the user was deleted in the transaction, this query or the create will fail.
+            author = User.objects.get(pk=author_id)
+            
             Notification.objects.create(
-                recipient=instance.author,
-                actor=instance.author,
+                recipient=author,
+                actor=author,
                 notification_type='post_delete',
-                content_object=instance.author,  
+                content_object=author,
                 message=msg
             )
-    except IntegrityError:
-        pass
+        except (User.DoesNotExist, IntegrityError):
+            pass
+
+    # 3. Schedule it to run AFTER the transaction commits
+    transaction.on_commit(create_notification_safely)
     
 # Send email when new user login
     
