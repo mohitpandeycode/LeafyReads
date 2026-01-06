@@ -161,12 +161,11 @@ def send_welcome_email_thread(user_email, first_name):
         
         # Plain text fallback
         plain_message = f"Welcome to LeafyReads, {first_name}! We are glad you are here."
-        from_email = 'LeafyReads <support@leafyreads.com>'
         
         send_mail(
             subject,
             plain_message,
-            from_email,  # <--- Using our custom sender name
+            settings.DEFAULT_FROM_EMAIL,
             [user_email],
             html_message=html_message,
             fail_silently=False,
