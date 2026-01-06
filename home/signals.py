@@ -6,6 +6,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from community.models import Post, Comment
 from home.models import Notification
+from allauth.account.signals import user_signed_up
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
+import threading
+import logging
 
 @receiver(user_logged_in)
 def show_login_message(sender, request, user, **kwargs):
@@ -137,3 +143,52 @@ def notify_post_delete(sender, instance, **kwargs):
         content_object=instance.author,  
         message=msg
     )
+    
+# Send email when new user login
+    
+logger = logging.getLogger(__name__)
+
+# --- 1. The Background Task (Worker) ---
+def send_welcome_email_thread(user_email, first_name):
+    try:
+        subject = "Welcome to LeafyReads🌿"
+        context = {
+            'user': {'first_name': first_name},
+        }
+        
+        # Render the HTML
+        html_message = render_to_string('emails/welcome_email.html', context)
+        
+        # Plain text fallback
+        plain_message = f"Welcome to LeafyReads, {first_name}! We are glad you are here."
+        from_email = 'LeafyReads <support@leafyreads.com>'
+        
+        send_mail(
+            subject,
+            plain_message,
+            from_email,  # <--- Using our custom sender name
+            [user_email],
+            html_message=html_message,
+            fail_silently=False,
+        )
+        logger.info(f"Welcome email sent to {user_email}")
+        
+    except Exception as e:
+        logger.error(f"Failed to send welcome email: {e}")
+
+# --- 2. The Trigger (Listener) ---
+@receiver(user_signed_up)
+def trigger_welcome_email(request, user, **kwargs):
+    """
+    Listens for any new user signup and triggers the email thread.
+    """
+    if user.email:
+        # Get name or default to 'Reader'
+        first_name = user.first_name if user.first_name else "Reader"
+        
+        # Start the background thread
+        email_thread = threading.Thread(
+            target=send_welcome_email_thread,
+            args=(user.email, first_name)
+        )
+        email_thread.start()

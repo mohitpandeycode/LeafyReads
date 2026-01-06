@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to LeafyReads</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+</head>
+
+<body style="margin:0; padding:0; background-color:#e3ded4; font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0; background-color:#e3ded4;">
+    <tr>
+      <td align="center">
+
+        <table width="100%" cellpadding="0" cellspacing="0" style="
+          max-width: 640px;
+          background-color:#fdf8ef;
+          border-radius:4px;
+          /* The Solid Edge */
+          border:1px solid #dccfb8;
+          /* The 'Lifted Paper' Shadow */
+          box-shadow: 0 20px 50px rgba(0,0,0,0.15), 0 5px 15px rgba(0,0,0,0.05);
+        ">
+
+          <tr>
+            <td style="
+              padding: 8px 15px;
+              border-bottom: 2px dashed #e6dec9; /* Stitched Stationery Effect */
+            ">
+              <table width="100%">
+                <tr>
+                  <td align="left">
+                    <a href="https://leafyreads.com" target="_blank"
+                      style="display:flex; align-items:center; text-decoration:none;">
+                      <img
+                        src="https://leafyreads.com/static/images/logo1.png"
+                        alt="LeafyReads Logo Icon"
+                        style="width:35px; border-radius:10px; margin-right:12px; display:block;"
+                      />
+                      <img
+                        src="https://leafyreads.com/static/images/leafylight.webp"
+                        alt="LeafyReads"
+                        style="width:100px; height:auto; display:block;"
+                      />
+                    </a>
+                  </td>
+                  <td align="right" style="font-family: 'Courier New', monospace; font-size: 11px; color: #a89f91; letter-spacing: 1px; text-transform: uppercase;">
+                    {% now "F j, Y" %}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding: 40px 40px 10px 40px;">
+                <div style="
+                    background: #fff;
+                    padding: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    transform: rotate(-1deg);
+                    display: inline-block;
+                    border: 1px solid #eaeaea;
+                ">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=1000&auto=format&fit=crop" 
+                         alt="Open Book" 
+                         style="display: block; width: 100%; max-width: 400px; height: auto; filter: sepia(10%);">
+                </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 30px 60px 40px 60px; color:#3b2f22;">
+
+              <p style="margin:0 0 25px 0; font-size:18px; font-weight: 600;">
+                Dear Reader,
+              </p>
+
+              <p style="margin:0 0 22px 0; font-size:18px; line-height:1.8;">
+                <span style="
+                  float:left;
+                  font-size:52px;
+                  line-height:0.8;
+                  padding-right:12px;
+                  color:#149546;
+                  font-family: 'Times New Roman', serif;
+                  font-weight: bold;
+                ">W</span>
+                elcome to <strong>LeafyReads</strong> <span style="color: #194d5b;font-weight:600;">{{ user.first_name|capfirst }}</span>. You have found a quiet place between pages, where stories rest gently and readers gather as friends.
+              </p>
+
+              <p style="margin:0 0 22px 0; font-size:18px; line-height:1.8;">
+                You now hold an invitation to slow down, to read with intention, and to share thoughts the way letters once were — thoughtfully, honestly, and with care.
+              </p>
+
+              <p style="margin:0 0 22px 0; font-size:18px; line-height:1.8;">
+                Every book you open here is more than a title. It is a conversation, a memory in the making, and a gentle reminder that stories are best when shared.
+              </p>
+
+              <div style="
+                margin:42px 0;
+                text-align:center;
+                font-size:20px;
+                color:#8b6a3e;
+                letter-spacing:8px;
+              ">
+                ✦ ❦ ✦
+              </div>
+
+              <div style="margin-top: 10px;">
+                  <p style="margin:0 0 5px 0; font-size:20px; font-style: italic; color: #666; font-weight: 600;">
+                    Yours in reading,
+                  </p>
+                  
+                  <p style="
+                    margin:0; 
+                    font-family: 'Dancing Script', 'Brush Script MT', cursive; 
+                    font-size: 25px; 
+                    color: #149546; 
+                    line-height: 1.2;
+                    text-shadow: 1px 1px 0px rgba(0,0,0,0.1); /* Subtle Ink Depth */
+                  ">
+                    The LeafyReads Team
+                  </p>
+              </div>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:0 60px 60px 60px;">
+              <a href="https://leafyreads.com"
+                style="
+                  display:inline-block;
+                  padding:16px 45px;
+                  font-size:16px;
+                  font-weight: 600;
+                  color:#ffffff;
+                  background-color: #149546;
+                  text-decoration:none;
+                  border-radius:50px;
+                  border-bottom: 3px solid #0d632e;
+                  letter-spacing: 0.5px;
+                  font-family: sans-serif;
+                  box-shadow: 0 10px 20px rgba(20, 149, 70, 0.2);
+                ">
+                Open Your First Page
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="
+              padding:30px;
+              text-align:center;
+              color:#8c8272;
+              background-color: #f7f2e6;
+              border-top: 1px dashed #dccfb8;
+            ">
+              <p style="margin:0 0 10px 0; font-size:13px; font-style: italic;">
+                "A room without books is like a body without a soul."
+              </p>
+              <p style="margin:0; font-size:10px; text-transform: uppercase; letter-spacing: 1px;">
+                © 2026 LeafyReads · Crafted for readers who linger
+              </p>
+              <p style="margin:0 0 10px 0; font-size:13px; font-style: italic;">
+                  <a style="text-decoration: none;" href="https://leafyreads.com/privacy-policy/">Privacy</a> &bull; 
+                  <a style="text-decoration: none;" href="https://leafyreads.com/aboutus/">About Us</a> &bull; 
+                  <a style="text-decoration: none;" href="mailto:support@leafyreads.com">Support</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        
+        <div style="height: 40px;"></div>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
