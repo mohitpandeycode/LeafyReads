@@ -1,6 +1,7 @@
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.contrib import messages
+from django.db import IntegrityError
 from django.db.models.signals import post_save, m2m_changed,post_delete
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
@@ -136,13 +137,16 @@ def notify_post_delete(sender, instance, **kwargs):
         post_preview = instance.content[:30] + "..." if len(instance.content) > 30 else instance.content
 
     msg = f"<strong>Your post “{post_preview}”</strong> has been deleted. 🗑️"
-    Notification.objects.create(
-        recipient=instance.author,
-        actor=instance.author,
-        notification_type='post_delete',
-        content_object=instance.author,  
-        message=msg
-    )
+    try:
+        Notification.objects.create(
+            recipient=instance.author,
+            actor=instance.author,
+            notification_type='post_delete',
+            content_object=instance.author,  
+            message=msg
+        )
+    except IntegrityError:
+        pass
     
 # Send email when new user login
     
