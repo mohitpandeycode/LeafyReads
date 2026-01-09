@@ -95,7 +95,12 @@
           </svg>
         </button>
       </div>
-      <div>
+      <div class="goto-page-box">
+          <h6 class="pagesinfo">Loading...</h6>
+            <input type="number" id="pageInput" placeholder="Page..." min="1" />
+            <button id="goBtn">Go</button>
+      </div>
+      <div style="position: absolute;top: 80px;right: 20px;z-index: 999; display: flex;justify-content: space-between;flex-direction: column;gap:20px;height: 36vw;">
         <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
         <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 130px; padding: 8px" title="Dark Mode">🌙</button>
         <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;back" title="listen book"><i data-lucide="play"></i></button>
