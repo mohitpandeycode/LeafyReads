@@ -2,6 +2,8 @@
 <html lang="en">
   {% load static %}
   {% load socialaccount %}
+  {% load cloudinary_filters %}
+
 
   <head>
     <meta charset="UTF-8" />
@@ -356,10 +358,7 @@
 
           <article class="page">
             <div class="pagestyle">
-              {{ bookcontent|safe }}
-              <!--  {% for paragraph in bookcontent.splitlines %}
-                <p>{{ paragraph|safe }}</p>
-              {% endfor %}  -->
+              {{ bookcontent|optimize_cloudinary_images|safe }}
             </div>
           </article>
         </div>
@@ -800,6 +799,13 @@
         }
     });
 </script>
-
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".pagestyle img").forEach(img => {
+    img.loading = "lazy";
+    img.decoding = "async";
+  });
+});
+</script>
   </body>
 </html>

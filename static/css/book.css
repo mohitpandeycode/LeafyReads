@@ -650,6 +650,8 @@ ul {
     -webkit-backdrop-filter: blur(5px);
     transition: transform 0.1s ease-out;
     transform-origin: center;
+    content-visibility: auto;
+    contain-intrinsic-size: 1200px;
 }
 
 .flipbook {
