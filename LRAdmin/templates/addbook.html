@@ -74,13 +74,19 @@ Add Book - LeafyReads Admin
                 </div>
 
                 <div style="margin-bottom: 10px;">
-                    <label for="{{ book_form.price.id_for_label }}">Price <span style="color: red;">*</span></label>
+                    <label for="{{ book_form.book_language.id_for_label }}">Book Language <span style="color: red;">*</span></label>
+                    {{ book_form.book_language }}
+                    {{ book_form.book_language.errors }}
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="{{ book_form.price.id_for_label }}">Price</label>
                     {{ book_form.price }}
                     {{ book_form.price.errors }}
                 </div>
 
                 <div style="margin-bottom: 10px;">
-                    <label for="{{ book_form.isbn.id_for_label }}">ISBN <span style="color: red;">*</span></label>
+                    <label for="{{ book_form.isbn.id_for_label }}">ISBN</label>
                     {{ book_form.isbn }}
                     {{ book_form.isbn.errors }}
                 </div>
@@ -99,11 +105,16 @@ Add Book - LeafyReads Admin
                     {{ book_form.cover_front.errors }}
                 </div>
 
-                <div class="checkbox">
-                    <label style="color: white;" for="{{ book_form.is_published.id_for_label }}">Is Published</label>
-                    {{ book_form.is_published }}
-                </div>
+                <div class="checkbox" style="display: flex; align-items: center; gap: 10px;">
+                    <label style="color: white; margin: 0;" for="{{ book_form.is_published.id_for_label }}">
+                        Is Published <span style="color: red;">*</span>
+                    </label>
 
+                    <label class="switch">
+                        {{ book_form.is_published }}
+                        <span class="slider round"></span>
+                    </label>
+                </div>
                 <div class="file-input">
                     <label for="{{ book_form.audio_file.id_for_label }}">Audio File</label>
                     {{ book_form.audio_file }}

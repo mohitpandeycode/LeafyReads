@@ -47,27 +47,32 @@ Update Book - LeafyReads Admin
         <div class="form-left">
             
             <div style="margin-bottom: 10px;">
-                <label for="{{ book_form.title.id_for_label }}">Title</label>
+                <label for="{{ book_form.title.id_for_label }}">Title <span style="color: red;">*</span></label>
                 {{ book_form.title }}
                 {{ book_form.title.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="{{ book_form.slug.id_for_label }}">Slug</label>
+                <label for="{{ book_form.slug.id_for_label }}">Slug <span style="color: red;">*</span></label>
                 {{ book_form.slug }}
                 {{ book_form.slug.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="{{ book_form.author.id_for_label }}">Author</label>
+                <label for="{{ book_form.author.id_for_label }}">Author <span style="color: red;">*</span></label>
                 {{ book_form.author }}
                 {{ book_form.author.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label for="{{ book_form.genre.id_for_label }}">Genre</label>
+                <label for="{{ book_form.genre.id_for_label }}">Genre <span style="color: red;">*</span></label>
                 {{ book_form.genre }}
                 {{ book_form.genre.errors }}
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label for="{{ book_form.book_language.id_for_label }}">Book Language <span style="color: red;">*</span></label>
+                {{ book_form.book_language }}
+                {{ book_form.book_language.errors }}
             </div>
 
             <div style="margin-bottom: 10px;">
@@ -82,7 +87,7 @@ Update Book - LeafyReads Admin
                 {{ book_form.isbn.errors }}
             </div>
 
-            <label>Front Cover</label>
+            <label>Front Cover <span style="color: red;">*</span></label>
             <div class="image-upload">
                 {% if book.cover_front %}
                     <img id="preview" src="{{ book.cover_front.url }}" alt="Cover Front" loading="lazy">
@@ -103,9 +108,15 @@ Update Book - LeafyReads Admin
                 {{ book_form.cover_front.errors }}
             </div>
 
-            <div class="checkbox">
-                <label style="color: white;" for="{{ book_form.is_published.id_for_label }}">Is Published</label>
-                {{ book_form.is_published }}
+            <div class="checkbox" style="display: flex; align-items: center; gap: 10px;">
+                <label style="color: white; margin: 0;" for="{{ book_form.is_published.id_for_label }}">
+                    Is Published <span style="color: red;">*</span>
+                </label>
+
+                <label class="switch">
+                    {{ book_form.is_published }}
+                    <span class="slider round"></span>
+                </label>
             </div>
 
             <div class="file-input">

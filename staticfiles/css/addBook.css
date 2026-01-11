@@ -62,18 +62,73 @@ select:focus{
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
+
 .checkbox {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     margin: 20px 0;
-    background-color: #00b243;
+    background-color: #0089b2;
     padding: 10px 0 6px 10px;
     border-radius: 8px;
 }
-input[type="checkbox"] {
-  transform: scale(1.5);
+
+/* The Switch Container */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-bottom: 0;
+}
+
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; 
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "✕"; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;   
+    font-weight: bold;
+    color: #555;          
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* State: CHECKED (ON) */
+.switch input:checked + .slider {
+    background-color: #20dd12; 
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(26px);
+    content: "✔";  
+    color: #20dd12;
 }
 
 .form-actions {

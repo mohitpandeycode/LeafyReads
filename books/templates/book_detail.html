@@ -15,6 +15,6 @@
   {% if book.uploaded_at %}
   "datePublished": "{{ book.uploaded_at|date:'Y-m-d' }}", 
   {% endif %}
-  "genre": "{{ book.category|escapejs }}"
+  "genre": "{{ book.genre|escapejs }}"
 }
 </script>

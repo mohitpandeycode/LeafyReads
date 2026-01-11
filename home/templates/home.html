@@ -129,37 +129,38 @@ LeafyReads - Your Digital Bookshelf
         <p>Handpicked selections just for you.</p>
       </div>
       <div class="books-grid">
-        {% for book in books %}
-        {% if book.is_published %}
-        <div class="book-item" style="position: relative;">
-          <a href="{% url 'book' book.slug %}">
-            <img class="imgbook" src="{{ book.cover_front.url }}?q_auto&f_auto" alt="Book Cover 1" loading="lazy"
-              onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"
-              style="object-fit: cover;" />
-            <img loading="lazy"
-              style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;"
-              src="{% static 'images/framebook1.png' %}" alt="frame" />
-            <div style="box-shadow: 1px 1px 1px #61616138;border-radius: 0px 0px 5px 5px;">
-              <div class="readby">
-                <h3 class="truncate">{{ book.title }}</h3>
-                <div class="views">
-                  <h4>{{ book.readby_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
-                </div>
-              </div>
-              <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
-                <p>
-                  <span style="font-weight: 700;">by:</span> {{ book.author }}
-                </p>
-                <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
-                  ♥️{{ book.likes_count }}
-                </div>
+      {% for book in books %}
+      {% if book.is_published %}
+      <div class="book-item" style="position: relative;">
+        <a href="{% url 'book' book.slug %}">
+          <img class="imgbook" src="{{ book.cover_front.url }}?q_auto&f_auto" alt="Book Cover 1" loading="lazy"
+            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"
+            style="object-fit: cover;" />
+          <img loading="lazy"
+            style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;"
+            src="{% static 'images/framebook1.png' %}" alt="frame" />
+
+          <div style="box-shadow: 1px 1px 1px #61616138;border-radius: 0px 0px 5px 5px;">
+            <div class="readby">
+              <h3 class="truncate">{{ book.title }}</h3>
+              <div class="views">
+                <h4>{{ book.views_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
               </div>
             </div>
-          </a>
-        </div>
-        {% endif %}
-        {% endfor %}
+            <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
+              <p>
+                <span style="font-weight: 700;">by:</span> {{ book.author }}
+              </p>
+              <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
+                ♥️{{ book.likes_count }}
+              </div>
+            </div>
+          </div>
+        </a>
       </div>
+      {% endif %}
+      {% endfor %}
+    </div>
 
       <div class="btn-donate">
         <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Explore

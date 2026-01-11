@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
-from books.models import *
-from django.db.models import Count
+from books.models import Genre, Book
 from django.core.cache import cache
 import random
 
 def home(request):
-        
     categories = cache.get("home_categories")
 
     if categories is None:
@@ -19,14 +17,11 @@ def home(request):
     categories = categories[:]
     random.shuffle(categories)
 
-    # Fetch Books (Cache for 15 minutes) ---
     books = cache.get("home_books")
     
     if books is None:
         books = list(
             Book.objects.select_related("genre")
-            .annotate(likes_count=Count("likes"))
-            .annotate(readby_count=Count("readbooks"))
             .defer("pdf_file", "audio_file", "price", "isbn", "updated_at")
             .order_by("-uploaded_at")[:28]
         )

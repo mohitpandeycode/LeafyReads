@@ -13,6 +13,7 @@ import random
 from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy, SearchQueryLog
 
 def home(request, slug):
+    Book.objects.filter(slug=slug).update(views_count=F('views_count') + 1)
     book_qs = Book.objects.select_related("content")
     if request.user.is_authenticated:
         saved_subquery = ReadLater.objects.filter(
@@ -84,48 +85,31 @@ def home(request, slug):
 
 
 def openBook(request, slug):
-    # 1. Reuseable Subqueries
-    likes_sq = Like.objects.filter(book_id=OuterRef("pk")).values("book").annotate(c=Count("id")).values("c")
-    saved_sq = ReadLater.objects.filter(book_id=OuterRef("pk")).values("book").annotate(c=Count("id")).values("c")
-    reads_sq = ReadBy.objects.filter(book_id=OuterRef("pk")).values("book").annotate(c=Count("id")).values("c")
-
-    # 2. Fetch Main Book
+    # 1. Fetch Book
     book = get_object_or_404(
-        Book.objects.select_related("genre", "genre__category")
-        .annotate(
-            likes_count=Coalesce(Subquery(likes_sq, output_field=IntegerField()), 0),
-            saved_count=Coalesce(Subquery(saved_sq, output_field=IntegerField()), 0),
-            read_count=Coalesce(Subquery(reads_sq, output_field=IntegerField()), 0),
-        ),
+        Book.objects.select_related("genre", "genre__category"),
         slug=slug,
         is_published=True,
     )
 
-    # 3. Optimized Content
+    # 2. Optimized Content Fetching
     content_data = BookContent.objects.filter(book=book).values("chunks").first()
     
     if content_data and content_data.get("chunks"):
-        # Combine first 5 chunks to ensure we have enough text for 5 lines
-        # Then strip tags and take first 1000 characters
         raw_text = " ".join(content_data["chunks"][:5])
         book.bookcontent = strip_tags(raw_text)[:1000]
     else:
         book.bookcontent = ""
-
-    # 4. Related Books
+    # 3. Related Books
     related_books = (
         Book.objects.select_related("genre")
         .filter(is_published=True, genre=book.genre)
         .exclude(id=book.id)
-        .annotate(
-            likes_count=Coalesce(Subquery(likes_sq, output_field=IntegerField()), 0),
-            read_count=Coalesce(Subquery(reads_sq, output_field=IntegerField()), 0),
-        )
-        .order_by("-uploaded_at")
-        .only("title", "slug", "cover_front", "genre", "uploaded_at")[:12]
+        .only("title", "slug", "cover_front", "genre", "uploaded_at", "likes_count", "views_count")
+        .order_by("-uploaded_at")[:12]
     )
 
-    # 5. User Flags
+    # 4. User Flags (Has the user saved this)
     user_saved = False
     if request.user.is_authenticated:
         user_saved = ReadLater.objects.filter(user=request.user, book=book).exists()
@@ -140,12 +124,10 @@ def openBook(request, slug):
             "user_saved": user_saved,
         }
     )
-  
 
 def library(request):
-    #Categories
+    # Categories Cache
     categories = cache.get("library_categories")
-
     if categories is None:
         categories = list(Genre.objects.all())
         cache.set("library_categories", categories, timeout=60 * 60 * 24)
@@ -153,41 +135,23 @@ def library(request):
     categories = categories[:]
     random.shuffle(categories)
 
-    #Main Books List (Paginated Cache: 15 mins) ---
-    # We must include the page number in the cache key!
+    # Main Books List
     page_number = request.GET.get("page", 1)
     books_cache_key = f"library_books_page_{page_number}"
     
     books = cache.get(books_cache_key)
     if books is None:
-        # complex query logic
-        likes_subquery = Subquery(
-            Book.objects.filter(id=OuterRef("id"))
-            .annotate(count=Count("likes"))
-            .values("count")[:1],
-            output_field=IntegerField(),
-        )
-
-        readby_subquery = Subquery(
-            Book.objects.filter(id=OuterRef("id"))
-            .annotate(count=Count("readbooks"))
-            .values("count")[:1],
-            output_field=IntegerField(),
-        )
-
         books_list = (
-            Book.objects.defer("content")
-            .annotate(likes_count=likes_subquery, readby_count=readby_subquery)
+            Book.objects.defer("content") 
             .order_by("-uploaded_at")
         )
 
         paginator = Paginator(books_list, 30)
         books = paginator.get_page(page_number)
         
-        # Cache the specific page result
         cache.set(books_cache_key, books, timeout=60 * 15)
 
-    #Recently Read (User-Specific Cache: 1 hour) ---
+    # Recently Read
     recently_read_books = []
     if request.user.is_authenticated:
         user_recent_key = f"library_recent_user_{request.user.id}"
@@ -197,10 +161,6 @@ def library(request):
             recently_read_books = list(
                 ReadBy.objects.filter(user=request.user)
                 .select_related("book")
-                .only(
-                    "book__id", "book__title", "book__slug",
-                    "book__author", "book__cover_front", "readed_at",
-                )
                 .order_by("-readed_at")[:10]
             )
             cache.set(user_recent_key, recently_read_books, timeout=60 * 60)
@@ -219,23 +179,8 @@ def library(request):
 
 def categories(request, slug):
     current_genre = get_object_or_404(Genre, slug=slug)
-
-    likes_subquery = Subquery(
-        Book.objects.filter(id=OuterRef("id"))
-        .annotate(count=Count("likes"))
-        .values("count")[:1],
-        output_field=IntegerField(),
-    )
-
-    readby_subquery = Subquery(
-        Book.objects.filter(id=OuterRef("id"))
-        .annotate(count=Count("readbooks"))
-        .values("count")[:1],
-        output_field=IntegerField(),
-    )
     books_list = (
         Book.objects.filter(genre=current_genre)
-        .annotate(likes_count=likes_subquery, readby_count=readby_subquery)
         .order_by("-uploaded_at")
     )
 
@@ -260,11 +205,7 @@ def categories(request, slug):
 def myBooks(request):
     books_qs = (
         Book.objects.filter(saved_by__user=request.user)
-        .only("id", "title", "slug", "cover_front", "author")
-        .annotate(
-            likes_count=Count("likes", distinct=True),
-            readby_count=Count("readbooks", distinct=True),
-        )
+        .only("id", "title", "slug", "cover_front", "author", "likes_count", "views_count")
         .order_by("title")
     )
 
@@ -279,8 +220,7 @@ def myBooks(request):
             "title": "Your Wishlist",
         },
     )
-
-
+    
 def searchbooks(request):
     book_query = request.GET.get("q", "").strip()
     page_number = request.GET.get("page", 1)
@@ -288,98 +228,73 @@ def searchbooks(request):
     # 1. Full Page Cache Check
     cache_key = f"search_{book_query}_page_{page_number}"
     context = cache.get(cache_key)
-
     if context:
         return render(request, "library.html", context)
 
-    # 2. Define Subqueries
-    likes_subquery = Subquery(
-        Book.objects.filter(id=OuterRef("id"))
-        .annotate(cnt=Count("likes"))
-        .values("cnt")[:1],
-        output_field=IntegerField()
-    )
-    
-    readby_subquery = Subquery(
-        Book.objects.filter(id=OuterRef("id"))
-        .annotate(cnt=Count("readbooks"))
-        .values("cnt")[:1],
-        output_field=IntegerField()
-    )
-    
-    # 3. Cached Suggestions
+    # 2. Cached Suggestions (Sidebar)
     cached_suggestions = cache.get("popular_books_sidebar")
-    
     if not cached_suggestions:
         cached_suggestions = list(
-            Book.objects.filter(is_published=True).only(
-                "id", "title", "slug", "author", "cover_front"
-            ).annotate(
-                likes_count=likes_subquery,
-                readby_count=readby_subquery 
-            ).order_by('-likes_count')[:12]
+            Book.objects.filter(is_published=True)
+            # FIX 1: Added 'is_published' here too, just in case the template checks it
+            .only("id", "title", "slug", "author", "cover_front", "likes_count", "views_count", "is_published")
+            .order_by('-likes_count')[:12]
         )
         cache.set("popular_books_sidebar", cached_suggestions, 3600)
 
-    # 4. Main Query Setup
-    books_queryset = Book.objects.filter(is_published=True).select_related("genre").only(
-        "id", "title", "slug", "author", "cover_front", "genre__name", "uploaded_at"
-    )
-
+    # 3. Main Query Setup    
     suggested_books = None
     no_results_found = False
+    
+    # Base Query
+    books_queryset = Book.objects.filter(is_published=True).select_related("genre").only(
+        "id", "title", "slug", "author", "cover_front", "genre__name", "uploaded_at",
+        "likes_count", "views_count", "is_published" 
+    )
 
     if book_query:
-        # --- Trigram Search Logic ---
+        # --- SEARCH LOGIC ---
         books_queryset = books_queryset.annotate(
             similarity=(
                 TrigramSimilarity('title', book_query) * 1.0 +
-                TrigramSimilarity('author', book_query) * 0.7 +
-                TrigramSimilarity('slug', book_query) * 0.5 +
-                TrigramSimilarity('genre__name', book_query) * 0.5
+                TrigramSimilarity('author', book_query) * 0.8 +
+                TrigramSimilarity('genre__name', book_query) * 0.6 +
+                TrigramSimilarity('slug', book_query) * 0.5
             )
         ).filter(
-            # Allow EITHER good similarity OR exact substring match
-            Q(similarity__gt=0.1) | 
-            Q(slug__icontains=book_query) | 
-            Q(title__icontains=book_query)
-        ).order_by('-similarity', '-uploaded_at')
-
-        # Attach counts
-        books_queryset = books_queryset.annotate(
-            likes_count=likes_subquery, 
-            readby_count=readby_subquery
+            similarity__gt=0.05  
+        ).order_by(
+            '-similarity',
+            '-likes_count',
+            '-uploaded_at'
         )
 
         paginator = Paginator(books_queryset, 30)
         books = paginator.get_page(page_number)
 
+        # 4. "No Results" Fallback Logic
         if len(books) == 0:
             no_results_found = True
-            
             try:
                 clean_query = book_query.lower().strip()[:200]
-                if clean_query:
+                if clean_query and len(clean_query) > 2:
                     SearchQueryLog.objects.update_or_create(
                         query=clean_query,
                         defaults={'count': F('count') + 1}
                     )
             except Exception:
                 pass
-
+            
             suggested_books = cached_suggestions
-        
         else:
             suggested_books = cached_suggestions
 
     else:
-        # No Search
-        books_queryset = books_queryset.order_by("-uploaded_at").annotate(
-            likes_count=likes_subquery, 
-            readby_count=readby_subquery
-        )
+        # No Search provided
+        books_queryset = books_queryset.order_by("-uploaded_at")
         paginator = Paginator(books_queryset, 30)
         books = paginator.get_page(page_number)
+        suggested_books = cached_suggestions
 
     context = {
         "books": books,
@@ -399,11 +314,9 @@ def ajax_search(request):
     # 1. Clean the input
     query = request.GET.get("q", "").strip()[:100].lower()
 
-    # 2. LIMIT CHECK: If length is less than 3, return empty (Safety)
-    if len(query) < 3:
+    if len(query) < 2:
         return JsonResponse({"results": []})
         
-    # 3. Cache Check
     safe_query = hashlib.md5(query.encode('utf-8')).hexdigest()
     cache_key = f"ajax_search_{safe_query}"
     cached_results = cache.get(cache_key)
@@ -411,28 +324,29 @@ def ajax_search(request):
     if cached_results:
         return JsonResponse({"results": cached_results})
 
-    # 4. Build Query
-    keywords = query.split()
-    q_obj = Q()
-    for kw in keywords:
-        q_obj |= (
-            Q(title__icontains=kw)
-            | Q(slug__icontains=kw)
-            | Q(author__icontains=kw)
-            | Q(genre__name__icontains=kw) 
-        )
-
-    # 5. Fetch from DB
+    
     books = list(
-        Book.objects.filter(q_obj, is_published=True)
+        Book.objects.filter(is_published=True)
+        .annotate(
+            similarity=(
+                # Weighted search: Title matches are most important
+                TrigramSimilarity('title', query) * 1.0 +
+                TrigramSimilarity('author', query) * 0.8 +
+                TrigramSimilarity('slug', query) * 0.5 +
+                TrigramSimilarity('genre__name', query) * 0.5
+            )
+        )
+        .filter(
+            similarity__gt=0.05 
+        )
         .only("id", "title", "author", "slug") 
-        .order_by('-uploaded_at')[:20] 
+        .order_by(
+            '-similarity',
+            '-likes_count'   
+        )[:8] # Limit to 8 for the dropdown
     )
 
-    # 6. Smart Sorting (Exact matches first)
-    books.sort(key=lambda x: x.title.lower().startswith(query), reverse=True)
-
-    # 7. Serialize
+    # 5. Serialize
     results = [
         {
             "id": b.id,
@@ -440,9 +354,10 @@ def ajax_search(request):
             "author": b.author,
             "slug": b.slug,
         }
-        for b in books[:8]
+        for b in books
     ]
-    # 8. Set Cache
+    
+    # 6. Set Cache (Short duration for autocomplete: 5 mins)
     cache.set(cache_key, results, timeout=300)
     
     return JsonResponse({"results": results})

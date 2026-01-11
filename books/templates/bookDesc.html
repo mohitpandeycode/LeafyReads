@@ -38,11 +38,11 @@
                     <span class="label">❤️Likes</span>
                 </div>
                 <div class="stat-item">
-                    <span class="count">{{ book.read_count }}</span>
+                    <span class="count">{{ book.views_count }}</span>
                     <span class="label">📖Reads</span>
                 </div>
                 <div class="stat-item verified">
-                    <span class="count">{{ book.saved_count }}</span>
+                    <span class="count">{{ book.read_later_count }}</span>
                     <span class="label">📂Saved</span>
                 </div>
             </div>
@@ -128,7 +128,7 @@
                         <div class="readby">
                             <h3 class="truncate">{{ b.title }}</h3>
                             <div class="views">
-                                <h4>{{ b.read_count }}</h4>
+                                <h4>{{ b.views_count }}</h4>
                                 <i style="width:16px;" data-lucide="eye"></i>
                             </div>
                         </div>
