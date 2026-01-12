@@ -125,6 +125,32 @@ def openBook(request, slug):
         }
     )
 
+
+#  Language choice to filter language based books
+LANGUAGE_CHOICES = [
+    ('English', 'English'),
+    ('Hindi', 'Hindi'),
+    ('Arabic', 'Arabic'),
+    ('Bengali', 'Bengali'),
+    ('Chinese', 'Chinese'),
+    ('French', 'French'),
+    ('German', 'German'),
+    ('Gujarati', 'Gujarati'),
+    ('Japanese', 'Japanese'),
+    ('Kannada', 'Kannada'),
+    ('Malayalam', 'Malayalam'),
+    ('Marathi', 'Marathi'),
+    ('Odia', 'Odia'),
+    ('Portuguese', 'Portuguese'),
+    ('Punjabi', 'Punjabi'),
+    ('Russian', 'Russian'),
+    ('Sanskrit', 'Sanskrit'),
+    ('Spanish', 'Spanish'),
+    ('Tamil', 'Tamil'),
+    ('Telugu', 'Telugu'),
+    ('Urdu', 'Urdu')
+]
+
 def library(request):
     # Categories Cache
     categories = cache.get("library_categories")
@@ -135,20 +161,39 @@ def library(request):
     categories = categories[:]
     random.shuffle(categories)
 
-    # Main Books List
+    # --- 1. Get Parameters ---
     page_number = request.GET.get("page", 1)
-    books_cache_key = f"library_books_page_{page_number}"
+    sort_param = request.GET.get("sort", "newest") 
+    lang_param = request.GET.get("lang", "").strip()
+
+    # --- 2. Build Cache Key ---
+    books_cache_key = f"library_books_p{page_number}_s{sort_param}_l{lang_param}"
     
     books = cache.get(books_cache_key)
+    
     if books is None:
-        books_list = (
-            Book.objects.defer("content") 
-            .order_by("-uploaded_at")
-        )
+        # --- 3. Base Query ---
+        books_queryset = Book.objects.defer("content")
+        
+        # --- Apply Language Filter --- 
+        if lang_param:
+            books_queryset = books_queryset.filter(book_language__iexact=lang_param)
+        # --- 4 Apply Sorting ---
+        if sort_param == 'popular':
+            books_queryset = books_queryset.order_by('-likes_count', '-uploaded_at')
+        elif sort_param == 'views':
+            books_queryset = books_queryset.order_by('-views_count', '-uploaded_at')
+        elif sort_param == 'oldest':
+            books_queryset = books_queryset.order_by('uploaded_at')
+        else:
+            # Default (Newest)
+            books_queryset = books_queryset.order_by('-uploaded_at')
 
-        paginator = Paginator(books_list, 30)
+        # --- 5. Paginate the SORTED Queryset ---
+        paginator = Paginator(books_queryset, 30)
         books = paginator.get_page(page_number)
         
+        # Cache the result
         cache.set(books_cache_key, books, timeout=60 * 15)
 
     # Recently Read
@@ -173,8 +218,10 @@ def library(request):
             "books": books,
             "recently_read_books": recently_read_books,
             "categories": categories,
+            "languages": LANGUAGE_CHOICES,
         },
     )
+
 
 
 def categories(request, slug):

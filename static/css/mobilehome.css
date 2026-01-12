@@ -328,6 +328,30 @@
         gap: 5px
     }
 
+    .filter-btn {
+        gap: 5px !important;
+        padding: 5px !important;
+        font-size: 0.65rem !important;
+    }
+
+    .layout-toggles {
+        display: none !important;
+    }
+
+    .dropdown-menu-box {
+        width: 150px !important;
+        padding: 0px !important;
+    }
+
+    .dropdown-header {
+        font-size: 0.55rem !important;
+    }
+
+    .dropdown-option {
+        gap: 10px;
+        padding: 7px !important;
+        font-size: 0.7rem !important;
+    }
 
     .author-title {
         font-size: 0.8rem;

@@ -45,7 +45,7 @@ All Books - LeafyReads Admin
                         <th>Title</th>
                         <th>Author</th>
                         <th>Genre</th>
-                        <th>Price</th>
+                        <th>Language</th>
                         <th>Is Published</th>
                         <th>Uploaded At</th>
                     </tr>
@@ -59,7 +59,7 @@ All Books - LeafyReads Admin
                         <td><a style="color: #4b72ff;" href="{% url 'updateBook' book.slug %}">{{book.title}}</a></td>
                         <td>{{book.author}}</td>
                         <td>{{book.genre}}</td>
-                        <td>₹{{book.price}}</td>
+                        <td>{{book.book_language}}</td>
                         {% if book.is_published %}
                         <td><span class="status">Published</span></td>
                         {% else %}

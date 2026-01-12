@@ -1,0 +1,139 @@
+{% load static %}
+
+<div class="filter-bar-wrapper">
+    <div class="container" style="width:100%">
+        <div class="filter-bar-content">
+            
+            <div class="filter-left">
+            </div>
+
+            <div class="filter-right">
+                
+                <div class="dropdown-wrapper">
+                    <button class="filter-btn" onclick="toggleFilterMenu(this)">
+                        <i data-lucide="languages" style="width: 16px;"></i>
+                        <span class="btn-text">
+                            {% if request.GET.lang %}
+                                {{ request.GET.lang }}
+                            {% else %}
+                                All Languages
+                            {% endif %}
+                        </span>
+                        <i data-lucide="chevron-down" style="width: 14px; opacity: 0.5;"></i>
+                    </button>
+
+                    <div class="dropdown-menu-box scrollable-menu">
+                        <div class="dropdown-header">Select Language</div>
+                        
+                        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}" 
+                           class="dropdown-option {% if not request.GET.lang %}active{% endif %}">
+                            <div class="option-icon"><i data-lucide="globe"></i></div>
+                            <span>All Languages</span>
+                            {% if not request.GET.lang %}<i data-lucide="check" class="check-icon"></i>{% endif %}
+                        </a>
+
+                        <div class="dropdown-divider"></div>
+
+                        {% for code, name in languages %}
+                        {% if code %} <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}lang={{ code }}" 
+                           class="dropdown-option {% if request.GET.lang == code %}active{% endif %}">
+                            
+                            <div class="option-icon" style="font-size: 0.8rem; font-weight: bold; width: 20px; text-align: center;">
+                                {{ name|slice:":2"|upper }}
+                            </div>
+                            
+                            <span>{{ name }}</span>
+                            
+                            {% if request.GET.lang == code %}
+                                <i data-lucide="check" class="check-icon"></i>
+                            {% endif %}
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+
+                <div class="dropdown-wrapper">
+                    <button class="filter-btn" onclick="toggleFilterMenu(this)">
+                        <i data-lucide="arrow-up-down" style="width: 16px;"></i>
+                        <span class="btn-text">
+                            {% if request.GET.sort == 'popular' %}Most Liked
+                            {% elif request.GET.sort == 'views' %}Most Viewed
+                            {% elif request.GET.sort == 'oldest' %}Oldest First
+                            {% else %}Newest First{% endif %}
+                        </span>
+                        <i data-lucide="chevron-down" style="width: 14px; opacity: 0.5;"></i>
+                    </button>
+
+                    <div class="dropdown-menu-box">
+                        <div class="dropdown-header">Sort Books By</div>
+                        
+                        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.lang %}lang={{ request.GET.lang }}&{% endif %}sort=newest" 
+                           class="dropdown-option {% if not request.GET.sort or request.GET.sort == 'newest' %}active{% endif %}">
+                            <div class="option-icon"><i data-lucide="clock"></i></div>
+                            <span>Newest First</span>
+                            {% if not request.GET.sort or request.GET.sort == 'newest' %}<i data-lucide="check" class="check-icon"></i>{% endif %}
+                        </a>
+
+                        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.lang %}lang={{ request.GET.lang }}&{% endif %}sort=popular" 
+                           class="dropdown-option {% if request.GET.sort == 'popular' %}active{% endif %}">
+                            <div class="option-icon"><i data-lucide="heart"></i></div>
+                            <span>Most Liked</span>
+                            {% if request.GET.sort == 'popular' %}<i data-lucide="check" class="check-icon"></i>{% endif %}
+                        </a>
+
+                        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.lang %}lang={{ request.GET.lang }}&{% endif %}sort=views" 
+                           class="dropdown-option {% if request.GET.sort == 'views' %}active{% endif %}">
+                            <div class="option-icon"><i data-lucide="eye"></i></div>
+                            <span>Most Viewed</span>
+                            {% if request.GET.sort == 'views' %}<i data-lucide="check" class="check-icon"></i>{% endif %}
+                        </a>
+
+                        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.lang %}lang={{ request.GET.lang }}&{% endif %}sort=oldest" 
+                           class="dropdown-option {% if request.GET.sort == 'oldest' %}active{% endif %}">
+                            <div class="option-icon"><i data-lucide="history"></i></div>
+                            <span>Oldest First</span>
+                            {% if request.GET.sort == 'oldest' %}<i data-lucide="check" class="check-icon"></i>{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="layout-toggles">
+                    <button class="icon-btn active" aria-label="Grid View">
+                        <i data-lucide="layout-grid"></i>
+                    </button>
+                    <button class="icon-btn" aria-label="List View" style="opacity: 0.5; cursor: not-allowed;">
+                        <i data-lucide="list"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFilterMenu(btn) {
+        const menu = btn.nextElementSibling;
+        const allMenus = document.querySelectorAll('.dropdown-menu-box');
+        
+        // Close other menus first
+        allMenus.forEach(m => {
+            if (m !== menu) m.classList.remove('show');
+        });
+
+        menu.classList.toggle('show');
+
+        // Close when clicking outside
+        if (!window.hasFilterListener) {
+            window.addEventListener('click', function(e) {
+                // Check if click is inside any dropdown button or menu
+                const isDropdown = e.target.closest('.dropdown-wrapper');
+                if (!isDropdown) {
+                    document.querySelectorAll('.dropdown-menu-box').forEach(m => m.classList.remove('show'));
+                }
+            });
+            window.hasFilterListener = true;
+        }
+    }
+</script>

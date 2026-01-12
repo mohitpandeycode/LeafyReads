@@ -11,14 +11,14 @@ class BookForm(forms.ModelForm):
             ('', 'Select Language'),
             
             # --- Top Global Languages ---
+            ('English', 'English'),
+            ('Hindi', 'Hindi'),
             ('Arabic', 'Arabic'),
             ('Bengali', 'Bengali'),
             ('Chinese', 'Chinese'),
-            ('English', 'English'),
             ('French', 'French'),
             ('German', 'German'),
             ('Gujarati', 'Gujarati'),
-            ('Hindi', 'Hindi'),
             ('Japanese', 'Japanese'),
             ('Kannada', 'Kannada'),
             ('Malayalam', 'Malayalam'),
