@@ -11,6 +11,49 @@ from django.utils.html import strip_tags
 import hashlib
 import random
 from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy, SearchQueryLog
+#  Language choice to filter language based books
+
+LANGUAGE_CHOICES = [
+    ('English', 'English'),
+    ('Hindi', 'Hindi'),
+    ('Arabic', 'Arabic'),
+    ('Bengali', 'Bengali'),
+    ('Chinese', 'Chinese'),
+    ('French', 'French'),
+    ('German', 'German'),
+    ('Gujarati', 'Gujarati'),
+    ('Japanese', 'Japanese'),
+    ('Kannada', 'Kannada'),
+    ('Malayalam', 'Malayalam'),
+    ('Marathi', 'Marathi'),
+    ('Odia', 'Odia'),
+    ('Portuguese', 'Portuguese'),
+    ('Punjabi', 'Punjabi'),
+    ('Russian', 'Russian'),
+    ('Sanskrit', 'Sanskrit'),
+    ('Spanish', 'Spanish'),
+    ('Tamil', 'Tamil'),
+    ('Telugu', 'Telugu'),
+    ('Urdu', 'Urdu')
+]
+
+def apply_common_filters(queryset, lang_param, sort_param):
+    """Applies Language and Sort filters to any Book QuerySet"""
+    
+    # 1. Language Filter
+    if lang_param:
+        queryset = queryset.filter(book_language__iexact=lang_param)
+        
+    # 2. Sorting
+    if sort_param == 'popular':
+        queryset = queryset.order_by('-likes_count', '-uploaded_at')
+    elif sort_param == 'views':
+        queryset = queryset.order_by('-views_count', '-uploaded_at')
+    elif sort_param == 'oldest':
+        queryset = queryset.order_by('uploaded_at')
+    
+    return queryset
+
 
 def home(request, slug):
     Book.objects.filter(slug=slug).update(views_count=F('views_count') + 1)
@@ -126,33 +169,9 @@ def openBook(request, slug):
     )
 
 
-#  Language choice to filter language based books
-LANGUAGE_CHOICES = [
-    ('English', 'English'),
-    ('Hindi', 'Hindi'),
-    ('Arabic', 'Arabic'),
-    ('Bengali', 'Bengali'),
-    ('Chinese', 'Chinese'),
-    ('French', 'French'),
-    ('German', 'German'),
-    ('Gujarati', 'Gujarati'),
-    ('Japanese', 'Japanese'),
-    ('Kannada', 'Kannada'),
-    ('Malayalam', 'Malayalam'),
-    ('Marathi', 'Marathi'),
-    ('Odia', 'Odia'),
-    ('Portuguese', 'Portuguese'),
-    ('Punjabi', 'Punjabi'),
-    ('Russian', 'Russian'),
-    ('Sanskrit', 'Sanskrit'),
-    ('Spanish', 'Spanish'),
-    ('Tamil', 'Tamil'),
-    ('Telugu', 'Telugu'),
-    ('Urdu', 'Urdu')
-]
+
 
 def library(request):
-    # Categories Cache
     categories = cache.get("library_categories")
     if categories is None:
         categories = list(Genre.objects.all())
@@ -161,42 +180,31 @@ def library(request):
     categories = categories[:]
     random.shuffle(categories)
 
-    # --- 1. Get Parameters ---
+    # 1. Get Parameters
     page_number = request.GET.get("page", 1)
     sort_param = request.GET.get("sort", "newest") 
     lang_param = request.GET.get("lang", "").strip()
 
-    # --- 2. Build Cache Key ---
+    # 2. Build Cache Key (Includes filters)
     books_cache_key = f"library_books_p{page_number}_s{sort_param}_l{lang_param}"
     
     books = cache.get(books_cache_key)
     
     if books is None:
-        # --- 3. Base Query ---
-        books_queryset = Book.objects.defer("content")
+        books_queryset = Book.objects.defer("content").filter(is_published=True)
         
-        # --- Apply Language Filter --- 
-        if lang_param:
-            books_queryset = books_queryset.filter(book_language__iexact=lang_param)
-        # --- 4 Apply Sorting ---
-        if sort_param == 'popular':
-            books_queryset = books_queryset.order_by('-likes_count', '-uploaded_at')
-        elif sort_param == 'views':
-            books_queryset = books_queryset.order_by('-views_count', '-uploaded_at')
-        elif sort_param == 'oldest':
-            books_queryset = books_queryset.order_by('uploaded_at')
-        else:
-            # Default (Newest)
+        # 3. Apply Common Filters
+        books_queryset = apply_common_filters(books_queryset, lang_param, sort_param)
+        
+        # Default Sort
+        if sort_param == 'newest':
             books_queryset = books_queryset.order_by('-uploaded_at')
 
-        # --- 5. Paginate the SORTED Queryset ---
         paginator = Paginator(books_queryset, 30)
         books = paginator.get_page(page_number)
         
-        # Cache the result
         cache.set(books_cache_key, books, timeout=60 * 15)
 
-    # Recently Read
     recently_read_books = []
     if request.user.is_authenticated:
         user_recent_key = f"library_recent_user_{request.user.id}"
@@ -226,13 +234,24 @@ def library(request):
 
 def categories(request, slug):
     current_genre = get_object_or_404(Genre, slug=slug)
-    books_list = (
-        Book.objects.filter(genre=current_genre)
-        .order_by("-uploaded_at")
-    )
+    
+    # 1. Get Parameters
+    page_number = request.GET.get("page", 1)
+    sort_param = request.GET.get("sort", "newest") 
+    lang_param = request.GET.get("lang", "").strip()
 
-    paginator = Paginator(books_list, 30)
-    books = paginator.get_page(request.GET.get("page"))
+    # 2. Base Query
+    books_queryset = Book.objects.filter(genre=current_genre, is_published=True)
+
+    # 3. Apply Common Filters
+    books_queryset = apply_common_filters(books_queryset, lang_param, sort_param)
+
+    # Default sort
+    if sort_param == 'newest':
+        books_queryset = books_queryset.order_by("-uploaded_at")
+
+    paginator = Paginator(books_queryset, 30)
+    books = paginator.get_page(page_number)
 
     all_categories = Genre.objects.all().order_by("name")
 
@@ -244,9 +263,9 @@ def categories(request, slug):
             "title": f"{current_genre.name} Books",
             "category": current_genre,
             "categories": all_categories,
+            "languages": LANGUAGE_CHOICES,
         },
     )
-
 
 @login_required(login_url="/")
 def myBooks(request):
@@ -271,36 +290,39 @@ def myBooks(request):
 def searchbooks(request):
     book_query = request.GET.get("q", "").strip()
     page_number = request.GET.get("page", 1)
+    
+    # 1. Get Parameters
+    sort_param = request.GET.get("sort", "relevance") 
+    lang_param = request.GET.get("lang", "").strip()
 
-    # 1. Full Page Cache Check
-    cache_key = f"search_{book_query}_page_{page_number}"
+    # 2. Update Cache Key
+    cache_key = f"search_{book_query}_p{page_number}_s{sort_param}_l{lang_param}"
     context = cache.get(cache_key)
+    
     if context:
         return render(request, "library.html", context)
 
-    # 2. Cached Suggestions (Sidebar)
+    # Sidebar
     cached_suggestions = cache.get("popular_books_sidebar")
     if not cached_suggestions:
         cached_suggestions = list(
             Book.objects.filter(is_published=True)
-            # FIX 1: Added 'is_published' here too, just in case the template checks it
             .only("id", "title", "slug", "author", "cover_front", "likes_count", "views_count", "is_published")
             .order_by('-likes_count')[:12]
         )
         cache.set("popular_books_sidebar", cached_suggestions, 3600)
 
-    # 3. Main Query Setup    
     suggested_books = None
     no_results_found = False
     
     # Base Query
     books_queryset = Book.objects.filter(is_published=True).select_related("genre").only(
         "id", "title", "slug", "author", "cover_front", "genre__name", "uploaded_at",
-        "likes_count", "views_count", "is_published" 
+        "likes_count", "views_count", "is_published", "book_language"
     )
 
     if book_query:
-        # --- SEARCH LOGIC ---
+        # Search Logic
         books_queryset = books_queryset.annotate(
             similarity=(
                 TrigramSimilarity('title', book_query) * 1.0 +
@@ -310,35 +332,47 @@ def searchbooks(request):
             )
         ).filter(
             similarity__gt=0.05  
-        ).order_by(
-            '-similarity',
-            '-likes_count',
-            '-uploaded_at'
         )
+        
+        # 3. Apply Common Filters
+        books_queryset = apply_common_filters(books_queryset, lang_param, sort_param)
+
+        # 4. Sorting (Search Specific)
+        if sort_param == 'popular':
+            books_queryset = books_queryset.order_by('-likes_count')
+        elif sort_param == 'views':
+            books_queryset = books_queryset.order_by('-views_count')
+        elif sort_param == 'oldest':
+            books_queryset = books_queryset.order_by('uploaded_at')
+        elif sort_param == 'newest':
+            books_queryset = books_queryset.order_by('-uploaded_at')
+        else:
+            # Default: Relevance
+            books_queryset = books_queryset.order_by('-similarity', '-likes_count')
 
         paginator = Paginator(books_queryset, 30)
         books = paginator.get_page(page_number)
 
-        # 4. "No Results" Fallback Logic
         if len(books) == 0:
             no_results_found = True
             try:
                 clean_query = book_query.lower().strip()[:200]
                 if clean_query and len(clean_query) > 2:
                     SearchQueryLog.objects.update_or_create(
-                        query=clean_query,
-                        defaults={'count': F('count') + 1}
+                        query=clean_query, defaults={'count': F('count') + 1}
                     )
             except Exception:
                 pass
-            
             suggested_books = cached_suggestions
         else:
             suggested_books = cached_suggestions
 
     else:
-        # No Search provided
-        books_queryset = books_queryset.order_by("-uploaded_at")
+        # No Search provided - treat like Library
+        books_queryset = apply_common_filters(books_queryset, lang_param, sort_param)
+        if sort_param == 'relevance' or sort_param == 'newest':
+             books_queryset = books_queryset.order_by("-uploaded_at")
+
         paginator = Paginator(books_queryset, 30)
         books = paginator.get_page(page_number)
         suggested_books = cached_suggestions
@@ -349,12 +383,12 @@ def searchbooks(request):
         "title": f"Results for '{book_query}'" if book_query else "All Books",
         "no_results_found": no_results_found,
         "suggested_books": suggested_books,
+        "languages": LANGUAGE_CHOICES,
     }
     
     cache.set(cache_key, context, timeout=60 * 2)
 
     return render(request, "library.html", context)
-
 
 # AJAX Search with Caching and Concurrency Control
 def ajax_search(request):
