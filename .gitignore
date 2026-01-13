@@ -1,2 +1,47 @@
-venv
+
+# --- Django Core ---
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# --- Environment & Secrets---
 .env
+.env.local
+.env.*
+
+# --- Virtual Environment ---
+venv/
+env/
+venv
+.venv/
+.env/
+
+# --- User Media ---
+media/
+!media/.gitkeep
+
+# --- Static Files ---
+# Ignore the "collected" static folder generated for production
+staticfiles/
+
+
+# --- Editor / OS Junk ---
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Testing & Coverage ---
+htmlcov/
+.coverage
+.coverage.*
+
+# --- Celery / Redis ---
+celerybeat-schedule
+celerybeat.pid
+dump.rdb
