@@ -1,6 +1,4 @@
 {% extends 'base.html' %}
-{% load static %}
-
 {% block title %}
 About Us | LeafyReads
 {% endblock %}
@@ -11,7 +9,7 @@ Learn about the mission behind LeafyReads.
 {% block social_tags %}
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 <meta property="og:title" content="About Us - The Mission of LeafyReads" />
-<meta property="og:image" content="{% static 'images/favicon.png' %}" />
+<link rel="icon" type="image/x-icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' %}">
 <meta property="og:type" content="website" />
 {% endblock %}
 
