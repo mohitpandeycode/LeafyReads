@@ -1,0 +1,251 @@
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.addbookcontainer {
+    margin: 5px 20px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 25px;
+}
+
+/* Split layout */
+.split-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.form-left {
+    flex: 0 0 25%;
+    padding-right: 20px;
+}
+
+.form-right {
+    flex: 0 0 70%;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+    color: #374151;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: border 0.2s ease;
+}
+
+input:focus,
+select:focus{
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+    background-color: #0089b2;
+    padding: 10px 0 6px 10px;
+    border-radius: 8px;
+}
+
+/* The Switch Container */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-bottom: 0;
+}
+
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; 
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "✕"; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;   
+    font-weight: bold;
+    color: #555;          
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* State: CHECKED (ON) */
+.switch input:checked + .slider {
+    background-color: #20dd12; 
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(26px);
+    content: "✔";  
+    color: #20dd12;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+.image-upload {
+    position: relative;
+    display: inline-block;
+    border: 2px dashed #3b82f6;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.image-upload img {
+    max-width: 250px;
+    width: 250px;
+    border-radius: 10px;
+    display: block;
+    max-height: 250px;
+    object-fit: cover;
+}
+
+.image-upload input[type="file"] {
+    display: none;
+}
+
+/* Camera icon overlay */
+.image-upload .overlay {
+    position: absolute;
+    top: 38%;
+    left: 39%;
+    font-size: 35px;
+    background-color: #000000ad;
+    padding: 0px 5px 13px 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none;
+}
+
+.image-upload:hover .overlay {
+    display: block;
+}
+
+/* Remove (X) button */
+.image-upload .remove-btn {
+   position: absolute;
+    top: 2px;
+    right: 2px;
+    color: white;
+    background-color: #424242;
+    font-size: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.ck.ck-content.ck-editor__editable {
+    height: 823px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+body.dark-mode .addbookcontainer {
+      background-color: #2d3748;
+      color: #e2e8f0;
+  }
+body.dark-mode label,
+body.dark-mode h1 {
+  color: #e2e8f0;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+   background-color: #232a35;
+    color: #ffffff;             
+    border: 1px solid #555; 
+}
+
+body.dark-mode .ck.ck-content.ck-editor__editable {
+    background-color: #2d3748;
+      color: #e2e8f0;
+}
+body.dark-mode .ck.ck-toolbar>.ck-toolbar__items {
+    background-color: #cecece;
+}
+body.dark-mode .ck.ck-editor__editable pre {
+  color: #00ffcc !important; 
+}

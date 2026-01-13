@@ -1,0 +1,118 @@
+  .nav-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: width 0.4s ease;
+    overflow: hidden;
+    width: 60px;
+  }
+
+  .nav-search-wrapper.expanded {
+    width: 250px;
+  }
+
+  .nav-search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
+
+  .nav-search-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav-search-wrapper.expanded .nav-search-input {
+    opacity: 1;
+  }
+
+  ::placeholder {
+    color: #aaa;
+  }
+
+  body.dark-mode .nav-search-input {
+    color: #ffffff;
+  }
+
+  body.dark-mode .nav-search-button {
+    color: #ffffff;
+  }
+
+
+  .nav-search-history-title {
+    font-size: 12px;
+    padding-left: 5px;
+  }
+
+  .nav-history-item {
+    display: flex;
+    align-items: flex-start;
+    color: inherit !important;
+    border-bottom: 1px solid #f1f1f1;
+    gap: 12px;
+    padding: 5px;
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .nav-history-item i {
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .nav-history-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+  }
+
+  /* The Book Title */
+  .nav-history-item-title {
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+
+  .nav-history-item-author {
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+
+  .nav-history-item:hover {
+    background-color: #f8fafc;
+  }
+  body.dark-mode .nav-history-item:hover {
+    background-color: #4f4f4f;
+  }
+
+  .nav-results {
+    position: absolute;
+    right: 0;
+    width: 250px;
+    top: 100%;
+    background: rgb(255, 255, 255);
+    border-radius: 0 0 15px 15px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  body.dark-mode .nav-results {
+    background: rgb(59, 59, 59);
+  }
