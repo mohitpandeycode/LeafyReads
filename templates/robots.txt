@@ -1,6 +1,8 @@
 User-agent: *
 Disallow: /admin/
+Disallow: /tryhardadmin/
 Disallow: /accounts/
+Disallow: /admin-dashboard/
 Allow: /
 
 Sitemap: https://leafyreads.com/sitemap.xml
