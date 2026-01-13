@@ -1,23 +1,20 @@
 {% load static %}
 {% load socialaccount %}
-
+{% load cloudinary %}
 <section class="loginpagesection" id="loginSection">
   <div class="leafy-auth-container" id="loginContainer">
     <button class="close-btn" id="closelogin">&times;</button>
     <div class="login-logo" style="display: flex; align-items: center; justify-content: center;">
   <!-- common small logo -->
-      <img style="width: 60px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" loading="lazy" alt="logo">
-      <!-- light theme image -->
-      <img class="login-leafy-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.webp' %}" loading="lazy" alt="LeafyReads">
-      <!-- dark theme image -->
-      <img class="login-leafy-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.webp' %}" loading="lazy" alt="LafyReads">
+      {% cloudinary "qqeschqzlywacz6rqsbl" quality="auto" fetch_format="auto" style="width: 60px; border-radius: 15px;" loading="lazy" alt="logo" %}
+      {% cloudinary "tdehybbsyciqodgxs2rq" quality="auto" fetch_format="auto" class="login-leafy-light" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LeafyReads" %}
+      {% cloudinary "kp6b6xlwuu8d52cfhfba" quality="auto" fetch_format="auto" class="login-leafy-dark" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LafyReads" %}
     </div>
     <h3>Create Your Account</h3>
     <div class="leafy-sub-text">
       Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
     </div>
-    <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy" alt="Funny loading GIF" />
-
+    {% cloudinary "ht4lblz4fxlllxlbw5sa" width=400 crop="scale" quality="auto" fetch_format="auto" flags="lossy" style="width: 100%; height:25vh;" loading="lazy" alt="Funny loading GIF" %}
     <a href="{% provider_login_url 'google' %}?next={{request.path}}" class="leafy-auth-button google">
       <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
       Continue with Google

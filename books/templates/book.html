@@ -3,13 +3,13 @@
   {% load static %}
   {% load socialaccount %}
   {% load cloudinary_filters %}
-
+{% load cloudinary %}
 
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Read {{ title }} by {{ book.author }} online. {{ bookcontent|truncatewords:25 }}" />
-    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' %}">
     <link rel="canonical" href="{{ request.build_absolute_uri }}" />
     <title>{{ title }} - By {{ book.author }} | LeafyReads</title>
     <meta property="og:type" content="book" />
@@ -30,7 +30,7 @@
     
   <style>
     body {
-      background-image: url('{% static "images/lightback.webp" %}');
+      background-image: url('{% cloudinary_url "wyufreqgjewhquxqfz3e" %}');
       width: 100%;
       background-repeat: no-repeat;
       background-position: center center;
@@ -38,7 +38,7 @@
       background-attachment: fixed;
     }
     body.dark-mode {
-  background-image: url('{% static "images/backdark.webp" %}');
+      background-image: url('{% cloudinary_url "ykzhhhzo80g9lxu1g5vk" %}');
 }
 
     .nav-history-item{
@@ -110,17 +110,15 @@
         <button class="close-btn" id="closelogin">&times;</button>
         <div class="login-logo" style="display: flex; align-items: center; justify-content: center;">
         <!-- common small logo -->
-        <img style="width: 60px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" loading="lazy" alt="logo">
-        <!-- light theme image -->
-        <img class="login-leafy-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.webp' %}" loading="lazy" alt="LeafyReads">
-        <!-- dark theme image -->
-        <img class="login-leafy-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.webp' %}" loading="lazy" alt="LeafyReads">
+        {% cloudinary "qqeschqzlywacz6rqsbl" quality="auto" fetch_format="auto" style="width: 60px; border-radius: 15px;" loading="lazy" alt="logo" %}
+      {% cloudinary "tdehybbsyciqodgxs2rq" quality="auto" fetch_format="auto" class="login-leafy-light" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LeafyReads" %}
+      {% cloudinary "kp6b6xlwuu8d52cfhfba" quality="auto" fetch_format="auto" class="login-leafy-dark" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LafyReads" %}
       </div>
         <h3 style="margin: 0;">Create Your Account</h3>
         <div class="leafy-sub-text">
           Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
         </div>
-        <img style="width: 100%; height:25vh;" src="{% static 'images/login.gif' %}" loading="lazy" alt="Funny loading GIF" />
+        {% cloudinary "ht4lblz4fxlllxlbw5sa" width=400 crop="scale" quality="auto" fetch_format="auto" flags="lossy" style="width: 100%; height:25vh;" loading="lazy" alt="Funny loading GIF" %}
 
         <a style="width: 94%;" href="{% provider_login_url 'google' %}?next={{ request.path }}" class="leafy-auth-button google">
           <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
@@ -156,11 +154,9 @@
         <div class="co-header-content">
           <a href="/" class="logo">
             <!-- common logo part -->
-            <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="logo">
-            <!-- light theme image -->
-            <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.webp' %}" alt="LeafyReads">
-            <!-- dark theme image -->
-            <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.webp' %}" alt="LeafyReads">
+            {% cloudinary "qqeschqzlywacz6rqsbl" class="logo-icon" style="width: 48px; border-radius: 15px;" alt="logo" %}
+            {% cloudinary "tdehybbsyciqodgxs2rq" class="logo-light" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
+            {% cloudinary "kp6b6xlwuu8d52cfhfba" class="logo-dark" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
           </a>
 
           <nav class="co-desktop-nav" style="position: relative;">
@@ -316,7 +312,6 @@
             <input type="number" id="pageInput" placeholder="Page..." min="1" />
             <button id="goBtn">Go</button>
       </div>
-
       <div class="action-btn">
         <div class="nonsocialaction">
           <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
@@ -344,11 +339,14 @@
       <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
 
       <section id="container">
+        <div style="display:none;position: absolute;bottom: -30px;left: 0;" class="soundwave">
+            {% cloudinary "jg32efxqxb4pt7efvegr" style="height: 65px;width: 100px;" quality="auto" fetch_format="auto" secure=True alt="soundwave" %}
+        </div>
         <div id="spine-illusion" hidden></div>
 
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
-            <img src="{% static 'images/framebook1.png' %}" loading="lazy" class="cover-image" style="position: absolute;    left: -2px;width: 101%;top: -2px;height: 101%;" alt="forntFrame" />
+            {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" class="cover-image" style="position: absolute; left: -2px; width: 101%; top: -2px; height: 101%;" alt="forntFrame" secure=True %}
             <img src="{{ book.cover_front.url }}?q_auto,f_auto" style="object-fit: cover;" alt="Cover Image" class="cover-image" />
             <div class="bookinfocover">
               <h4 style="margin: 0;">{{book.title}}</h4>
@@ -410,15 +408,18 @@
   // Audio Play/Pause Logic
   let audioFile = new Audio('{{ book.audio_file.url }}');
   const playBtn = document.getElementById('play');
+  const soundwave = document.querySelector('.soundwave')
 
   if (playBtn) {
     playBtn.addEventListener('click', () => {
       if (audioFile.paused) {
         audioFile.play();
         playBtn.innerHTML = '<i data-lucide="pause"></i>';
+        soundwave.style.display="block"
       } else {
         audioFile.pause();
         playBtn.innerHTML = '<i data-lucide="play"></i>';
+        soundwave.style.display="none"
       }
       lucide.createIcons();
     });

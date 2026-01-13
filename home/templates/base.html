@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+{% load cloudinary %}
 
 <head>
   <meta charset="UTF-8" />
@@ -13,7 +14,7 @@
 
     {% endblock %}
   </title>
-  <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+  <link rel="icon" type="image/x-icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -163,14 +164,11 @@
   <header class="header">
     <div class="container navcontainer">
       <div class="header-content">
-        <a href="/" class="logo">
-          <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
-            alt="logo" />
-          <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.webp' %}"
-            alt="LeafyReads" />
-          <img class="logo-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.webp' %}"
-            alt="LeafyReads" />
-        </a>
+       <a href="/" class="logo">
+          {% cloudinary "qqeschqzlywacz6rqsbl" class="logo-icon" style="width: 48px; border-radius: 15px;" alt="logo" %}
+          {% cloudinary "tdehybbsyciqodgxs2rq" class="logo-light" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
+          {% cloudinary "kp6b6xlwuu8d52cfhfba" class="logo-dark" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
+      </a>
         <nav class="desktop-nav" style="position: relative;">
           <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
           <a href="{% url 'library' %}" class="{% if request.path == '/book/library/' %}active{% endif %}">Library</a>
@@ -338,8 +336,7 @@
       <div class="footer-grid">
         <div class="footer-about">
           <div class="logo" style="margin-bottom: 1rem;">
-            <img style="width: 48px;border-radius: 15px;" src="{% static 'images/logo1.png' %}" alt="logo"
-              loading="lazy" />
+            {% cloudinary "qqeschqzlywacz6rqsbl" class="logo-icon" style="width: 48px; border-radius: 15px;" alt="logo" %}
             <span style="color: white">LeafyReads</span>
           </div>
           <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>

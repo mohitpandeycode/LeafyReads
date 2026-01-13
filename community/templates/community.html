@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load socialaccount %}
-
+{% load cloudinary %}
 {% block meta_description %}
 Join the LeafyReads community. Connect with fellow book lovers, share reviews, discuss your favorite novels, and find your next great read together.
 {% endblock %}
@@ -13,7 +13,7 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
 
 <meta property="og:description" content="Connect with book lovers, share thoughts, and discuss your favorite stories on LeafyReads." />
 
-<meta property="og:image" content="{% static 'images/favicon.png' %}" />
+<meta property="og:image" content="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' secure=True %}" />
 
 <meta property="og:type" content="website" />
 {% endblock %}

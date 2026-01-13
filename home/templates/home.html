@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load socialaccount %}
-
+{% load cloudinary %}
 {% block title %}
 LeafyReads - Your Digital Bookshelf
 {% endblock %}
@@ -12,7 +12,7 @@ LeafyReads - Your Digital Bookshelf
 
 <meta property="og:description" content="LeafyReads is your personal reading sanctuary. Discover thousands of books, track your reading progress, and connect with a community of book lovers." />
 
-<meta property="og:image" content="{% static 'images/favicon.png' %}" />
+<meta property="og:image" content="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' %}" />
 
 <meta property="og:type" content="website" />
 {% endblock %}
@@ -85,10 +85,8 @@ LeafyReads - Your Digital Bookshelf
 
       <div class="hero-visual animate-float">
         <div class="glass-box">
-          <img src="{% static 'images/landing.webp' %}" alt="book illustrations"
-            class="book-image light-image" fetchpriority="high" decoding="async"/>
-          <img src="{% static 'images/darklanding.webp' %}" alt="book illustrations"
-            class="book-image dark-image" fetchpriority="high" decoding="async"/>
+          {% cloudinary "wiayhqut9my2u79fkqxp" quality="auto" fetch_format="auto" class="book-image light-image" fetchpriority="high" decoding="async" alt="book illustrations" %}
+          {% cloudinary "tmdpzrd5e4ijvp43wbfy" quality="auto" fetch_format="auto" class="book-image dark-image" fetchpriority="high" decoding="async" alt="book illustrations" %}
           <div class="hero-light"></div>
         </div>
       </div>
@@ -136,10 +134,7 @@ LeafyReads - Your Digital Bookshelf
           <img class="imgbook" src="{{ book.cover_front.url }}?q_auto&f_auto" alt="Book Cover 1" loading="lazy"
             onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"
             style="object-fit: cover;" />
-          <img loading="lazy"
-            style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;"
-            src="{% static 'images/framebook1.png' %}" alt="frame" />
-
+          {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" alt="frame" %}
           <div style="box-shadow: 1px 1px 1px #61616138;border-radius: 0px 0px 5px 5px;">
             <div class="readby">
               <h3 class="truncate">{{ book.title }}</h3>
@@ -208,7 +203,7 @@ LeafyReads - Your Digital Bookshelf
           <p>"LeafyReads has completely changed how I read. I've discovered so many new authors and the progress
             tracking keeps me motivated. It's a must-have for any book lover!"</p>
           <div class="testimonial-author">
-            <img src="{% static 'images/im1.webp' %}" loading="lazy" alt="Avatar of Rajesh Gupta" />
+            {% cloudinary "qo70gdkgfxapqspmsctj" loading="lazy" alt="Avatar of Rajesh Gupta" %}
             <div>
               <p class="author-name">Rajesh Gupta</p>
               <p class="author-title">Avid Reader</p>
@@ -219,7 +214,7 @@ LeafyReads - Your Digital Bookshelf
           <p>“LeafyReads makes reading feel effortless and fun. The personalized recommendations are spot-on, and I love
             seeing my reading streak grow. It’s become part of my daily routine.”</p>
           <div class="testimonial-author">
-            <img src="{% static 'images/im3.webp' %}" loading="lazy" alt="Avatar of Michael B." />
+            {% cloudinary "ya7hqkayftqbdr6wpgmq" loading="lazy" alt="Avatar of Michael B."%}
             <div>
               <p class="author-name">Priya Sharma</p>
               <p class="author-title">Top Reader</p>
@@ -230,7 +225,7 @@ LeafyReads - Your Digital Bookshelf
           <p>"Finally, a beautiful and functional app for my reading life. Joining the book club discussions has been
             amazing. It feels like a real community. Love to Read in LeafyReads"</p>
           <div class="testimonial-author">
-            <img src="{% static 'images/im2.webp' %}" loading="lazy" alt="Avatar of Arjun Patel" />
+            {% cloudinary "rhn4dqvmsp45ep8la5bx" loading="lazy" alt="Avatar of Arjun Patel" %}
             <div>
               <p class="author-name">Arjun Patel</p>
               <p class="author-title">Book Club Organizer</p>
@@ -356,7 +351,7 @@ LeafyReads - Your Digital Bookshelf
 
         <div class="cta-image">
           <div class="cta-blob"></div>
-          <img src="{% static 'images/bookself.webp' %}" alt="Cozy reading environment" loading="lazy" />
+          {% cloudinary "rzjci3wmb8ox0k7puljb" alt="Cozy reading environment" loading="lazy"%}
         </div>
 
         <div class="cta-content">

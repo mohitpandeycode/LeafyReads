@@ -1,10 +1,8 @@
 
-{% load static %}
-
 {% block title %}
 <title>LeafyReads - Login To Admin Account</title>
 {% endblock %}
-
+{% load cloudinary %}
 {% block css %}
 <style>
 body{
@@ -145,16 +143,13 @@ body.dark-mode .login-leafy-dark {
 
 <section style="padding: 3rem;" class="loginpagesection" id="loginSection">
     <div class="leafy-auth-container" id="loginContainer">
-        <div
-            style="align-items: center;justify-content: center;display: flex;">
-             <img style="width: 60px; border-radius: 15px;" src="{% static 'images/logo1.png' %}" loading="lazy" alt="Logo">
-      <!-- light theme image -->
-      <img class="login-leafy-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.webp' %}" loading="lazy" alt="LeafyReads">
-      <!-- dark theme image -->
-      <img class="login-leafy-dark" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafyDark.webp' %}" loading="lazy" alt="LeafyReads">
+        <div style="align-items: center;justify-content: center;display: flex;">
+              {% cloudinary "qqeschqzlywacz6rqsbl" quality="auto" fetch_format="auto" style="width: 60px; border-radius: 15px;" loading="lazy" alt="logo" %}
+              {% cloudinary "tdehybbsyciqodgxs2rq" quality="auto" fetch_format="auto" class="login-leafy-light" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LeafyReads" %}
+              {% cloudinary "kp6b6xlwuu8d52cfhfba" quality="auto" fetch_format="auto" class="login-leafy-dark" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LafyReads" %}
         </div>
         <h3>Login To Your Account</h3>
-         <img style="width: 100%; height:25vh;" src="{% static 'images/admin.gif' %}" loading="lazy" alt="Funny loading GIF" />
+          {% cloudinary "hgwwpdjttmklz8uosc36" width=400 crop="scale" quality="auto" fetch_format="auto" flags="lossy" style="width: 100%; height:25vh;" loading="lazy" alt="Funny loading GIF" %}  
         <div class="leafy-sub-text">
             Not an Admin? <a href="/" style="color:#4e8ef7;">Go Back</a>
         </div>

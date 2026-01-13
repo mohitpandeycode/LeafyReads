@@ -1,250 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-  {% load static %}
+{% load static %}
+{% load cloudinary %} <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>View Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/book.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+  <script src="{% static 'js/loading.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+</head>
 
-  <!-- loginpage -->
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>View Book</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="{% static 'css/book.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/searchnav.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-    <script src="{% static 'js/loading.js' %}"></script>
-    <!-- Full version, works with turn.js -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
-  </head>
+<style>
+  * {
+    user-select: text;
+    -webkit-user-select: text;
+  }
 
-  <style>
-    *{
-      user-select: text;
-      -webkit-user-select: text;
-    }
-    body {
-      width: 100%;
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: cover;
-      background-attachment: fixed;
-      
-    }
-    .like {
-      position: fixed;
-      top: -40px;
-      will-change: transform, opacity;
-      animation: fall linear forwards;
-      pointer-events: none;
-      z-index: 1000;
-    }
-    @keyframes fall {
+  body {
+    width: 100%;
+    background: rgb(255, 255, 255);
+    transition: background-image 0.3s ease;
+  }
+
+  /* 3. ADDED DARK MODE BACKGROUND */
+  body.dark-mode {
+    background:rgb(26, 26, 26)
+  }
+
+  .like {
+    position: fixed;
+    top: -40px;
+    will-change: transform, opacity;
+    animation: fall linear forwards;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  @keyframes fall {
     to {
       transform: translateY(100vh) rotate(360deg);
       opacity: 0;
     }
   }
-       .co-desktop-nav a.active {
-        color: #60a5fa !important;
-      }
 
+  .co-desktop-nav a.active {
+    color: #60a5fa !important;
+  }
+</style>
 
-  </style>
-  <body>
-    <div id="loader-overlay" style="display:flex;flex-direction: column;">
-      <div id="loader-spinner"></div>
-      <h2>Unfolding stories, please wait...</h2>
-    </div>
-    <header class="co-header">
-      <div class="co-container">
-        <div class="co-header-content">
-           <a href="/" class="co-logo" style="background-color: white;border-radius: 15px;">
-            <img class="logo-icon" style="width: 48px; border-radius: 15px;" src="{% static 'images/logo1.png' %}"
-            alt="logo" loading="lazy" />
-          <img class="logo-light" style="width: 140px; border-radius: 15px;" src="{% static 'images/leafylight.webp' %}"
-            alt="logo" loading="lazy"/>
-          </a>
+<body>
+  <div id="loader-overlay" style="display:flex;flex-direction: column;">
+    <h2>Please wait...</h2>
+  </div>
+  <header class="co-header">
+    <div class="co-container">
+      <div class="co-header-content">
+        <a href="/" class="co-logo" style="background-color: white;border-radius: 15px;">
+          {% cloudinary "qqeschqzlywacz6rqsbl" class="logo-icon" style="width: 48px; border-radius: 15px;" alt="logo" secure=True %}
+          
+          {% cloudinary "tdehybbsyciqodgxs2rq" class="logo-light" style="width: 140px; border-radius: 15px;" alt="LeafyReads" secure=True %}
+          
+          {% cloudinary "kp6b6xlwuu8d52cfhfba" class="logo-dark" style="width: 140px; border-radius: 15px;" alt="LeafyReads" secure=True %}
+        </a>
 
-          <nav class="co-desktop-nav">
-            <a href="{% url 'dashboard' %}">Admin Home</a>
-            <a href="{% url 'updateBook' book.slug %}">Update Book</a>
-            <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
-              <div id="navSearchBtn" class="nav-search-button" aria-label="Search">
-                <i data-lucide="search"></i>
-              </div>
-              <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
-              <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
-            </form>
-          </nav>
-
-          <div class="co-header-actions">
-            <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="actionbtns">
-      <div id="myAlert" class="alert-container">
-        <span class="alert-message">Tip : Press "F" for batter expirence.</span>
-        <button class="alert-close-btn" aria-label="Close alert">
-          <svg viewBox="0 0 24 24">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-          </svg>
-        </button>
-      </div>
-      <div class="goto-page-box">
-          <h6 class="pagesinfo">Loading...</h6>
-            <input type="number" id="pageInput" placeholder="Page..." min="1" />
-            <button id="goBtn">Go</button>
-      </div>
-      <div style="position: absolute;top: 80px;right: 20px;z-index: 999; display: flex;justify-content: space-between;flex-direction: column;gap:20px;height: 36vw;">
-        <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
-        <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 130px; padding: 8px" title="Dark Mode">🌙</button>
-        <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;back" title="listen book"><i data-lucide="play"></i></button>
-        <button id="highlightBtn" class="control-button fullscreen-button" style="top: 230px; padding: 8px" title="Highlighter">🖍️</button>
-        <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
-         <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
-        <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px" title="Like"><i data-lucide="thumbs-up"></i></button>
-        <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px" title="Save"><i data-lucide="bookmark"></i></button>
-      </div>
-    </div>
-
-    <main id="container-wrapper">
-      <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
-
-      <section id="container">
-        <div id="spine-illusion" hidden></div>
-
-        <div class="flipbook">
-          <article class="page hard cover" style="border: 1px double white;">
-            <img src="{% static 'images/framebook1.png' %}" class="cover-image" style="position: absolute;" alt="forntFrame" loading="lazy">
-            <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" loading="lazy" />
-          </article>
-
-          <article class="page">
-            <div class="pagestyle">
-              {{ bookcontent|safe }}
-            <!--{% for paragraph in bookcontent.splitlines %}
-                <p>{{ paragraph|safe }}</p>
-              {% endfor %}-->
+        <nav class="co-desktop-nav">
+          <a href="{% url 'dashboard' %}">Admin Home</a>
+          <a href="{% url 'updateBook' book.slug %}">Update Book</a>
+          <form id="navSearch" class="nav-search-wrapper" action="{% url 'searchbooks' %}" method="get">
+            <div id="navSearchBtn" class="nav-search-button" aria-label="Search">
+              <i data-lucide="search"></i>
             </div>
-          </article>
+            <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Search for books, authors, or genres..." />
+            <button type="submit" id="sctive" style="display: none;border: none; background: #3B82F6;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
+          </form>
+        </nav>
+
+        <div class="co-header-actions">
+          <div id="startlogin" class="co-btn co-primary-btn">Start Reading Now</div>
         </div>
-      </section>
-
-      <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span></button>
-    </main>
-
-    <div id="progress-bar-container" aria-label="Page Progress">
-      <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-    </div>
-
-    <audio id="flipForward" src="{% static 'sounds/flip1.mp3' %}" preload="auto" aria-hidden="true"></audio>
-    <audio id="flipBackward" src="{% static 'sounds/flip2.mp3' %}" preload="auto" aria-hidden="true"></audio>
-    <div id="shortcutsPanel" class="shortcuts-panel">
-      <div class="shortcuts-header">
-        <h2>Keyboard Shortcuts</h2>
-        <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
       </div>
-      <ul>
-        <li>
-          <b>( ᖴ )</b> ☛ Fullscreen Mode
-        </li>
-        <li>
-          <b>( D )</b> ☛ Dark Mode/Light Mode
-        </li>
-        <li>
-          <b>( M )</b> ☛ Mute/Unmute
-        </li>
-        <li>
-          <b>( H )</b> ☛ Highlighter Pen
-        </li>
-        <li>
-          <b>(➡️)</b> ☛ Next Page
-        </li>
-        <li>
-          <b>(⬅️)</b> ☛ Previous Page
-        </li>
-      </ul>
     </div>
-    <script src="{% static 'js/turn.min.js' %}"></script>
-    <script src="{% static 'js/highlight.js' %}"></script>
-    <script src="{% static 'js/book.js' %}"></script>
-    <script src="{% static 'js/pagination.js' %}"></script>
-    <script src="{% static 'js/navsearch.js' %}"></script>
-    {% if book.audio_file %}
-    <script>
-    let audioFile = new Audio("{{ book.audio_file.url }}");
-          let playBtn = document.getElementById("play");
-          playBtn.addEventListener('click', () => {
-          if (audioFile.paused) {
-            audioFile.play();
-            playBtn.innerHTML = '<i data-lucide="pause"></i>';
-          } else {
-            audioFile.pause();
-            playBtn.innerHTML = '<i data-lucide="play"></i>';
-          }
+  </header>
 
-          // re-render icons
-          lucide.createIcons();
-        });
-    </script>
-    {% endif %}
-    <script>
-      const clicks = new Audio('/static/sounds/click.mp3')
-      document.addEventListener('DOMContentLoaded', () => {
-        const likeBtn = document.getElementById('likeBtn')
-        const saveBtn = document.getElementById('saveBtn')
-      
-        likeBtn.addEventListener('click', () => {
-          const isActive = likeBtn.classList.contains('like-active')
-          if (!isActive) burstLikes(30)
-          likeBtn.classList.toggle('like-active')
-          clicks.currentTime = 0
-          clicks.play()
-        })
-      
-        saveBtn.addEventListener('click', () => {
-          saveBtn.classList.toggle('save-active')
-          clicks.currentTime = 0
-          clicks.play()
-        })
+  <div class="actionbtns">
+    <div class="goto-page-box">
+      <h6 class="pagesinfo">Loading...</h6>
+      <input type="number" id="pageInput" placeholder="Page..." min="1" />
+      <button id="goBtn">Go</button>
+    </div>
+    <div style="position: absolute;top: 80px;right: 20px;z-index: 999; display: flex;justify-content: space-between;flex-direction: column;gap:20px;height: 36vw;">
+      <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
+      <button id="darkModeBtn" class="control-button fullscreen-button" style="top: 130px; padding: 8px" title="Dark Mode">🌙</button>
+      <button disabled id="play" class="control-button fullscreen-button" style="top: 180px; padding: 10px 10px 5px 10px;" title="listen book"><i data-lucide="play"></i></button>
+      <button id="highlightBtn" class="control-button fullscreen-button" style="top: 230px; padding: 8px" title="Highlighter">🖍️</button>
+      <button id="shortcutsBtn" class="control-button fullscreen-button" style="top: 280px; padding: 8px" title="Keyboard Shortcuts">⌨️</button>
+      <button id="muteBtn" class="control-button fullscreen-button" style="top: 330px; padding: 8px" title="Mute/Unmute Audio">🔊</button>
+      <button id="likeBtn" class="control-button fullscreen-button" style="top: 530px; padding: 8px" title="Like"><i data-lucide="thumbs-up"></i></button>
+      <button id="saveBtn" class="control-button fullscreen-button" style="top: 580px; padding: 8px" title="Save"><i data-lucide="bookmark"></i></button>
+    </div>
+  </div>
+
+  <main id="container-wrapper">
+    <button id="prevBtn" class="nav-button prev" style="display: none;" aria-label="Previous"><span class="icon">&larr;</span></button>
+
+    <section id="container">
+      <div id="spine-illusion" hidden></div>
+
+      <div class="flipbook">
+        <article class="page hard cover" style="border: 1px double white;">
+          {% cloudinary "rpy7fckyfzgkmnftr6ln" class="cover-image" style="position: absolute;" loading="lazy" alt="forntFrame" secure=True %}
+          
+          <img src="{{ book.cover_front.url }}" alt="Cover Image" class="cover-image" loading="lazy" />
+        </article>
+
+        <article class="page">
+          <div class="pagestyle">
+            {{ bookcontent|safe }}
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <button id="nextBtn" class="nav-button next" style="display: none;" aria-label="Next"><span class="icon">&rarr;</span></button>
+  </main>
+
+  <div id="progress-bar-container" aria-label="Page Progress">
+    <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+  </div>
+
+  <audio id="flipForward" src="" preload="auto" aria-hidden="true"></audio>
+  <audio id="flipBackward" src="" preload="auto" aria-hidden="true"></audio>
+  
+  <div id="shortcutsPanel" class="shortcuts-panel">
+    <div class="shortcuts-header">
+      <h2>Keyboard Shortcuts</h2>
+      <button id="closeShortcuts" aria-label="Close Shortcuts Panel">✖️</button>
+    </div>
+    <ul>
+      <li><b>( ᖴ )</b> ☛ Fullscreen Mode</li>
+      <li><b>( D )</b> ☛ Dark Mode/Light Mode</li>
+      <li><b>( M )</b> ☛ Mute/Unmute</li>
+      <li><b>( H )</b> ☛ Highlighter Pen</li>
+      <li><b>(➡️)</b> ☛ Next Page</li>
+      <li><b>(⬅️)</b> ☛ Previous Page</li>
+    </ul>
+  </div>
+
+  <script src="{% static 'js/turn.min.js' %}"></script>
+  <script src="{% static 'js/highlight.js' %}"></script>
+  <script src="{% static 'js/book.js' %}"></script>
+  <script src="{% static 'js/pagination.js' %}"></script>
+  <script src="{% static 'js/navsearch.js' %}"></script>
+  
+  {% if book.audio_file %}
+  <script>
+    let audioFile = new Audio("{{ book.audio_file.url }}");
+    let playBtn = document.getElementById("play");
+    playBtn.addEventListener('click', () => {
+      if (audioFile.paused) {
+        audioFile.play();
+        playBtn.innerHTML = '<i data-lucide="pause"></i>';
+      } else {
+        audioFile.pause();
+        playBtn.innerHTML = '<i data-lucide="play"></i>';
+      }
+      lucide.createIcons();
+    });
+  </script>
+  {% endif %}
+  
+  <script>
+    const clicks = new Audio('/static/sounds/click.mp3')
+    document.addEventListener('DOMContentLoaded', () => {
+      const likeBtn = document.getElementById('likeBtn')
+      const saveBtn = document.getElementById('saveBtn')
+
+      likeBtn.addEventListener('click', () => {
+        const isActive = likeBtn.classList.contains('like-active')
+        if (!isActive) burstLikes(30)
+        likeBtn.classList.toggle('like-active')
+        clicks.currentTime = 0
+        clicks.play()
       })
-      
-      function burstLikes(count = 30) {
-        let i = 0
-        const interval = setInterval(() => {
-          if (i >= count) return clearInterval(interval)
-          requestAnimationFrame(() => {
-            const like = document.createElement('div')
-            like.classList.add('like')
-            like.textContent = '👍'
-            const size = Math.random() * 16 + 16
-            like.style.cssText = `
+
+      saveBtn.addEventListener('click', () => {
+        saveBtn.classList.toggle('save-active')
+        clicks.currentTime = 0
+        clicks.play()
+      })
+    })
+
+    function burstLikes(count = 30) {
+      let i = 0
+      const interval = setInterval(() => {
+        if (i >= count) return clearInterval(interval)
+        requestAnimationFrame(() => {
+          const like = document.createElement('div')
+          like.classList.add('like')
+          like.textContent = '👍'
+          const size = Math.random() * 16 + 16
+          like.style.cssText = `
                 font-size: ${size}px;
                 left: ${Math.random() * window.innerWidth}px;
                 animation-duration: ${Math.random() * 2 + 2}s;
               `
-            document.body.appendChild(like)
-            setTimeout(() => like.remove(), 4000)
-          })
-          i++
-        }, 20)
-      }
-      
-      // Login Modal Toggle Logic
-      const startlogin = document.getElementById('startlogin')
-      const loginSection = document.getElementById('loginSection')
-      const closelogin = document.getElementById('closelogin')
-      
-      startlogin.addEventListener('click', () => loginSection.classList.add('active'))
-      closelogin.addEventListener('click', () => loginSection.classList.remove('active'))
-      loginSection.addEventListener('click', (e) => {
-        if (e.target === loginSection) loginSection.classList.remove('active')
-      })
-    </script>
-  </body>
+          document.body.appendChild(like)
+          setTimeout(() => like.remove(), 4000)
+        })
+        i++
+      }, 20)
+    }
+  </script>
+</body>
 </html>

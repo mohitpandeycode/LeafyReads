@@ -112,7 +112,7 @@ My Dashboard | LeafyReads
                     {% if book.cover_front %}
                     <img src="{{ book.cover_front.url }}" class="read-cover">
                     {% else %}
-                    <img src="{% static 'images/default_cover.png' %}" class="read-cover">
+                    <img src="" class="read-cover">
                     {% endif %}
                     <div class="read-info">
                         <div class="read-title">{{ book.title }}</div>
@@ -244,7 +244,7 @@ My Dashboard | LeafyReads
                     </div>
                     {% else %}
                     <div class="book-wrapper">
-                        <img src="{% static 'images/default_cover.png' %}" alt="No Cover Available" class="book-cover"
+                        <img src="" alt="No Cover Available" class="book-cover"
                             loading="lazy">
                         <div class="book-info-overlay">
                             <p class="book-title">{{ book.title }}</p>

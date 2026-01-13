@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from LeafyReads.ckEditor import *
+import cloudinary
 from environ import Env
 import dj_database_url
 env = Env()
@@ -207,14 +208,25 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': env('CLOUDINARY_API_KEY'),
     'API_SECRET': env('CLOUDINARY_API_SECRET'),
+    'SECURE': True,
     'UPLOAD_OPTIONS': {
         'upload_preset': 'django_auto_compress'
     }
 }
+
+# this is for static images
+
+cloudinary.config(
+    cloud_name = env('CLOUDINARY_CLOUD_NAME'),
+    api_key = env('CLOUDINARY_API_KEY'),
+    api_secret = env('CLOUDINARY_API_SECRET'),
+    secure = True
+)
 
 STORAGES = {
     "default": {

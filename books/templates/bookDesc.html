@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load cloudinary %}
 {% block title %}
 {{ title }} - By {{ book.author }} | LeafyReads
 {% endblock %}
@@ -121,8 +121,7 @@
                         onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';"
                         style="object-fit: cover;" />
 
-                    <img loading="lazy" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;"
-                        src="{% static 'images/framebook1.png' %}" alt="frame" />
+                    {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;" alt="frame" secure=True %}
 
                     <div style="box-shadow:1px 1px 1px #61616138;border-radius:0 0 5px 5px;">
                         <div class="readby">
