@@ -9,7 +9,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Read {{ title }} by {{ book.author }} online. {{ bookcontent|truncatewords:25 }}" />
-    <link rel="icon" type="image/x-icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' %}">
+    <link rel="icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=96 height=96 crop='scale' %}" sizes="96x96" type="image/png">
+    <link rel="icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=48 height=48 crop='scale' %}" sizes="48x48" type="image/png">
+    <link rel="apple-touch-icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=180 height=180 crop='scale' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="canonical" href="{{ request.build_absolute_uri }}" />
     <title>{{ title }} - By {{ book.author }} | LeafyReads</title>
     <meta property="og:type" content="book" />
