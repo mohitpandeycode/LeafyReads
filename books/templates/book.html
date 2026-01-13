@@ -340,13 +340,13 @@
 
       <section id="container">
         <div style="display:none;position: absolute;bottom: -30px;left: 0;" class="soundwave">
-            {% cloudinary "jg32efxqxb4pt7efvegr" style="height: 65px;width: 100px;" quality="auto" fetch_format="auto" secure=True alt="soundwave" %}
+            {% cloudinary "jg32efxqxb4pt7efvegr" style="height: 65px;width: 100px;" quality="auto" fetch_format="auto" alt="soundwave" %}
         </div>
         <div id="spine-illusion" hidden></div>
 
         <div class="flipbook">
           <article class="page hard cover" style="border: 1px double white;">
-            {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" class="cover-image" style="position: absolute; left: -2px; width: 101%; top: -2px; height: 101%;" alt="forntFrame" secure=True %}
+            {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" class="cover-image" style="position: absolute; left: -2px; width: 101%; top: -2px; height: 101%;" alt="forntFrame" %}
             <img src="{{ book.cover_front.url }}?q_auto,f_auto" style="object-fit: cover;" alt="Cover Image" class="cover-image" />
             <div class="bookinfocover">
               <h4 style="margin: 0;">{{book.title}}</h4>
