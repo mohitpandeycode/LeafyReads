@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'debug_toolbar',
     'django.contrib.postgres',
     'health_check',
@@ -79,8 +80,35 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
+    },
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'name',
+            'name_format',
+            'picture',
+            'short_name'
+        ],
+        'EXCHANGE_TOKEN': True,
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v17.0',
+        'APP': {
+            'client_id': env('FACEBOOK_APP_ID', default=''),
+            'secret': env('FACEBOOK_APP_SECRET', default=''),
+            'key': ''
+        }
     }
 }
+
+
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
@@ -127,26 +155,26 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = 'LeafyReads.wsgi.application'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'LeafyReads',
-#         'USER': 'postgres',
-#         'PASSWORD': 'mohit@123@123', 
-#         'HOST': 'localhost',
-#         'PORT': '5433',
-#     }
-# }
-
-
-DATABASE_URL = env('DATABASE_URL')
-db_config = dj_database_url.config(default=DATABASE_URL, conn_max_age=0)
-db_config['DISABLE_SERVER_SIDE_CURSORS'] = True
 DATABASES = {
-    'default': db_config
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'LeafyReads',
+        'USER': 'postgres',
+        'PASSWORD': 'mohit@123@123', 
+        'HOST': 'localhost',
+        'PORT': '5433',
+    }
 }
 
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+
+# DATABASE_URL = env('DATABASE_URL')
+# db_config = dj_database_url.config(default=DATABASE_URL, conn_max_age=0)
+# db_config['DISABLE_SERVER_SIDE_CURSORS'] = True
+# DATABASES = {
+#     'default': db_config
+# }
+
+# SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 
 CACHES = {
