@@ -71,6 +71,8 @@ INSTALLED_APPS = [
     
 ]
 
+SOCIALACCOUNT_ADAPTER = 'LeafyReads.adapters.CustomSocialAccountAdapter'
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
@@ -85,7 +87,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'METHOD': 'oauth2',
         'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
         'SCOPE': ['email', 'public_profile'],
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'AUTH_PARAMS': {},
         'INIT_PARAMS': {'cookie': True},
         'FIELDS': [
             'id',
