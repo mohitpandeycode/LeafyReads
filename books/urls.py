@@ -4,6 +4,7 @@ from books import views
 
 urlpatterns = [
     path('library/open/<slug>', views.home, name='read-book'),
+    path('read/<slug:slug>/page-view/', views.book_page_view, name='pageView'),
     path('library/book-details/<slug:slug>/', views.openBook, name="book"),
     path('category/<slug:slug>/', views.categories, name='category'),
     path('library/', views.library, name='library'),

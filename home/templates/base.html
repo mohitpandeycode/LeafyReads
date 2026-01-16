@@ -402,246 +402,210 @@
   <script src="{% static 'js/home.js' %}"></script>
   <script src="{% static 'js/navsearch.js' %}"></script>
   <script>
-    function toggleNotifications() {
-      const box = document.getElementById('notificationBox');
-      box.classList.toggle('active');
-    }
 
-    // Close when clicking outside
-    document.addEventListener('click', function (event) {
-      const box = document.getElementById('notificationBox');
-      const btn = document.querySelector('.notif-btn');
-      if (box && btn && !box.contains(event.target) && !btn.contains(event.target)) {
-        box.classList.remove('active');
-      }
-    });
-    const startlogin = document.getElementById('startlogin')
-    const loginSection = document.getElementById('loginSection')
-    const closelogin = document.getElementById('closelogin')
+  window.toggleNotifications = function() {
+    const box = document.getElementById('notificationBox');
+    if (box) box.classList.toggle('active');
+  };
 
-    // Check if elements exist before adding listeners (robustness)
-    if (startlogin && loginSection && closelogin) {
+  // ==========================================
+  //      2. MAIN EXECUTION
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // --- A. LOADER LOGIC (Optimized) ---
+    // Runs immediately when HTML is ready.
+    const loader = document.getElementById('loader');
+    const content = document.getElementById('content');
+    if (loader) loader.style.display = 'none';
+    if (content) content.style.display = 'block';
+
+    // --- B. LOGIN MODAL LOGIC ---
+    const startlogin = document.getElementById('startlogin');
+    const loginSection = document.getElementById('loginSection');
+    const closelogin = document.getElementById('closelogin');
+
+    if (startlogin && loginSection) {
       startlogin.addEventListener('click', () => {
-        loginSection.classList.add('active')
-      })
+        loginSection.classList.add('active');
+      });
 
-      closelogin.addEventListener('click', () => {
-        loginSection.classList.remove('active')
-      })
+      if (closelogin) {
+        closelogin.addEventListener('click', () => {
+          loginSection.classList.remove('active');
+        });
+      }
 
-      // Close when clicking outside the login box
+      // Close when clicking the dark overlay background
       loginSection.addEventListener('click', (e) => {
         if (e.target === loginSection) {
-          loginSection.classList.remove('active')
+          loginSection.classList.remove('active');
         }
-      })
+      });
     }
-  </script>
-  <script>
-    // Wait for the page to fully load
-    window.addEventListener('load', function () {
-      // Hide the loader
-      const loader = document.getElementById('loader')
-      if (loader) {
-        loader.style.display = 'none'
-      }
 
-      // Show the main content
-      const content = document.getElementById('content')
-      if (content) {
-        // Added check in case #content doesn't exist
-        content.style.display = 'block'
-      }
-    })
-  </script>
+    // --- C. DROPDOWN LOGIC ---
+    const dropdownButton = document.getElementById('dropdown-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const dropdownButton = document.getElementById('dropdown-button')
-      const dropdownMenu = document.getElementById('dropdown-menu')
+    if (dropdownButton && dropdownMenu) {
+      dropdownButton.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent global click from closing it immediately
+        dropdownMenu.classList.toggle('hidden');
+      });
+    }
 
-      if (dropdownButton && dropdownMenu) {
-        // 1. Toggle dropdown visibility
-        dropdownButton.addEventListener('click', (event) => {
-          // Stop the click from bubbling up to the window listener
-          event.stopPropagation()
-          dropdownMenu.classList.toggle('hidden')
-        })
+    // --- D. NAV SEARCH LOGIC ---
+    const navSearchForm = document.getElementById('navSearch');
+    const navSearchInput = document.getElementById('navSearchInput');
+    const navResultsBox = document.querySelector('.nav-results');
+    const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null;
+    
+    // Search Variables
+    let currentController = null;
+    let navTypingTimer;
+    const navDebounceDelay = 300;
+    
+    // Skeleton HTML
+    const skeletonHTML = `
+      <div class="skeleton-item">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-text-col">
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>`;
 
-        // 2. Close dropdown if clicked outside
-        window.addEventListener('click', (event) => {
-          if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
-            dropdownMenu.classList.add('hidden')
+    if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
+
+      const escapeHtml = (unsafe) => {
+        if (!unsafe) return "";
+        return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+      };
+
+      const fetchNavResults = async (query) => {
+        if (currentController) currentController.abort();
+        currentController = new AbortController();
+
+        // Show Loading
+        navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Searching...</div>${skeletonHTML}${skeletonHTML}`;
+        
+        try {
+          const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+            signal: currentController.signal
+          });
+          
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          
+          const data = await response.json();
+          const results = data.results;
+
+          navHistoryContainer.innerHTML = '';
+          const fragment = document.createDocumentFragment();
+          
+          const titleEl = document.createElement('div');
+          titleEl.className = 'nav-search-history-title';
+          titleEl.textContent = `Results for "${query}"`;
+          fragment.appendChild(titleEl);
+
+          if (!results || results.length === 0) {
+            const noResultEl = document.createElement('div');
+            noResultEl.className = 'nav-history-item';
+            noResultEl.innerHTML = `<i data-lucide="search"></i><div class="nav-history-item-info"><span class="nav-history-item-title">No results found</span></div>`;
+            fragment.appendChild(noResultEl);
+          } else {
+            results.forEach((book) => {
+              const link = document.createElement('a');
+              link.href = `/book/library/book-details/${book.slug}`;
+              link.className = 'nav-history-item';
+              link.innerHTML = `
+                <i style="width:40px;" data-lucide="notebook"></i>  
+                <div class="nav-history-item-info">
+                  <span class="nav-history-item-title">${escapeHtml(book.title)}</span>
+                  <span class="nav-history-item-author">by ${escapeHtml(book.author)}</span>
+                </div>`;
+              fragment.appendChild(link);
+            });
           }
-        })
+          navHistoryContainer.appendChild(fragment);
+          if (window.lucide) lucide.createIcons({ root: navHistoryContainer, nameAttr: 'data-lucide' });
+
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+          console.error('Nav search error:', err);
+          navHistoryContainer.innerHTML = `<div class="nav-history-item"><div class="nav-history-item-info">Error fetching results</div></div>`;
+        }
+      };
+
+      // Input Listener
+      navSearchInput.addEventListener('input', () => {
+        clearTimeout(navTypingTimer);
+        const query = navSearchInput.value.trim();
+
+        if (query.length > 1) {
+          navResultsBox.style.display = 'block';
+          navSearchForm.classList.add('results-open');
+          navSearchForm.style.borderRadius = '15px 15px 0 0';
+          
+          // Show skeleton immediately while waiting for debounce
+          navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Searching...</div>${skeletonHTML}`;
+          
+          navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
+        } else {
+          navResultsBox.style.display = 'none';
+          navSearchForm.classList.remove('results-open');
+          navSearchForm.style.borderRadius = '15px';
+          if (currentController) currentController.abort();
+        }
+      });
+
+      // Focus Listener
+      navSearchInput.addEventListener('focus', () => {
+        if (navSearchInput.value.trim().length > 1) {
+          navResultsBox.style.display = 'block';
+          navSearchForm.classList.add('results-open');
+          navSearchForm.style.borderRadius = '15px 15px 0 0';
+        }
+      });
+    }
+
+    // --- E. UNIFIED GLOBAL CLICK LISTENER---
+    // 
+    // Handles closing Notifications, Dropdowns, and Search Results in one go
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+
+      // 1. Close Notifications
+      const notifBox = document.getElementById('notificationBox');
+      const notifBtn = document.querySelector('.notif-btn');
+      if (notifBox && notifBox.classList.contains('active')) {
+        if (!notifBox.contains(target) && (!notifBtn || !notifBtn.contains(target))) {
+          notifBox.classList.remove('active');
+        }
       }
-    })
-  </script>
 
-  <script>
-      ; (function () {
-        'use strict';
+      // 2. Close Dropdown
+      if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+        if (!dropdownMenu.contains(target) && (!dropdownButton || !dropdownButton.contains(target))) {
+          dropdownMenu.classList.add('hidden');
+        }
+      }
 
-        // Tracks the current active request for cancellation
-        let currentController = null;
+      // 3. Close Search Results
+      if (navSearchForm && navResultsBox && navResultsBox.style.display === 'block') {
+        if (!navSearchForm.contains(target)) {
+          navResultsBox.style.display = 'none';
+          navSearchForm.classList.remove('results-open');
+          navSearchForm.style.borderRadius = '15px';
+        }
+      }
+    });
 
-        document.addEventListener('DOMContentLoaded', () => {
-          // --- Nav Search Bar Elements ---
-          const navSearchForm = document.getElementById('navSearch');
-          const navSearchInput = document.getElementById('navSearchInput');
-          const navResultsBox = document.querySelector('.nav-results');
-          const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null;
+    // --- F. INITIALIZE ICONS ---
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 
-          if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
-
-            // --- 1. Fetch Logic ---
-            const fetchNavResults = async (query) => {
-              // Cancel previous request
-              if (currentController) currentController.abort();
-              currentController = new AbortController();
-
-              try {
-                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
-                  signal: currentController.signal
-                });
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const data = await response.json();
-                const results = data.results;
-
-                // Render results
-                navHistoryContainer.innerHTML = '';
-                const fragment = document.createDocumentFragment();
-
-                const titleEl = document.createElement('div');
-                titleEl.className = 'nav-search-history-title';
-                titleEl.textContent = `Results for "${query}"`;
-                fragment.appendChild(titleEl);
-
-                if (!results || results.length === 0) {
-                  const noResultEl = document.createElement('div');
-                  noResultEl.className = 'nav-history-item';
-                  noResultEl.innerHTML = `
-                                <i data-lucide="search"></i>
-                                <div class="nav-history-item-info">
-                                    <span class="nav-history-item-title">No results found</span>
-                                </div>`;
-                  fragment.appendChild(noResultEl);
-                } else {
-                  results.forEach((book) => {
-                    const link = document.createElement('a');
-                    link.href = `/book/library/book-details/${book.slug}`;
-                    link.className = 'nav-history-item';
-
-                    // XSS Safe Rendering
-                    link.innerHTML = `
-                                    <i style="width:40px;" data-lucide="notebook"></i>  
-                                    <div class="nav-history-item-info">
-                                        <span class="nav-history-item-title">${escapeHtml(book.title)}</span>
-                                        <span class="nav-history-item-author">by ${escapeHtml(book.author)}</span>
-                                    </div>
-                                `;
-                    fragment.appendChild(link);
-                  });
-                }
-
-                navHistoryContainer.appendChild(fragment);
-
-                // OPTIMIZATION: Scan only the new container
-                if (window.lucide) {
-                  lucide.createIcons({
-                    root: navHistoryContainer,
-                    nameAttr: 'data-lucide'
-                  });
-                }
-
-              } catch (err) {
-                if (err.name === 'AbortError') return; // Ignore user cancellation
-
-                console.error('Nav search error:', err);
-                navHistoryContainer.innerHTML = `
-                            <div class="nav-search-history-title">Error</div>
-                            <div class="nav-history-item">
-                                <span class="nav-history-item-title">Could not load results</span>
-                            </div>`;
-              }
-            };
-
-            // --- 2. Input Listener (Debounce + Skeleton) ---
-            let navTypingTimer;
-            const navDebounceDelay = 300;
-
-            navSearchInput.addEventListener('input', () => {
-              clearTimeout(navTypingTimer);
-              const query = navSearchInput.value.trim();
-
-              if (query.length > 1) { // Trigger after 2 chars
-                // Show Box & Styling
-                navResultsBox.style.display = 'block';
-                navSearchForm.classList.add('results-open');
-                navSearchForm.style.borderRadius = '15px 15px 0 0';
-
-                // Show Skeleton Immediately
-                const skeletonHTML = `
-                            <div class="skeleton-item">
-                                <div class="skeleton-icon"></div>
-                                <div class="skeleton-text-col">
-                                    <div class="skeleton-line long"></div>
-                                    <div class="skeleton-line short"></div>
-                                </div>
-                            </div>`;
-
-                navHistoryContainer.innerHTML = `
-                            <div class="nav-search-history-title">Searching...</div>
-                            ${skeletonHTML}
-                            ${skeletonHTML}
-                            ${skeletonHTML}
-                        `;
-
-                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
-
-              } else {
-                // Hide Box
-                navResultsBox.style.display = 'none';
-                navSearchForm.classList.remove('results-open');
-                navSearchForm.style.borderRadius = '15px';
-                if (currentController) currentController.abort();
-              }
-            });
-
-            // --- 3. UI Helpers ---
-            document.addEventListener('click', (e) => {
-              if (!navSearchForm.contains(e.target)) {
-                navResultsBox.style.display = 'none';
-                navSearchForm.style.borderRadius = '15px';
-                navSearchForm.classList.remove('results-open');
-              }
-            });
-
-            navSearchInput.addEventListener('focus', () => {
-              const query = navSearchInput.value.trim();
-              if (query.length > 1) {
-                navResultsBox.style.display = 'block';
-                navSearchForm.classList.add('results-open');
-                navSearchForm.style.borderRadius = '15px 15px 0 0';
-              }
-            });
-
-            // Helper for XSS Security
-            const escapeHtml = (unsafe) => {
-              if (!unsafe) return "Unknown";
-              return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-            };
-          }
-        });
-      })();
-  </script>
+  });
+</script>
 
 </body>
 

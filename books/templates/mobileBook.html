@@ -18,7 +18,6 @@
     <link rel="icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=48 height=48 crop='scale' %}" sizes="48x48" type="image/png">
     <link rel="apple-touch-icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=180 height=180 crop='scale' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -32,25 +31,6 @@
       margin: 0;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background-image: url('{% cloudinary_url "wyufreqgjewhquxqfz3e" %}');
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: cover;
-      will-change: transform; 
-    }
-
-    /* 3. Dark Mode now updates the pseudo-element */
-    body.dark-mode::before {
-      background-image: url('{% cloudinary_url "ykzhhhzo80g9lxu1g5vk" %}');
-    }
 
     .leafy-auth-container{
         max-width: 80%;
@@ -204,58 +184,116 @@
       <input type="number" id="pageInput" placeholder="Go to page 1 to {{ page_obj.paginator.num_pages }}....." min="1" max="{{ page_obj.paginator.num_pages }}" data-total="{{ page_obj.paginator.num_pages }}" />
       <button id="goBtn">Go <i style="width: 20px;" data-lucide="scan-search"></i> </button> 
   </div>
-  <div class="fab-container" id="fabContainer">
-    <button id="fabTrigger" class="fab-btn main-btn">
-      <i data-lucide="plus"></i>
-    </button>
 
-    <div class="fab-options">
-      {% if user.is_authenticated %}
-      <a href="{% url 'community' %}" id="comment" class="fab-btn mini-btn" title="Community">
-        <i data-lucide="messages-square"></i>
-      </a>
-
-      <button id="saveBtn" class="fab-btn mini-btn {% if saved %}save-active{% endif %}" title="Save"
-        data-url="{% url 'toggle_read_later' book.slug %}">
-        <i data-lucide="bookmark"></i>
+  {% if request.user_agent.is_mobile %}
+    <div class="fab-container" id="fabContainer">
+      <button id="fabTrigger" class="fab-btn main-btn">
+        <i data-lucide="plus"></i>
       </button>
 
-      <button id="likeBtn" class="fab-btn mini-btn {% if liked %}like-active{% endif %}" title="Like"
-        data-url="{% url 'toggle_like' book.slug %}">
-        <i data-lucide="thumbs-up"></i>
-      </button>
-      {% endif %} 
-      
-      <button id="zoom-out" class="fab-btn mini-btn" title="zoom-out">
-        <i data-lucide="zoom-out"></i> 
-      </button>
-      <button id="zoom-in" class="fab-btn mini-btn" title="zoom-in">
-        <i data-lucide="zoom-in"></i> 
-      </button>
-      <a href="{% url 'library' %}" disabled id="play" class="fab-btn mini-btn" title="library">
-        <i data-lucide="house"></i>
-      </a>
-      <button id="searchpage" class="fab-btn mini-btn" title="search page">
-        <i data-lucide="text-select"></i> 
-      </button>
+      <div class="fab-options">
+        {% if user.is_authenticated %}
+        <a href="{% url 'community' %}" id="comment" class="fab-btn mini-btn" title="Community">
+          <i data-lucide="messages-square"></i>
+        </a>
 
-      <button disabled id="play" class="fab-btn mini-btn" title="Listen">
-        <i data-lucide="play"></i>
-      </button>
+        <button id="saveBtn" style="border:3px solid #ff9209;" class="fab-btn mini-btn {% if saved %}save-active{% endif %}" title="Save"
+          data-url="{% url 'toggle_read_later' book.slug %}">
+          <i data-lucide="bookmark"></i>
+        </button>
 
-      <button id="darkModeBtn" class="fab-btn mini-btn" title="Dark Mode">
-        <i data-lucide="moon"></i>
-      </button>
-    </div>
+        <button id="likeBtn" style="border: 3px solid #09a2ff;" class="fab-btn mini-btn {% if liked %}like-active{% endif %}" title="Like"
+          data-url="{% url 'toggle_like' book.slug %}">
+          <i data-lucide="thumbs-up"></i>
+        </button>
+        {% endif %} 
+        
+        <button id="zoom-out" class="fab-btn mini-btn" title="zoom-out">
+          <i data-lucide="zoom-out"></i> 
+        </button>
+        <button id="zoom-in" class="fab-btn mini-btn" title="zoom-in">
+          <i data-lucide="zoom-in"></i> 
+        </button>
+        <a href="{% url 'library' %}" disabled id="play" class="fab-btn mini-btn" title="library">
+          <i data-lucide="house"></i>
+        </a>
+        <button id="searchpage" class="fab-btn mini-btn" title="search page">
+          <i data-lucide="text-select"></i> 
+        </button>
 
+        <button disabled id="play" class="fab-btn mini-btn" title="Listen">
+          <i data-lucide="play"></i>
+        </button>
+
+        <button id="darkModeBtn" class="fab-btn mini-btn" title="Dark Mode">
+          <i data-lucide="moon"></i>
+        </button>
+      </div>
+  {% else %}
+      <div class="fab-options" style="position:fixed;bottom: 25px; right: 1%; z-index: 1;">
+        {% if user.is_authenticated %}
+        <a href="{% url 'community' %}" id="comment" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="Community">
+          <i data-lucide="messages-square"></i>
+        </a>
+
+        <button id="saveBtn" style="opacity:1;transform:none;border: 4px solid #ff9209;" class="fab-btn mini-btn {% if saved %}save-active{% endif %}" title="Save"
+          data-url="{% url 'toggle_read_later' book.slug %}">
+          <i data-lucide="bookmark"></i>
+        </button>
+
+        <button id="likeBtn" style="opacity:1;transform:none;border: 4px solid #09a2ff;" class="fab-btn mini-btn {% if liked %}like-active{% endif %}" title="Like"
+          data-url="{% url 'toggle_like' book.slug %}">
+          <i data-lucide="thumbs-up"></i>
+        </button>
+        {% endif %} 
+        
+        <button id="zoom-out" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="zoom-out">
+          <i data-lucide="zoom-out"></i> 
+        </button>
+        <button id="zoom-in" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="zoom-in">
+          <i data-lucide="zoom-in"></i> 
+        </button>
+        <a href="{% url 'library' %}" disabled id="play" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="library">
+          <i data-lucide="house"></i>
+        </a>
+        <button id="searchpage" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="search page">
+          <i data-lucide="text-select"></i> 
+        </button>
+
+        <a href="{% url 'read-book' book.slug %}" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="Switch to Book view">
+          <i data-lucide="book-open"></i>  
+        </a>
+
+        <button disabled id="play" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="Listen">
+          <i data-lucide="play"></i>
+        </button>
+
+        <button id="darkModeBtn" style="opacity:1;transform:none;" class="fab-btn mini-btn" title="Dark Mode">
+          <i data-lucide="moon"></i>
+        </button>
+      </div>
+  {% endif %}
     <div id="toast-notification" class="toast">
       <span id="toast-message"></span>
     </div>
   </div>
+
+
   <main id="container-wrapper">
+    {% if request.user_agent.is_mobile %}
     <section id="container">
-      {{ bookcontent|safe }}
+        {{ bookcontent|safe }}
     </section>
+    {% else %}
+    <div id="resize-shell">
+      <section id="container">
+          {{ bookcontent|safe }}
+      </section>
+      <div class="resizer resizer-l"></div>
+      <div class="resizer resizer-r"></div>
+      <div class="resizer resizer-b"></div>
+    </div>
+    {% endif %}
   </main>
   <div class="pagination-container">
 
@@ -286,20 +324,17 @@
 
     </div>
   <script src="{% static 'js/loading.js' %}"></script>
-  <script>
-  // --- Global Helper: UI Sound ---
+<script>
+  // --- 1. GLOBAL HELPER: UI SOUND ---
   const uiClickSound = new Audio('/static/sounds/click.mp3');
-
-  function playUiSound() {
+  window.playUiSound = function() {
     uiClickSound.currentTime = 0;
-    uiClickSound.play().catch(e => {
-    });
-  }
+    uiClickSound.play().catch(e => { /* Ignore auto-play errors */ });
+  };
 
-  // --- Main Execution ---
   document.addEventListener('DOMContentLoaded', () => {
-    
-    // 1. GLOBAL UI CONSTANTS & TOASTS
+
+    // --- 2. GLOBAL UI CONSTANTS ---
     const toast = document.getElementById('toast-notification');
     const toastMessage = document.getElementById('toast-message');
     const csrfToken = '{{ csrf_token }}'; // Django Token
@@ -314,27 +349,91 @@
       }
     }
 
-    // 2. AUDIO PLAYER MODULE
-    const audioUrl = "{% if book.audio_file %}{{ book.audio_file.url }}{% endif %}"; 
-    const playBtn = document.getElementById('play');
+    // --- 3. RESIZE LOGIC (With SessionStorage) ---
+    const shell = document.getElementById('resize-shell');
+    if (shell) {
+      // Restore Saved Size
+      const savedWidth = sessionStorage.getItem('bookContainerWidth');
+      const savedHeight = sessionStorage.getItem('bookContainerHeight');
+      if (savedWidth) shell.style.width = savedWidth;
+      if (savedHeight) shell.style.height = savedHeight;
+
+      // Resizing Handlers
+      const resizers = shell.querySelectorAll('.resizer');
+      let isResizing = false;
+      let currentResizer;
+
+      resizers.forEach(resizer => {
+        resizer.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          isResizing = true;
+          currentResizer = resizer;
+          resizer.classList.add('resizing');
+
+          const rect = shell.getBoundingClientRect();
+          const startX = e.clientX;
+          const startY = e.clientY;
+          const startWidth = rect.width;
+          const startHeight = rect.height;
+          const maxAllowedHeight = window.innerHeight * 0.9;
+
+          function onMouseMove(e) {
+            if (!isResizing) return;
+
+            // RESIZE RIGHT
+            if (currentResizer.classList.contains('resizer-r')) {
+              const newWidth = startWidth + (e.clientX - startX);
+              if (newWidth > 500) shell.style.width = newWidth + 'px';
+            }
+            // RESIZE BOTTOM
+            else if (currentResizer.classList.contains('resizer-b')) {
+              let newHeight = startHeight + (e.clientY - startY);
+              if (newHeight > 400 && newHeight <= maxAllowedHeight) {
+                shell.style.height = newHeight + 'px';
+              }
+            }
+            // RESIZE LEFT
+            else if (currentResizer.classList.contains('resizer-l')) {
+              const newWidth = startWidth - (e.clientX - startX);
+              if (newWidth > 300) shell.style.width = newWidth + 'px';
+            }
+          }
+
+          function onMouseUp() {
+            isResizing = false;
+            if (currentResizer) currentResizer.classList.remove('resizing');
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+
+            // Save preference
+            sessionStorage.setItem('bookContainerWidth', shell.style.width);
+            sessionStorage.setItem('bookContainerHeight', shell.style.height);
+          }
+
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+        });
+      });
+    }
+
+    // --- 4. AUDIO PLAYER MODULE ---
+    const audioUrl = "{% if book.audio_file %}{{ book.audio_file.url }}{% endif %}";
+    const playBtn = document.querySelector('#play:not([href])'); 
 
     if (audioUrl && playBtn) {
       const audioFile = new Audio(audioUrl);
       
-      // Enable button
       playBtn.removeAttribute('disabled');
       playBtn.style.cursor = 'pointer';
 
-      // Toggle Play/Pause
       playBtn.addEventListener('click', () => {
-        playUiSound();
-
+        window.playUiSound();
         if (audioFile.paused) {
           const playPromise = audioFile.play();
           if (playPromise !== undefined) {
             playPromise.then(() => {
               playBtn.innerHTML = '<i data-lucide="pause"></i>';
-              lucide.createIcons();
+              if (window.lucide) lucide.createIcons();
             }).catch(error => {
               console.error("Playback error:", error);
               if (error.name === "NotSupportedError") showToast("Audio format not supported.");
@@ -343,21 +442,18 @@
         } else {
           audioFile.pause();
           playBtn.innerHTML = '<i data-lucide="play"></i>';
-          lucide.createIcons();
+          if (window.lucide) lucide.createIcons();
         }
       });
 
-      // Reset on End
       audioFile.addEventListener('ended', () => {
         playBtn.innerHTML = '<i data-lucide="play"></i>';
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
       });
-
       audioFile.addEventListener('error', (e) => console.error("Audio Load Error:", audioFile.error));
     }
 
-
-    // 3. NAVIGATION & SEARCH MODULE
+    // --- 5. NAVIGATION & SEARCH MODULE ---
     const searchbtn = document.getElementById('searchpage');
     const gotobox = document.getElementById('gotobox');
     const goBtn = document.getElementById('goBtn');
@@ -372,7 +468,6 @@
       if (pageNum >= 1 && pageNum <= maxPages) {
         const url = new URL(window.location.href);
         url.searchParams.set('page', pageNum);
-        // Hide UI before reloading for visual cleanliness
         if (gotobox) gotobox.style.visibility = "hidden";
         if (searchbtn) searchbtn.classList.remove('tool-active');
         window.location.href = url.toString();
@@ -383,16 +478,14 @@
       }
     }
 
-    if (goBtn) goBtn.addEventListener('click', () => { playUiSound(); navigateToPage(); });
+    if (goBtn) goBtn.addEventListener('click', () => { window.playUiSound(); navigateToPage(); });
     if (pageInput) pageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') navigateToPage(); });
 
-    // Toggle Search Box
     if (searchbtn && gotobox) {
       searchbtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        playUiSound();
+        window.playUiSound();
         const isVisible = gotobox.style.visibility === "visible";
-        
         gotobox.style.visibility = isVisible ? "hidden" : "visible";
         overlaysearch.style.visibility = isVisible ? "hidden" : "visible";
         overlaysearch.style.opacity = isVisible ? "0" : "1";
@@ -407,8 +500,7 @@
       });
     }
 
-
-    // 4. ZOOM MODULE
+    // --- 6. ZOOM MODULE ---
     const zoomInBtn = document.getElementById('zoom-in');
     const zoomOutBtn = document.getElementById('zoom-out');
     const containerParagraphs = document.querySelectorAll('#container p');
@@ -416,7 +508,7 @@
 
     if (zoomInBtn && zoomOutBtn && containerParagraphs.length > 0) {
       const updateZoom = (change) => {
-        playUiSound();
+        window.playUiSound();
         const newSize = currentFontSize + change;
         if (newSize >= 10 && newSize <= 30) {
           currentFontSize = newSize;
@@ -426,27 +518,23 @@
           showToast(change > 0 ? "Max Zoom Reached" : "Min Zoom Reached");
         }
       };
-
       zoomInBtn.addEventListener('click', (e) => { e.stopPropagation(); updateZoom(2); });
       zoomOutBtn.addEventListener('click', (e) => { e.stopPropagation(); updateZoom(-1); });
     }
 
-
-    // 5. FAB (Floating Action Button) MENU
+    // --- 7. FAB MENU ---
     const fabContainer = document.getElementById('fabContainer');
     const fabTrigger = document.getElementById('fabTrigger');
 
     if (fabTrigger && fabContainer) {
       fabTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
-        playUiSound();
+        window.playUiSound();
         fabContainer.classList.toggle('active');
 
-        // Close menu when clicking outside
         const closeMenu = (evt) => {
           if (!fabContainer.contains(evt.target) && (!gotobox || !gotobox.contains(evt.target))) {
             fabContainer.classList.remove('active');
-            // Also close search if open
             if(gotobox) gotobox.style.visibility = "hidden";
             if(overlaysearch) { overlaysearch.style.visibility = "hidden"; overlaysearch.style.opacity = "0"; }
             if(searchbtn) searchbtn.classList.remove('tool-active');
@@ -459,41 +547,34 @@
         }
       });
     }
-
-    // Add sound to all FAB links
+    
     document.querySelectorAll('.fab-options a.fab-btn').forEach(link => {
-        link.addEventListener('click', playUiSound);
+        link.addEventListener('click', window.playUiSound);
     });
 
-
-    // 6. DARK MODE
+    // --- 8. DARK MODE ---
     const darkModeBtn = document.getElementById('darkModeBtn');
     const body = document.body;
-
-    // Initialize state
     if (localStorage.getItem('theme') === 'dark') {
       body.classList.add('dark-mode');
       if (darkModeBtn) darkModeBtn.innerHTML = '<i data-lucide="sun"></i>';
     }
-
     if (darkModeBtn) {
       darkModeBtn.addEventListener('click', () => {
-        playUiSound();
+        window.playUiSound();
         body.classList.toggle('dark-mode');
         const isDark = body.classList.contains('dark-mode');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
         darkModeBtn.innerHTML = isDark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
       });
     }
 
-
-    // 7. INTERACTIVITY (Like & Save)
+    // --- 9. LIKE & SAVE ---
     const likeBtn = document.getElementById('likeBtn');
     const saveBtn = document.getElementById('saveBtn');
     const dot = document.querySelector('.dot');
 
-    // Visual effect for liking
     function burstLikes() {
       let count = 0;
       const interval = setInterval(() => {
@@ -501,65 +582,58 @@
         const like = document.createElement('div');
         like.classList.add('like');
         like.textContent = '❤️';
-        // Randomize position and animation
         const size = Math.random() * 16 + 16;
         like.style.cssText = `font-size: ${size}px; left: ${Math.random() * window.innerWidth}px; animation-duration: ${Math.random() * 2 + 2}s;`;
         document.body.appendChild(like);
-        setTimeout(() => like.remove(), 4000); // Cleanup
+        setTimeout(() => like.remove(), 4000);
         count++;
       }, 20);
     }
 
     function handleInteraction(btn, actionType, dotElement = null) {
-        const url = btn.dataset.url;
-        const activeClass = actionType === 'like' ? 'like-active' : 'save-active';
-        
-        // Toggle UI immediately (Optimistic UI)
-        const wasActive = btn.classList.contains(activeClass);
-        btn.classList.toggle(activeClass);
-        playUiSound();
+      const url = btn.dataset.url;
+      const activeClass = actionType === 'like' ? 'like-active' : 'save-active';
+      const wasActive = btn.classList.contains(activeClass);
+      btn.classList.toggle(activeClass);
+      window.playUiSound();
 
-        // Specific UI Logic
-        if (actionType === 'like' && !wasActive) burstLikes();
-        if (actionType === 'save' && dotElement) dotElement.style.display = !wasActive ? "block" : "none";
+      if (actionType === 'like' && !wasActive) burstLikes();
+      if (actionType === 'save' && dotElement) dotElement.style.display = !wasActive ? "block" : "none";
 
-        fetch(url, {
-            method: 'POST',
-            headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
-        })
-        .then(response => response.json())
-        .then(data => {
-            showToast(data.message);
-            // Revert if server response contradicts optimistic update
-            // (Simplified check based on your original logic)
-            if (actionType === 'save' && data.status !== 'saved' && data.status !== 'removed') {
-                 btn.classList.toggle(activeClass);
-                 if (dotElement) dotElement.style.display = wasActive ? "block" : "none";
-            }
-            if (actionType === 'like' && data.status !== 'liked' && data.status !== 'unliked') {
-                btn.classList.toggle(activeClass);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            showToast('Action failed. Try again.');
-            btn.classList.toggle(activeClass); // Revert UI
-            if (actionType === 'save' && dotElement) dotElement.style.display = wasActive ? "block" : "none";
-        });
+      fetch(url, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
+      })
+      .then(response => response.json())
+      .then(data => {
+          showToast(data.message);
+          if (actionType === 'save' && data.status !== 'saved' && data.status !== 'removed') {
+               btn.classList.toggle(activeClass);
+               if (dotElement) dotElement.style.display = wasActive ? "block" : "none";
+          }
+          if (actionType === 'like' && data.status !== 'liked' && data.status !== 'unliked') {
+              btn.classList.toggle(activeClass);
+          }
+      })
+      .catch(err => {
+          console.error(err);
+          showToast('Action failed. Try again.');
+          btn.classList.toggle(activeClass);
+          if (actionType === 'save' && dotElement) dotElement.style.display = wasActive ? "block" : "none";
+      });
     }
 
     if (likeBtn) likeBtn.addEventListener('click', () => handleInteraction(likeBtn, 'like'));
     if (saveBtn) saveBtn.addEventListener('click', () => handleInteraction(saveBtn, 'save', dot));
 
-
-    // 8. LOGIN & DROPDOWNS
+    // --- 10. LOGIN & DROPDOWNS ---
     const startlogin = document.getElementById('startlogin');
     const loginSection = document.getElementById('loginSection');
     const closelogin = document.getElementById('closelogin');
     
     if (startlogin && loginSection) {
-        startlogin.addEventListener('click', () => { playUiSound(); loginSection.classList.add('active'); });
-        if(closelogin) closelogin.addEventListener('click', () => { playUiSound(); loginSection.classList.remove('active'); });
+        startlogin.addEventListener('click', () => { window.playUiSound(); loginSection.classList.add('active'); });
+        if(closelogin) closelogin.addEventListener('click', () => { window.playUiSound(); loginSection.classList.remove('active'); });
         loginSection.addEventListener('click', (e) => { if (e.target === loginSection) loginSection.classList.remove('active'); });
     }
 
@@ -568,7 +642,7 @@
     if (dropdownButton && dropdownMenu) {
         dropdownButton.addEventListener('click', (e) => {
             e.stopPropagation();
-            playUiSound();
+            window.playUiSound();
             dropdownMenu.classList.toggle('hidden');
         });
         window.addEventListener('click', (e) => {
@@ -578,15 +652,13 @@
         });
     }
 
-
-    // 9. DJANGO MESSAGE FADE OUT
+    // --- 11. ERROR MESSAGES FADE OUT ---
     const errorDiv = document.querySelector('.error');
     if (errorDiv) {
         const timer = setTimeout(() => {
             errorDiv.classList.add('fade-out');
             errorDiv.addEventListener('animationend', () => errorDiv.remove());
         }, 3000);
-        
         const closeErr = errorDiv.querySelector('.error__close');
         if(closeErr) closeErr.addEventListener('click', () => {
             clearTimeout(timer);
@@ -594,8 +666,7 @@
         });
     }
 
-
-    // 10. IMAGE OPTIMIZATION & LAZY LOADING
+    // --- 12. IMAGE OPTIMIZATION ---
     const images = document.querySelectorAll("#container img");
     if(images.length > 0) {
         images.forEach(img => {
@@ -607,13 +678,11 @@
         });
     }
 
-
-    // 11. INITIALIZE ICONS
+    // --- 13. INITIALIZE ICONS---
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
-  }); // End DOMContentLoaded
+  });
 </script>
-
 
 </body>
 

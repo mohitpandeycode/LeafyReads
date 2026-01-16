@@ -319,14 +319,15 @@
           <button id="fullscreenBtn" class="control-button fullscreen-button" title="Fullscreen mode">⛶</button>
           <button id="darkModeBtn" class="control-button fullscreen-button" title="Dark Mode">🌙</button>
           <button disabled id="play" class="control-button fullscreen-button" title="listen book"><i data-lucide="play"></i></button>
+          <a href="{% url 'pageView' book.slug %}" class="control-button fullscreen-button" title="Switch to Page View">📜</a>   
           <button id="highlightBtn" class="control-button fullscreen-button" title="Highlighter">🖍️</button>
           <button id="shortcutsBtn" class="control-button fullscreen-button" title="Keyboard Shortcuts">⌨️</button>
           <button id="muteBtn" class="control-button fullscreen-button" title="Mute/Unmute Audio">🔊</button>     
         </div>
         {% if user.is_authenticated %}
         <div class="socialaction">
-            <button id="likeBtn" class="control-button fullscreen-button {% if liked %}like-active{% endif %}" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
-            <button id="saveBtn" class="control-button fullscreen-button {% if saved %}save-active{% endif %}" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
+            <button id="likeBtn" style="border: 2px solid #09a2ff" class="control-button fullscreen-button {% if liked %}like-active{% endif %}" title="Like" data-url="{% url 'toggle_like' book.slug %}"><i data-lucide="thumbs-up"></i></button>
+            <button id="saveBtn" style="border: 2px solid #ff9209;" class="control-button fullscreen-button {% if saved %}save-active{% endif %}" title="Save" data-url="{% url 'toggle_read_later' book.slug %}"><i data-lucide="bookmark"></i></button>
             <a href="{% url 'community' %}" id="comment" class="control-button fullscreen-button" title="community"><i data-lucide="messages-square"></i></a>
         </div>
         {% endif %} 
@@ -351,7 +352,7 @@
             {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" class="cover-image" style="position: absolute; left: -2px; width: 101%; top: -2px; height: 101%;" alt="forntFrame" %}
             <img src="{{ book.cover_front.url }}?q_auto,f_auto" style="object-fit: cover;" alt="Cover Image" class="cover-image" />
             <div class="bookinfocover">
-              <h4 style="margin: 0;">{{book.title}}</h4>
+              <h5 style="margin: 0;">{{book.title}}</h5>
               <p style="font-size:16px;margin: 0;">By: {{book.author}}</p>
             </div>
           </article>
@@ -403,39 +404,79 @@
     <script src="{% static 'js/highlight.js' %}"></script>
     <script src="{% static 'js/book.js' %}"></script>
     <script src="{% static 'js/pagination.js' %}"></script>
+    <script src="{% static 'js/loading.js' %}"></script>
     <script src="{% static 'js/navsearch.js' %}"></script>
-    {% if book.audio_file %}
-    <script>
-      
-  // Audio Play/Pause Logic
-  let audioFile = new Audio('{{ book.audio_file.url }}');
-  const playBtn = document.getElementById('play');
-  const soundwave = document.querySelector('.soundwave')
-
-  if (playBtn) {
-    playBtn.addEventListener('click', () => {
-      if (audioFile.paused) {
-        audioFile.play();
-        playBtn.innerHTML = '<i data-lucide="pause"></i>';
-        soundwave.style.display="block"
-      } else {
-        audioFile.pause();
-        playBtn.innerHTML = '<i data-lucide="play"></i>';
-        soundwave.style.display="none"
-      }
-      lucide.createIcons();
-    });
-  }
-</script>
-{% endif %}
 
 <script>
-  function toggleNotifications() {
-      const box = document.getElementById('notificationBox');
-      box.classList.toggle('active');
+  // --- 1. GLOBAL HELPER: UI SOUND ---
+  const uiClickSound = new Audio('/static/sounds/click.mp3');
+  window.playUiSound = function() {
+    uiClickSound.currentTime = 0;
+    uiClickSound.play().catch(e => { /* Ignore auto-play blocking */ });
+  };
+
+  // --- 2. GLOBAL HELPER: TOGGLE NOTIFICATIONS ---
+  window.toggleNotifications = function() {
+    window.playUiSound();
+    const box = document.getElementById('notificationBox');
+    if(box) box.classList.toggle('active');
+  };
+
+  // ==========================================
+  //      MAIN EXECUTION (DOM Ready)
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- A. CONSTANTS & TOASTS ---
+    const toast = document.getElementById('toast-notification');
+    const toastMessage = document.getElementById('toast-message');
+    const csrfToken = '{{ csrf_token }}';
+
+    function showToast(message) {
+      if (toast && toastMessage) {
+        toastMessage.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      } else {
+        // Fallback if toast HTML isn't present
+        console.log("Toast:", message);
+      }
     }
 
-    // Close when clicking outside
+    // --- B. AUDIO PLAYER MODULE ---
+ 
+    const audioUrl = "{% if book.audio_file %}{{ book.audio_file.url }}{% endif %}";
+    const playBtn = document.getElementById('play');
+    const soundwave = document.querySelector('.soundwave');
+
+    if (audioUrl && playBtn) {
+      const audioFile = new Audio(audioUrl);
+      
+      playBtn.addEventListener('click', () => {
+        window.playUiSound();
+        if (audioFile.paused) {
+          audioFile.play().then(() => {
+            playBtn.innerHTML = '<i data-lucide="pause"></i>';
+            if(soundwave) soundwave.style.display = "block";
+            if(window.lucide) lucide.createIcons();
+          }).catch(e => console.error("Audio Play Error:", e));
+        } else {
+          audioFile.pause();
+          playBtn.innerHTML = '<i data-lucide="play"></i>';
+          if(soundwave) soundwave.style.display = "none";
+          if(window.lucide) lucide.createIcons();
+        }
+      });
+
+      // Reset when audio finishes
+      audioFile.addEventListener('ended', () => {
+        playBtn.innerHTML = '<i data-lucide="play"></i>';
+        if(soundwave) soundwave.style.display = "none";
+        if(window.lucide) lucide.createIcons();
+      });
+    }
+
+    // --- C. NOTIFICATION CLICK OUTSIDE ---
     document.addEventListener('click', function (event) {
       const box = document.getElementById('notificationBox');
       const btn = document.querySelector('.notif-btn');
@@ -443,372 +484,247 @@
         box.classList.remove('active');
       }
     });
-  const clicks = new Audio('/static/sounds/click.mp3');
 
-  document.addEventListener('DOMContentLoaded', () => {
+    // --- D. NAVIGATION SEARCH BAR (Ajax) ---
+    const navSearchForm = document.getElementById('navSearch');
+    const navSearchInput = document.getElementById('navSearchInput');
+    const navResultsBox = document.querySelector('.nav-results');
+    const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null;
+    let currentController = null; // For cancelling previous requests
+    let navTypingTimer;
+
+    if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
+        
+        const fetchNavResults = async (query) => {
+            if (currentController) currentController.abort();
+            currentController = new AbortController();
+
+            // Loading State
+            navHistoryContainer.innerHTML = `
+                <div class="nav-search-history-title">Search results</div>
+                <div class="nav-history-item loading-state">
+                    <i data-lucide="loader" class="animate-spin"></i>
+                    <div class="nav-history-item-info"><span class="nav-history-item-title">Searching...</span></div>
+                </div>`;
+            navResultsBox.style.display = 'block';
+            navSearchForm.classList.add('results-open');
+            navSearchForm.style.borderRadius = '15px 15px 0 0';
+            if(window.lucide) lucide.createIcons();
+
+            try {
+                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
+                    signal: currentController.signal
+                });
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                const results = data.results;
+
+                navHistoryContainer.innerHTML = '';
+                
+                // Title
+                const titleEl = document.createElement('div');
+                titleEl.className = 'nav-search-history-title';
+                titleEl.textContent = 'Search results';
+                navHistoryContainer.appendChild(titleEl);
+
+                if (!results.length) {
+                    const noResultEl = document.createElement('div');
+                    noResultEl.className = 'nav-history-item';
+                    noResultEl.innerHTML = `<i data-lucide="search"></i>
+                        <div class="nav-history-item-info"><span class="nav-history-item-title">No results found</span></div>`;
+                    navHistoryContainer.appendChild(noResultEl);
+                } else {
+                    results.forEach((book) => {
+                        const link = document.createElement('a');
+                        link.href = `/book/library/book-details/${book.slug}`;
+                        link.className = 'nav-history-item';
+                        link.innerHTML = `
+                            <i data-lucide="search"></i>
+                            <div class="nav-history-item-info">
+                                <span class="nav-history-item-title">${book.title || 'Untitled'}</span>
+                                <span class="nav-history-item-author"> by ${book.author || 'Unknown'}</span>
+                            </div>`;
+                        navHistoryContainer.appendChild(link);
+                    });
+                }
+                if(window.lucide) lucide.createIcons();
+
+            } catch (err) {
+                if (err.name === 'AbortError') return; // Ignore cancellations
+                console.error('Nav search error:', err);
+                navHistoryContainer.innerHTML = `<div class="nav-history-item"><div class="nav-history-item-info">Error fetching results</div></div>`;
+            }
+        };
+
+        // Input Listener with Debounce
+        navSearchInput.addEventListener('input', () => {
+            clearTimeout(navTypingTimer);
+            const query = navSearchInput.value.trim();
+            if (query.length > 2) {
+                navTypingTimer = setTimeout(() => fetchNavResults(query), 300);
+            } else {
+                navResultsBox.style.display = 'none';
+                navSearchForm.classList.remove('results-open');
+                navSearchForm.style.borderRadius = '15px';
+                if (currentController) currentController.abort();
+            }
+        });
+
+        // Focus & Click Outside
+        document.addEventListener('click', (e) => {
+            if (!navSearchForm.contains(e.target)) {
+                navResultsBox.style.display = 'none';
+                navSearchForm.classList.remove('results-open');
+            }
+        });
+        navSearchInput.addEventListener('focus', () => {
+            const query = navSearchInput.value.trim();
+            if (query.length > 2) {
+                navResultsBox.style.display = 'block';
+                fetchNavResults(query);
+            }
+        });
+    }
+
+    // --- E. LIKE & SAVE INTERACTIONS ---
     const likeBtn = document.getElementById('likeBtn');
     const saveBtn = document.getElementById('saveBtn');
     const dot = document.querySelector('.dot');
-    const toast = document.getElementById('toast-notification');
-    const toastMessage = document.getElementById('toast-message');
 
-    function showToast(message) {
-      toastMessage.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+    function burstLikes() {
+        let count = 0;
+        const interval = setInterval(() => {
+            if (count >= 30) return clearInterval(interval);
+            const like = document.createElement('div');
+            like.classList.add('like');
+            like.textContent = '❤️';
+            const size = Math.random() * 16 + 16;
+            like.style.cssText = `font-size: ${size}px; left: ${Math.random() * window.innerWidth}px; animation-duration: ${Math.random() * 2 + 2}s;`;
+            document.body.appendChild(like);
+            setTimeout(() => like.remove(), 4000);
+            count++;
+        }, 20);
     }
 
-    // Burst Likes Animation
-    function burstLikes(count = 30) {
-      let i = 0;
-      const interval = setInterval(() => {
-        if (i >= count) return clearInterval(interval);
-        requestAnimationFrame(() => {
-          const like = document.createElement('div');
-          like.classList.add('like');
-          like.textContent = '❤️';
-          const size = Math.random() * 16 + 16;
-          like.style.cssText = `
-            font-size: ${size}px;
-            left: ${Math.random() * window.innerWidth}px;
-            animation-duration: ${Math.random() * 2 + 2}s;
-          `;
-          document.body.appendChild(like);
-          setTimeout(() => like.remove(), 4000);
-        });
-        i++;
-      }, 20);
-    }
-
-    // AJAX for Save / Read Later (Optimistic)
-    if (saveBtn) {
-      saveBtn.addEventListener('click', function() {
-        const url = this.dataset.url;
-        const csrfToken = '{{ csrf_token }}';
-
-        // --- Optimistic UI Update ---
-        const isSaving = !this.classList.contains('save-active');
-        this.classList.toggle('save-active'); // Toggle UI immediately
-        clicks.currentTime = 0;
-        clicks.play();
-
-        if (isSaving) {
-          showToast('Added to Read Later');
-          if(dot) dot.style.display = "block";
-        } else {
-          showToast('Removed from Read Later');
-          if(dot) dot.style.display = "none";
-        }
-        // --- End Optimistic UI ---
-
-        fetch(url, {
-          method: 'POST',
-          headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status !== 'saved' && data.status !== 'removed') {
-            // ERROR: Revert UI
-            showToast(data.message || 'An error occurred.');
-            this.classList.toggle('save-active'); // Revert toggle
-            if(dot) dot.style.display = isSaving ? "none" : "block"; // Revert dot
-          } else {
-            // Server confirmed, just update the message
-            showToast(data.message);
-          }
-        })
-        .catch(error => {
-          // NETWORK ERROR: Revert UI
-          console.error('Error:', error);
-          showToast('Something went wrong. Please try again.');
-          this.classList.toggle('save-active'); // Revert toggle
-          if(dot) dot.style.display = isSaving ? "none" : "block"; // Revert dot
-        });
-      });
-    }
-
-    // AJAX for Like Button (Optimistic)
-    if (likeBtn) {
-      likeBtn.addEventListener('click', function() {
-        const url = this.dataset.url;
-        const csrfToken = '{{ csrf_token }}';
-
-        // --- Optimistic UI Update ---
-        const isLiking = !this.classList.contains('like-active');
-        this.classList.toggle('like-active'); // Toggle UI immediately
-        clicks.currentTime = 0;
-        clicks.play();
+    function handleInteraction(btn, actionType, dotElement = null) {
+        const url = btn.dataset.url;
+        const activeClass = actionType === 'like' ? 'like-active' : 'save-active';
+        const wasActive = btn.classList.contains(activeClass);
         
-        if (isLiking) {
-          showToast('Liked!');
-          burstLikes(30); // Only burst when liking
-        } else {
-          showToast('Unliked');
-        }
-        // --- End Optimistic UI ---
+        // Optimistic UI
+        btn.classList.toggle(activeClass);
+        window.playUiSound();
 
+        if (actionType === 'like') {
+             if(!wasActive) { showToast('Liked!'); burstLikes(); }
+             else { showToast('Unliked'); }
+        }
+        if (actionType === 'save') {
+             if(!wasActive) { showToast('Added to Read Later'); if(dotElement) dotElement.style.display = "block"; }
+             else { showToast('Removed from Read Later'); if(dotElement) dotElement.style.display = "none"; }
+        }
+
+        // Server Request
         fetch(url, {
-          method: 'POST',
-          headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
         })
         .then(response => response.json())
         .then(data => {
-          if (data.status !== 'liked' && data.status !== 'unliked') {
-            // ERROR: Revert UI
-            showToast(data.message || 'An error occurred.');
-            this.classList.toggle('like-active'); // Revert toggle
-          } else {
-            // Server confirmed, just update the message
-            showToast(data.message);
-          }
+            if (data.message) showToast(data.message); 
+            // Consistency Check
+            if (actionType === 'save' && data.status !== 'saved' && data.status !== 'removed') {
+                 // Revert if error
+                 btn.classList.toggle(activeClass);
+                 if (dotElement) dotElement.style.display = wasActive ? "block" : "none";
+            }
+            if (actionType === 'like' && data.status !== 'liked' && data.status !== 'unliked') {
+                 btn.classList.toggle(activeClass);
+            }
         })
-        .catch(error => {
-          // NETWORK ERROR: Revert UI
-          console.error('Error:', error);
-          showToast('Something went wrong. Please try again.');
-          this.classList.toggle('like-active'); // Revert toggle
+        .catch(err => {
+            console.error(err);
+            showToast('Connection error');
+            // Revert UI
+            btn.classList.toggle(activeClass);
+            if (actionType === 'save' && dotElement) dotElement.style.display = wasActive ? "block" : "none";
         });
-      });
     }
 
-    // Login Modal Toggle
+    if (likeBtn) likeBtn.addEventListener('click', () => handleInteraction(likeBtn, 'like'));
+    if (saveBtn) saveBtn.addEventListener('click', () => handleInteraction(saveBtn, 'save', dot));
+
+    // --- F. LOGIN MODAL & DROPDOWNS ---
     const startlogin = document.getElementById('startlogin');
     const loginSection = document.getElementById('loginSection');
     const closelogin = document.getElementById('closelogin');
 
-    if (startlogin && loginSection && closelogin) {
-      startlogin.addEventListener('click', () => loginSection.classList.add('active'));
-      closelogin.addEventListener('click', () => loginSection.classList.remove('active'));
-      loginSection.addEventListener('click', (e) => {
-        if (e.target === loginSection) loginSection.classList.remove('active');
-      });
+    if (startlogin && loginSection) {
+        startlogin.addEventListener('click', () => { window.playUiSound(); loginSection.classList.add('active'); });
+        if(closelogin) closelogin.addEventListener('click', () => { window.playUiSound(); loginSection.classList.remove('active'); });
+        loginSection.addEventListener('click', (e) => { if (e.target === loginSection) loginSection.classList.remove('active'); });
     }
 
-    // alert Fade-Out
-    const errorDiv = document.querySelector('.error');
-    if (errorDiv) {
-      const closeButton = errorDiv.querySelector('.error__close');
-      const hideError = () => {
-        errorDiv.classList.add('fade-out');
-        const onAnimationEnd = () => {
-          errorDiv.remove();
-          errorDiv.removeEventListener('animationend', onAnimationEnd);
-        };
-        errorDiv.addEventListener('animationend', onAnimationEnd);
-      };
-      const timer = setTimeout(hideError, 3000);
-      if (closeButton) closeButton.addEventListener('click', () => {
-        clearTimeout(timer);
-        hideError();
-      });
-    }
-
-    // User Dropdown Menu
     const dropdownButton = document.getElementById('dropdown-button');
     const dropdownMenu = document.getElementById('dropdown-menu');
-
     if (dropdownButton && dropdownMenu) {
-      dropdownButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        dropdownMenu.classList.toggle('hidden');
-      });
-
-      window.addEventListener('click', (event) => {
-        if (!dropdownMenu.contains(event.target) && !dropdownButton.contains(event.target)) {
-          dropdownMenu.classList.add('hidden');
-        }
-      });
-    }
-
-    // Initialize Lucide Icons
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
-  });
-</script>
-
-<!-- searchbar -->
-<script>
-      ; (function () {
-        'use strict'
-
-        // Tracks the current active request for cancellation (prevents race conditions)
-        let currentController = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-          // --- Nav Search Bar AJAX ---
-          const navSearchForm = document.getElementById('navSearch')
-          const navSearchInput = document.getElementById('navSearchInput')
-          const navResultsBox = document.querySelector('.nav-results')
-          const navHistoryContainer = navResultsBox ? navResultsBox.querySelector('.nav-search-history') : null
-
-          if (navSearchInput && navResultsBox && navHistoryContainer && navSearchForm) {
-
-            const fetchNavResults = async (query) => {
-
-              // Cancel the previous running request
-              if (currentController) currentController.abort();
-              currentController = new AbortController();
-
-              // Show immediate Loading State
-              navHistoryContainer.innerHTML = `
-                    <div class="nav-search-history-title">Search results</div>
-                    <div class="nav-history-item loading-state">
-                        <i data-lucide="loader" class="animate-spin"></i>
-                        <div class="nav-history-item-info">
-                            <span class="nav-history-item-title">Searching...</span>
-                        </div>
-                    </div>
-                `;
-              navResultsBox.style.display = 'block';
-              navSearchForm.classList.add('results-open');
-              navSearchForm.style.borderRadius = '15px 15px 0 0';
-
-
-              try {
-                const response = await fetch(`/book/ajax/search/?q=${encodeURIComponent(query)}`, {
-                  signal: currentController.signal
-                });
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const data = await response.json();
-                const results = data.results;
-
-                // Render results
-                navHistoryContainer.innerHTML = '';
-                const fragment = document.createDocumentFragment();
-
-                const titleEl = document.createElement('div');
-                titleEl.className = 'nav-search-history-title';
-                titleEl.textContent = 'Search results';
-                fragment.appendChild(titleEl);
-
-                if (!results.length) {
-                  const noResultEl = document.createElement('div');
-                  noResultEl.className = 'nav-history-item';
-                  noResultEl.innerHTML = `<i data-lucide="search"></i>
-                            <div class="nav-history-item-info">
-                                <span class="nav-history-item-title">No results found</span>
-                            </div>`;
-                  fragment.appendChild(noResultEl);
-                } else {
-                  results.forEach((book) => {
-                    const link = document.createElement('a');
-                    link.href = `/book/library/book-details/${book.slug}`;
-                    link.className = 'nav-history-item';
-
-                    const icon = document.createElement('i')
-                    icon.setAttribute('data-lucide', 'search')
-
-                    const infoDiv = document.createElement('div')
-                    infoDiv.className = 'nav-history-item-info'
-
-                    const titleSpan = document.createElement('span')
-                    titleSpan.className = 'nav-history-item-title'
-                    titleSpan.textContent = book.title || 'Untitled'
-
-                    const authorSpan = document.createElement('span')
-                    authorSpan.className = 'nav-history-item-author'
-                    authorSpan.textContent = ` by ${book.author || 'Unknown Author'}`
-
-                    infoDiv.appendChild(titleSpan)
-                    infoDiv.appendChild(authorSpan)
-                    link.appendChild(icon)
-                    link.appendChild(infoDiv)
-                    fragment.appendChild(link)
-                  });
-                }
-                navHistoryContainer.appendChild(fragment);
-                if (window.lucide) lucide.createIcons();
-
-              } catch (err) {
-                // Ignore AbortError: request was cancelled by user typing faster
-                if (err.name === 'AbortError') return;
-
-                console.error('Nav search error:', err);
-                navHistoryContainer.innerHTML = `<div class="nav-search-history-title">Search results</div><div class="nav-history-item"><div class="nav-history-item-info"><span class="nav-history-item-title">Error fetching results</span></div></div>`;
-                if (window.lucide) lucide.createIcons();
-              }
-            }
-
-            // --- DEBOUNCE & INPUT LISTENER ---
-            let navTypingTimer;
-            const navDebounceDelay = 300;
-
-            navSearchInput.addEventListener('input', () => {
-              clearTimeout(navTypingTimer);
-              const query = navSearchInput.value.trim();
-
-              if (query.length > 2) {
-                navTypingTimer = setTimeout(() => fetchNavResults(query), navDebounceDelay);
-
-              } else {
-                // Hide the box if the query is too short
-                navResultsBox.style.display = 'none';
-                navSearchForm.classList.remove('results-open');
-                navSearchForm.style.borderRadius = '15px';
-                // Cancel any pending fetch when search bar is cleared
-                if (currentController) currentController.abort();
-              }
-            });
-
-            // --- OUTSIDE CLICK & FOCUS LISTENERS ---
-            document.addEventListener('click', (e) => {
-              if (!navSearchForm.contains(e.target)) {
-                navResultsBox.style.display = 'none';
-                navSearchForm.classList.remove('results-open');
-              }
-            });
-
-            navSearchInput.addEventListener('focus', () => {
-              const query = navSearchInput.value.trim();
-              if (query.length > 2) {
-                navResultsBox.style.display = 'block';
-                fetchNavResults(query);
-              }
-            });
-          }
+        dropdownButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.playUiSound();
+            dropdownMenu.classList.toggle('hidden');
         });
-      })();
-  </script>
-  <script>
-    // book zoom-in and zoom-out
-    document.addEventListener('DOMContentLoaded', () => {
-        const container = document.getElementById('container');
-        let scale = 1; // Default scale is 1 (100%)
-        const zoomSpeed = 0.01; // How fast it zooms (lower is smoother)
-        const minScale = 0.5;   // Minimum zoom (50%)
-        const maxScale = 2.0;   // Maximum zoom (300%)
+        window.addEventListener('click', (e) => {
+            if (!dropdownMenu.contains(e.target) && !dropdownButton.contains(e.target)) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+    }
 
-        if (container) {
-            container.addEventListener('wheel', (e) => {
-                //Prevent the page from scrolling up/down while zooming the book
-                e.preventDefault();
+    // --- G. ZOOM ON WHEEL (For Book Container) ---
+    const container = document.getElementById('container');
+    if (container) {
+        let scale = 1;
+        const zoomSpeed = 0.01;
+        const minScale = 0.5;
+        const maxScale = 2.0;
 
-                // Check scroll direction
-                if (e.deltaY < 0) {
-                    scale += zoomSpeed;
-                } else {
-                    scale -= zoomSpeed;
-                }
+        container.addEventListener('wheel', (e) => {
+            if (e.ctrlKey) return; // Let browser handle ctrl+scroll? 
+            e.preventDefault();
 
-                //Enforce Min/Max limits so it doesn't disappear or get too huge
-                scale = Math.min(Math.max(minScale, scale), maxScale);
+            if (e.deltaY < 0) scale += zoomSpeed;
+            else scale -= zoomSpeed;
 
-                // Apply the CSS transform
-                container.style.transform = `scale(${scale})`;
-            }, { passive: false }); // used to preventDefault()
-        }
+            scale = Math.min(Math.max(minScale, scale), maxScale);
+            container.style.transform = `scale(${scale})`;
+        }, { passive: false });
+    }
+
+    // --- H. ERROR ALERTS FADE OUT ---
+    const errorDiv = document.querySelector('.error');
+    if (errorDiv) {
+        const timer = setTimeout(() => {
+            errorDiv.classList.add('fade-out');
+            errorDiv.addEventListener('animationend', () => errorDiv.remove());
+        }, 3000);
+        const closeErr = errorDiv.querySelector('.error__close');
+        if(closeErr) closeErr.addEventListener('click', () => {
+            clearTimeout(timer);
+            errorDiv.remove();
+        });
+    }
+
+    // --- I. LAZY LOAD IMAGES ---
+    document.querySelectorAll(".pagestyle img").forEach(img => {
+        img.loading = "lazy";
+        img.decoding = "async";
     });
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".pagestyle img").forEach(img => {
-    img.loading = "lazy";
-    img.decoding = "async";
-  });
-});
+
+    // --- J. INIT ICONS (Last Step) ---
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  }); 
 </script>
   </body>
 </html>

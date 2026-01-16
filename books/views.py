@@ -126,6 +126,46 @@ def home(request, slug):
     )
 
 
+# ISOLATED Scroll View (For PC "Normal View")
+def book_page_view(request, slug):
+    book_qs = Book.objects.select_related("content")
+    
+    if request.user.is_authenticated:
+        saved_subquery = ReadLater.objects.filter(book=OuterRef("pk"), user=request.user)
+        liked_subquery = Like.objects.filter(book=OuterRef("pk"), user=request.user)
+        book_qs = book_qs.annotate(is_saved=Exists(saved_subquery), is_liked=Exists(liked_subquery))
+
+    book = get_object_or_404(book_qs, slug=slug)
+
+    # 2. History Recording (Same as main view)
+    if request.user.is_authenticated:
+        def save_read():
+            ReadBy.objects.get_or_create(user=request.user, book=book)
+        transaction.on_commit(save_read)
+
+    # 3. Content & Pagination Logic (Strictly Chunk/Scroll based)
+    try:
+        content_obj = book.content
+        content_chunks = getattr(content_obj, "chunks", []) if content_obj else []
+    except:
+        content_chunks = []
+
+    paginator = Paginator(content_chunks, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    display_content = "".join(page_obj.object_list)
+
+    # 4. Render explicitly with mobileBook.html
+    return render(request, "mobileBook.html", {
+        "book": book,
+        "bookcontent": display_content,
+        "page_obj": page_obj,
+        "saved": getattr(book, "is_saved", False),
+        "liked": getattr(book, "is_liked", False),
+        "title": book.title,
+        "view_mode": "page view" 
+    })
+
 
 def openBook(request, slug):
     # 1. Fetch Book
