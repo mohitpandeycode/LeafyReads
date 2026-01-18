@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load cloudinary %}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        {% block title %}
+        LeafyReads
+        {% endblock %}
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+
+    <style>
+        /* --- Navigation Styles --- */
+        .desktop-nav a.active {
+            color: #25b95f !important;
+            font-weight: 500;
+        }
+
+        /* --- Theme Icons --- */
+        .moon-icon {
+            display: none;
+        }
+
+        .sun-icon {
+            display: block;
+        }
+
+        body.dark-mode .moon-icon {
+            display: block;
+        }
+
+        body.dark-mode .sun-icon {
+            display: none;
+        }
+
+        /* --- Theme Toggle --- */
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            color: inherit;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .theme-toggle-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- MESSAGE ALERT STYLES (NEW) --- */
+        .alert-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            width: 350px;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 5px 20px;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .alert-success {
+            background-color: #2d7348;
+            border: 1px solid #00ff00;
+        }
+
+        .alert-error {
+            background-color: #a64141;
+            border: 2px solid red;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .logo-light,
+            .logo-dark {
+                width: 100px !important;
+            }
+
+            .primary-btn {
+                padding: 8px 12px !important;
+                font-size: 14px !important;
+            }
+
+            .desktop-nav {
+                gap: 15px;
+            }
+
+            .alert-container {
+                width: 90%;
+                right: 5%;
+            }
+        }
+    </style>
+
+    {% block css %}
+    {% endblock %}
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    {% cloudinary "qqeschqzlywacz6rqsbl" quality="auto" fetch_format="auto" class="logo-icon" style="width: 48px; border-radius: 15px;" alt="logo" %}
+                    {% cloudinary "tdehybbsyciqodgxs2rq" quality="auto" fetch_format="auto" class="logo-light" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
+                    {% cloudinary "kp6b6xlwuu8d52cfhfba" quality="auto" fetch_format="auto" class="logo-dark" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
+                </a>
+
+                <nav class="desktop-nav">
+                    <a href="{% url 'draftBooks' %}"
+                        class="{% if request.path == '/profile/uploaded-books/' %}active{% endif %}">Dashboard</a>
+                    <a href="{% url 'createBook' %}"
+                        class="{% if request.path == '/profile/create-new-book/' %}active{% endif %}">Create Book</a>
+                    <a href="{% url 'publishedBooks' %}"
+                        class="{% if request.path == '/profile/published-books/' %}active{% endif %}">Published
+                        books</a>
+                    <a href="{% url 'profilepage' %}"
+                        class="{% if request.path == '/profile/' %}active{% endif %}">Profile</a>
+                </nav>
+
+                <div class="header-actions">
+                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+                        <i data-lucide="sun" class="sun-icon"></i>
+                        <i data-lucide="moon" class="moon-icon"></i>
+                    </button>
+                    <div class="btn primary-btn">Hi {{user.first_name}}😇</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            <span>{{ message }}</span>
+            <button class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block body %}
+    {% endblock %}
+
+    <script src="{% static 'js/home.js' %}"></script>
+    <script src="{% static 'js/navsearch.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Theme Toggle Logic
+            const themeToggleBtn = document.getElementById("theme-toggle");
+            const body = document.body;
+            const currentTheme = localStorage.getItem("theme");
+
+            if (currentTheme === "dark") body.classList.add("dark-mode");
+
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener("click", function () {
+                    body.classList.toggle("dark-mode");
+                    localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+                });
+            }
+
+            lucide.createIcons();
+        });
+    </script>
+</body>
+
+</html>

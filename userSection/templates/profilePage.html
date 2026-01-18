@@ -12,16 +12,6 @@ My Dashboard | LeafyReads
 
 {% block body %}
 <div class="container dashboard-header-container">
-    <div class="card">
-        <span>
-            <svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="m569.517 440.013c18.458 31.994-4.711 71.987-41.577 71.987h-479.886c-36.937 0-59.999-40.055-41.577-71.987l239.946-416.028c18.467-32.009 64.72-31.951 83.154 0zm-281.517-86.013c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346 7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z">
-                </path>
-            </svg>
-            <p>"We are working to make you an author. This feature is temporarily disabled."</p>
-        </span>
-    </div>
 
     <div class="user-greeting">
         {% if profile.avatar %}
@@ -40,21 +30,17 @@ My Dashboard | LeafyReads
     </div>
 
     <div class="quick-actions">
-        <a class="action-card createbook primary-card">
+        <a href="{% url 'createBook' %}" class="action-card createbook primary-card">
             <i data-lucide="book-up"></i>
             <span>Create New Book</span>
         </a>
-        <a class="action-card">
+        <a href="{% url 'draftBooks' %}" class="action-card">
             <i data-lucide="clipboard-list"></i>
-            <span>My Drafts</span>
+            <span>My Uploads Dashboard</span>
         </a>
-        <a class="action-card">
+        <a href="{% url 'publishedBooks' %}" class="action-card">
             <i data-lucide="book-check"></i>
             <span>Published Books</span>
-        </a>
-        <a class="action-card">
-            <i data-lucide="library"></i>
-            <span>My Library</span>
         </a>
         <a style="display:none" class="action-card">
             <i data-lucide="bar-chart-3"></i>
@@ -67,11 +53,11 @@ My Dashboard | LeafyReads
     <section class="profile-section">
         <div class="container">
             <div class="profile-stats">
-                <div class="stat-item">
+                <a href="{% url 'readBooks' %}" class="stat-item">
                     <div class="icon"><i data-lucide="book-open-check"></i></div>
                     <h2>{{ books_read_count }}</h2>
                     <p>Books Read</p>
-                </div>
+                </a>
                 <div class="stat-item">
                     <div class="icon" style="color:#f59e0b;"><i data-lucide="flame"></i></div>
                     <h2>5</h2>
@@ -82,16 +68,16 @@ My Dashboard | LeafyReads
                     <h2>{{ read_later_count }}</h2>
                     <p>Saved for Later</p>
                 </a>
-                <div class="stat-item">
+                <a href="{% url 'publishedBooks' %}" class="stat-item">
                     <div class="icon"><i data-lucide="book-plus"></i></div>
-                    <h2>0</h2>
+                    <h2>{{ published_books_count }}</h2>
                     <p>Book Published</p>
-                </div>
-                <div class="stat-item">
+                </a>
+                <a href="{% url 'my_community_posts' %}" class="stat-item">
                     <div class="icon"><i data-lucide="message-square-text"></i></div>
-                    <h2>{{ reviews_count }}</h2>
+                    <h2>{{ community_posts_count }}</h2>
                     <p>Community Post</p>
-                </div>
+                </a>
             </div>
         </div>
     </section>
@@ -102,7 +88,7 @@ My Dashboard | LeafyReads
             <div class="dash-card">
                 <div class="dash-header">
                     <div class="dash-title"><i data-lucide="history" size="18"></i> Continue Reading</div>
-                    <a href="{% url 'myBooks' %}" style="color:var(--dash-primary); font-size:0.9rem;">View All</a>
+                    <a href="{% url 'readBooks' %}" style="color:var(--dash-primary); font-size:0.9rem;">View All</a>
                 </div>
 
                 {% if recently_read_books %}
@@ -225,44 +211,7 @@ My Dashboard | LeafyReads
         </div>
     </section>
 
-    <section class="recent-books-section">
-        <div class="container">
-            <h2 class="section-title">Recently Published Books <i data-lucide="book-up"></i></h2>
-            {% if recently_published_books %}
-            <div class="book-list">
-                {% for read_item in recently_published_books %}
-                {% with book=read_item.book %}
-                <a href="{% url 'book' book.slug %}" class="book-card">
-                    {% if book.cover_front %}
-                    <div class="book-wrapper">
-                        <img src="{{ book.cover_front.url }}" alt="{{ book.title }} Cover" class="book-cover"
-                            loading="lazy">
-                        <div class="book-info-overlay">
-                            <p class="book-title">{{ book.title }}</p>
-                            <p class="book-author">{{ book.author }}</p>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="book-wrapper">
-                        <img src="" alt="No Cover Available" class="book-cover"
-                            loading="lazy">
-                        <div class="book-info-overlay">
-                            <p class="book-title">{{ book.title }}</p>
-                            <p class="book-author">{{ book.author }}</p>
-                        </div>
-                    </div>
-                    {% endif %}
-                </a>
-                {% endwith %}
-                {% endfor %}
-                <a class="showall" href="">Show All <i data-lucide="chevron-right"></i></a>
-            </div>
-            {% else %}
-            <p class="text-center">You haven't published any books yet. Start publishing and they'll appear here! 📚
-            </p>
-            {% endif %}
-        </div>
-    </section>
+    
 </main>
 
 <script>
@@ -272,15 +221,9 @@ My Dashboard | LeafyReads
     const createbook = document.querySelector('.createbook');
     const sidealert = document.querySelector('.card');
     let alertaudio = new Audio("{% static 'sounds/sidealert.wav' %}");
+    createbook.addEventListener('click', () => {
+        alertaudio.play().catch(e => console.log(e)); // Catch audio error if any
+    });
 
-    if (createbook && sidealert) {
-        createbook.addEventListener('click', () => {
-            sidealert.style.left = "0px";
-            alertaudio.play().catch(e => console.log(e)); // Catch audio error if any
-            setTimeout(() => {
-                sidealert.style.left = "-250px";
-            }, 7000);
-        });
-    }
 </script>
 {% endblock %}

@@ -10,6 +10,8 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.utils.html import strip_tags
 import hashlib
 import random
+from django.utils import timezone
+from datetime import timedelta
 from books.models import Book, BookContent, Genre, ReadLater, Like, ReadBy, SearchQueryLog
 #  Language choice to filter language based books
 
@@ -56,8 +58,42 @@ def apply_common_filters(queryset, lang_param, sort_param):
 
 
 def home(request, slug):
-    Book.objects.filter(slug=slug).update(views_count=F('views_count') + 1)
+    book_id = Book.objects.filter(slug=slug).values_list('id', flat=True).first()
+    
+    if book_id:
+        # CONFIGURATION of hours here
+        VIEW_COOLDOWN_HOURS = 3 
+        
+        # Create a unique session key for this specific book
+        session_key = f'viewed_book_{book_id}_last_at'
+        last_view_str = request.session.get(session_key)
+        
+        should_increment = False
+
+        if not last_view_str:
+            # Case 1: User has NEVER viewed this book (or cleared cookies)
+            should_increment = True
+        else:
+            # Case 2: User viewed before. Check if X hours have passed.
+            try:
+                last_view_time = timezone.datetime.fromisoformat(last_view_str)
+                if timezone.now() > last_view_time + timedelta(hours=VIEW_COOLDOWN_HOURS):
+                    should_increment = True
+            except ValueError:
+                # If the session data is weird/corrupt, reset it
+                should_increment = True
+
+        if should_increment:
+            # Increment DB Counter efficiently using F() expression
+            Book.objects.filter(id=book_id).update(views_count=F('views_count') + 1)
+            
+            # Update Session Timestamp to NOW
+            request.session[session_key] = timezone.now().isoformat()
+            request.session.modified = True
+
+    # --- 2. FETCH BOOK & USER DATA ---
     book_qs = Book.objects.select_related("content")
+    
     if request.user.is_authenticated:
         saved_subquery = ReadLater.objects.filter(
             book=OuterRef("pk"), user=request.user
@@ -72,13 +108,13 @@ def home(request, slug):
 
     book = get_object_or_404(book_qs, slug=slug)
 
-    # RECORD HISTORY (Async-safe)
+    # --- 3. RECORD HISTORY (Async-safe) ---
     if request.user.is_authenticated:
         def save_read():
             ReadBy.objects.get_or_create(user=request.user, book=book)
         transaction.on_commit(save_read)
 
-    # Book exists but has no Content yet.
+    # --- 4. CONTENT HANDLING ---
     try:
         content_obj = book.content
         has_content = True
@@ -86,16 +122,13 @@ def home(request, slug):
         content_obj = None
         has_content = False
 
-    # 5. DEVICE DETECTION & RENDERING
+    # --- 5. DEVICE DETECTION & RENDERING ---
     pagination_context = None
     display_content = ""
 
     if request.user_agent.is_mobile:
         template_name = "mobileBook.html"
-        if has_content:
-            content_chunks = getattr(content_obj, "chunks", [])
-        else:
-            content_chunks = []
+        content_chunks = getattr(content_obj, "chunks", []) if has_content else []
 
         # Paginate the pre-split chunks
         paragraphs_per_page = 30 
@@ -121,13 +154,47 @@ def home(request, slug):
             "page_obj": pagination_context,
             "saved": getattr(book, "is_saved", False),
             "liked": getattr(book, "is_liked", False),
-            "title":book.title
+            "title": book.title
         },
     )
-
-
+    
+    
 # ISOLATED Scroll View (For PC "Normal View")
 def book_page_view(request, slug):
+
+    book_id = Book.objects.filter(slug=slug).values_list('id', flat=True).first()
+    
+    if book_id:
+        # CONFIGURATION: Cooldown time in hours
+        VIEW_COOLDOWN_HOURS = 3 
+        
+        # Unique session key
+        session_key = f'viewed_book_{book_id}_last_at'
+        last_view_str = request.session.get(session_key)
+        
+        should_increment = False
+
+        if not last_view_str:
+            # Case 1: First visit
+            should_increment = True
+        else:
+            # Case 2: Check if X hours have passed
+            try:
+                last_view_time = timezone.datetime.fromisoformat(last_view_str)
+                if timezone.now() > last_view_time + timedelta(hours=VIEW_COOLDOWN_HOURS):
+                    should_increment = True
+            except ValueError:
+                should_increment = True
+
+        if should_increment:
+            # Increment DB Counter efficiently
+            Book.objects.filter(id=book_id).update(views_count=F('views_count') + 1)
+            
+            # Update Session Timestamp
+            request.session[session_key] = timezone.now().isoformat()
+            request.session.modified = True
+
+    # --- 2. MAIN DATA FETCHING ---
     book_qs = Book.objects.select_related("content")
     
     if request.user.is_authenticated:
@@ -137,13 +204,13 @@ def book_page_view(request, slug):
 
     book = get_object_or_404(book_qs, slug=slug)
 
-    # 2. History Recording (Same as main view)
+    # --- 3. HISTORY RECORDING ---
     if request.user.is_authenticated:
         def save_read():
             ReadBy.objects.get_or_create(user=request.user, book=book)
         transaction.on_commit(save_read)
 
-    # 3. Content & Pagination Logic (Strictly Chunk/Scroll based)
+    # --- 4. CONTENT & PAGINATION (Strictly Chunk/Scroll based) ---
     try:
         content_obj = book.content
         content_chunks = getattr(content_obj, "chunks", []) if content_obj else []
@@ -155,7 +222,7 @@ def book_page_view(request, slug):
     page_obj = paginator.get_page(page_number)
     display_content = "".join(page_obj.object_list)
 
-    # 4. Render explicitly with mobileBook.html
+    # --- 5. RENDER ---
     return render(request, "mobileBook.html", {
         "book": book,
         "bookcontent": display_content,
@@ -165,6 +232,7 @@ def book_page_view(request, slug):
         "title": book.title,
         "view_mode": "page view" 
     })
+
 
 
 def openBook(request, slug):
@@ -346,7 +414,7 @@ def searchbooks(request):
     cached_suggestions = cache.get("popular_books_sidebar")
     if not cached_suggestions:
         cached_suggestions = list(
-            Book.objects.filter(is_published=True)
+            Book.objects.filter(is_published=True,is_draft=False)
             .only("id", "title", "slug", "author", "cover_front", "likes_count", "views_count", "is_published")
             .order_by('-likes_count')[:12]
         )
@@ -447,7 +515,7 @@ def ajax_search(request):
 
     
     books = list(
-        Book.objects.filter(is_published=True)
+        Book.objects.filter(is_published=True,is_draft=False)
         .annotate(
             similarity=(
                 # Weighted search: Title matches are most important

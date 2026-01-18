@@ -1,0 +1,95 @@
+{% extends 'user_dashboard.html' %} {% load static %}
+{% load cloudinary %}
+
+{% block title %}
+My Published Books | LeafyReads
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/mobilehome.css' %}" />
+<link rel="stylesheet" href="{% static 'css/library.css' %}" />
+{% endblock %}
+
+{% block body %}
+<section class="bg-white" style="min-height: 80vh; padding-top: 2rem;">
+    <div class="container bookscontainer">
+        
+        <div class="section-header">
+            <h2 style="font-size: 1.8rem;">Your Published Works ✍️</h2>
+            <p>Books you have shared with the world.</p>
+        </div>
+
+        {% if books %}
+        <div class="books-grid">
+            {% for book in books %}
+            <div class="book-item" style="position: relative;">
+                <a href="{% url 'book' book.slug %}">
+                    
+                    {% if book.cover_front %}
+                        <img class="imgbook" src="{{ book.cover_front.url }}?q=auto&f_auto" alt="{{ book.title }}" loading="lazy" 
+                             style="object-fit: cover;" />
+                    {% else %}
+                         <img class="imgbook" src="https://placehold.co/400x600/cccccc/ffffff?text=No+Cover" alt="No Cover" loading="lazy" />
+                    {% endif %}
+                    
+                    {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" alt="frame" %}
+                    
+                    <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
+                        <div class="readby">
+                            <h3 class="truncate">{{ book.title }}</h3>
+                            <div class="views">
+                                <h4>{{ book.views_count }}</h4> <i style="width: 16px;" data-lucide="eye"></i>
+                            </div>
+                        </div>
+                        <div style="display: flex;justify-content: space-between;align-items: center;" class="truncate">
+                            <p><span style="font-weight: 700;">by:</span> You</p>
+                            <div style="font-size: 14px;align-items: center;display: flex;margin-right: 5px;">
+                                ❤️ {{ book.likes_count }}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if books.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if books.has_previous %}
+            <a href="?page={{ books.previous_page_number }}" class="page-btn">Previous</a>
+            {% else %}
+            <span class="page-btn disabled">Previous</span>
+            {% endif %}
+
+            {% for num in books.paginator.page_range %}
+                {% if num >= books.number|add:'-2' and num <= books.number|add:'2' %}
+                    {% if books.number == num %}
+                    <span class="page-btn current">{{ num }}</span>
+                    {% else %}
+                    <a href="?page={{ num }}" class="page-btn">{{ num }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if books.has_next %}
+            <a href="?page={{ books.next_page_number }}" class="page-btn">Next</a>
+            {% else %}
+            <span class="page-btn disabled">Next</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="fallback-modern">
+            <div class="fallback-card">
+                {% cloudinary "qfqb3sloiyybtxa4nolh" class="fallback-icon" loading="lazy" alt="Empty List" %}
+                <h2 style="color: inherit;">No published books yet</h2>
+                <p>You haven't published any books to the community yet.</p>
+                <a href="{% url 'createBook' %}" class="fallback-link">Write a Book</a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

@@ -1662,7 +1662,7 @@ body.dark-mode .footer {
 
 .footer-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    font-size: 12px;
     gap: 2rem;
     text-align: center;
 }
@@ -1760,7 +1760,7 @@ body.dark-mode .hero-bg {
     }
 
     .footer-grid {
-        grid-template-columns: repeat(4, 1fr)
+        grid-template-columns: repeat(3, 1fr)
     }
 
     .footer-about {
@@ -1770,7 +1770,7 @@ body.dark-mode .hero-bg {
 
 @media (min-width:1024px) {
     .footer-grid {
-        grid-template-columns: repeat(5, 1fr)
+        grid-template-columns: repeat(3, 1fr)
     }
 
     .footer-about {

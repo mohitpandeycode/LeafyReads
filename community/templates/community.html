@@ -107,13 +107,13 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
 
   <main class="main-content">
     <div class="create-post-card">
-      <div class="post-header" style="margin-bottom: 16px;">
+      <a href="{% url 'my_community_posts' %}" class="post-header" style="margin-bottom: 16px;">
         <div class="avatar">
           <img class="profileimage" src="https://i.pravatar.cc/150?u={{ user.username }}" alt="User Avatar"
             loading="lazy">
         </div>
         <span class="username">Share what's on your mind</span>
-      </div>
+      </a>
       {% if user.is_authenticated %}
 
       <form id="postForm" method="POST" enctype="multipart/form-data">

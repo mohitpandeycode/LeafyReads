@@ -1,0 +1,301 @@
+/* --- 1. THEME VARIABLES --- */
+:root {
+    --bg-card: #ffffff;
+    --bg-input: #f8f9fa;
+    --text-main: #2c3e50;
+    --text-muted: #6c757d;
+    --border-color: #e9ecef;
+    --focus-ring: rgba(37, 185, 95, 0.25);
+    --primary-color: #25b95f;
+    --primary-hover: #20a152;
+    --danger-color: #ff6b6b;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode {
+    --bg-card: #1e293b;
+    --bg-input: #0f172a;
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --focus-ring: rgba(37, 185, 95, 0.5);
+}
+
+/* --- 2. LAYOUT & CONTAINER --- */
+.addbookcontainer {
+    max-width:100%;
+    margin: 20px auto;
+    padding: 30px;
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+/* --- 3. FORM GRID --- */
+.split-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.form-left {
+    background: var(--bg-input);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.form-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- 4. INPUT STYLING --- */
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+    outline: none;
+}
+
+.django-ckeditor-widget {
+    width: 100%;
+}
+
+/* --- 5. IMAGE UPLOAD (FIXED HEIGHT UPDATE) --- */
+.image-upload {
+    position: relative;
+    width: 100%;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-card);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.image-upload:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-input);
+}
+
+.image-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 300px;
+    width: 100%;
+    padding: 0;
+}
+
+.image-upload img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* Reset Button for Update Page */
+.reset-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    z-index: 10;
+    opacity: 0.9;
+}
+
+.reset-btn:hover {
+    opacity: 1;
+}
+
+/* Adjust placeholder to center properly in the fixed box */
+.upload-placeholder {
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.overlay-icon {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px;
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+}
+
+/* --- 6. BUTTONS --- */
+.form-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary:hover {
+    background-color: var(--border-color);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    transform: scale(0.98);
+}
+
+/* Add this specific style for the word counter */
+.word-counter-box {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.word-counter-box.limit-exceeded {
+    color: var(--danger-color);
+    font-weight: 700;
+}
+
+/* Disable buttons visually when limit exceeded */
+button:disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+}
+
+#word-limit-alert {
+    background: rgb(255, 199, 199);
+    color: rgb(216, 8, 9);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgb(250, 177, 160);
+    position: fixed;
+    z-index: 9999;
+    top: 60px;
+    left: 16px;
+    width: 90%;
+}
+
+
+body.dark-mode .ck.ck-content.ck-editor__editable {
+    background-color: #2d3748;
+    color: #e2e8f0;
+}
+
+.ck.ck-content.ck-editor__editable {
+    height: 640px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* --- 7. RESPONSIVE DESIGN --- */
+@media (max-width: 900px) {
+    .split-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .form-left {
+        order: 1;
+    }
+
+    .form-right {
+        order: 2;
+    }
+
+    .addbookcontainer {
+        padding: 5px;
+        margin: 5px;
+    }
+}

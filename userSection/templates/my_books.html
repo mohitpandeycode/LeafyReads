@@ -1,0 +1,193 @@
+{% extends 'user_dashboard.html' %}
+{% load static %}
+
+{% block title %}
+My Uploads - LeafyReads
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}" />
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-wrapper">
+    <div class="books-container">
+        
+        <div class="books-header">
+            <h4>My Books</h4>
+            <div class="action-bar">
+                <form method="GET" class="search-form">
+                    <input type="text" name="search" class="search-input" placeholder="Search title, author..." value="{{ search|default:'' }}">
+                    <button type="submit" class="btn btn-search">
+                        <i data-lucide="search" style="width: 16px; margin-right: 5px;"></i> Search
+                    </button>
+                    {% if search %}
+                    <a href="{% url 'draftBooks' %}" class="btn btn-clear">Clear</a>
+                    {% endif %}
+                </form>
+                <a href="{% url 'createBook' %}" class="btn btn-add">
+                    <i data-lucide="plus" style="width: 16px; margin-right: 5px;"></i> Create Book
+                </a>
+            </div>
+        </div>
+
+        <form method="POST" id="bulk-action-form">
+            {% csrf_token %}
+            
+            <div class="bulk-toolbar">
+                <select name="action" id="action-select" class="action-select">
+                    <option value="">-- Bulk Actions --</option>
+                    <option value="delete">Delete selected</option>
+                </select>
+                <button type="submit" class="btn btn-search" style="padding: 8px 15px;">Apply</button>
+                <span id="selected-count" class="selected-count">0 selected</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"><input type="checkbox" id="select-all"></th>
+                            <th>Title</th>
+                            <th>Genre</th>
+                            <th>Language</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if books %}
+                            {% for book in books %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="book-checkbox" name="selected_books" value="{{ book.id }}">
+                                </td>
+                                <td>
+                                    <a href="{% url 'updateUserBook' book.slug %}" class="book-title-link">
+                                        {{ book.title }}
+                                    </a>
+                                </td>
+                                <td>{{ book.genre }}</td>
+                                <td>{{ book.book_language }}</td>
+                                <td>
+                                    {% if book.price > 0 %}
+                                        ${{ book.price }}
+                                    {% else %}
+                                        Free
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if book.is_published %}
+                                        <span class="badge published">
+                                            Published <i data-lucide="check-circle" style="width: 12px;"></i>
+                                        </span>
+                                    {% elif book.is_draft %}
+                                        <span class="badge draft">Draft</span>
+                                    {% else %}
+                                        <span class="badge pending">
+                                            Pending Review <i data-lucide="clock" style="width: 12px;"></i>
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="local-time" data-utc="{{ book.uploaded_at|date:'c' }}">
+                                    {{ book.uploaded_at|date:"M d, Y" }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    {% if search %}
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                                            <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                            <span>No books found matching "{{ search }}".</span>
+                                        </div>
+                                    {% else %}
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                                            <i data-lucide="book-open" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                            <span>You haven't uploaded any books yet.</span>
+                                            <a href="{% url 'createBook' %}" style="color: var(--primary-color); font-weight: 600;">Start writing now</a>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+
+        <div class="pagination-container">
+            <div class="page-info">
+                Showing {{ books.start_index }} - {{ books.end_index }} of {{ books.paginator.count }}
+            </div>
+
+            {% if books.has_other_pages %}
+            <div class="page-nav">
+                {% if books.has_previous %}
+                    <a href="?page={{ books.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}" class="btn-page">Previous</a>
+                {% else %}
+                    <span class="btn-page disabled">Previous</span>
+                {% endif %}
+
+                {% if books.has_next %}
+                    <a href="?page={{ books.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}" class="btn-page">Next</a>
+                {% else %}
+                    <span class="btn-page disabled">Next</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        lucide.createIcons();
+
+        // --- Checkbox Logic ---
+        const selectAllCheckbox = document.getElementById('select-all');
+        const checkboxes = document.querySelectorAll('.book-checkbox');
+        const selectedCountSpan = document.getElementById('selected-count');
+        const totalBookCount = {{ books.paginator.count }};
+
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.book-checkbox:checked').length;
+            if(selected > 0) {
+                selectedCountSpan.textContent = `${selected} selected`;
+                selectedCountSpan.style.color = 'var(--primary-color)';
+                selectedCountSpan.style.fontWeight = 'bold';
+            } else {
+                selectedCountSpan.textContent = `0 of ${totalBookCount} selected`;
+                selectedCountSpan.style.color = 'var(--text-muted)';
+                selectedCountSpan.style.fontWeight = 'normal';
+            }
+        }
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                checkboxes.forEach(cb => cb.checked = this.checked);
+                updateSelectedCount();
+            });
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedCount));
+        updateSelectedCount();
+
+        // --- Timezone Logic ---
+        const timeElements = document.querySelectorAll('.local-time');
+        timeElements.forEach(function (elem) {
+            const utcTime = elem.getAttribute('data-utc');
+            if (utcTime) {
+                const localDate = new Date(utcTime);
+                // Format: Jan 19, 2026
+                elem.innerText = localDate.toLocaleDateString(undefined, { 
+                    year: 'numeric', month: 'short', day: 'numeric' 
+                });
+            }
+        });
+    });
+</script>
+{% endblock body %}

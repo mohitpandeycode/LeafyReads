@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load cloudinary %}
+
 {% block title %}
 {{ title }} - By {{ book.author }} | LeafyReads
 {% endblock %}
+
 {% block meta_description %}{{ book.content|truncatewords:25 }} | {% endblock %}
+
 {% block social_tags %}
 <meta property="og:title" content="{{ book.title }} - By {{ book.author }}" />
 <meta property="og:description" content="Read {{ book.title }} online. {{ book.bookcontent|truncatewords:20 }}" />
@@ -35,26 +38,23 @@
             <div class="book-stats">
                 <div class="stat-item">
                     <span class="count">{{ book.likes_count }}</span>
-                    <span class="label">❤️Likes</span>
+                    <span class="label">Likes</span>
                 </div>
                 <div class="stat-item">
                     <span class="count">{{ book.views_count }}</span>
-                    <span class="label">📖Reads</span>
+                    <span class="label">Reads</span>
                 </div>
                 <div class="stat-item verified">
                     <span class="count">{{ book.read_later_count }}</span>
-                    <span class="label">📂Saved</span>
+                    <span class="label">Saves</span>
                 </div>
             </div>
 
             <div class="share-row">
-                {% with saved_label=user_saved|yesno:"✔ Saved,➕ Add to Read Later" %}
-                <button class="btn-chip">{{ saved_label }}</button>
-                {% endwith %}
-                <button style="cursor: pointer;" class="btn-chip" onclick="shareLink()">🔗 Share</button>
-                {% if book.audio_file %}
-                <button class="btn-chip">🎧 Listen Audio</button>
-                {% endif %}
+                <button class="btn-chip share-btn" onclick="shareLink()">
+                    <i data-lucide="share-2" style="width: 16px;"></i> Share Book
+                </button>
+                
             </div>
         </aside>
 
@@ -65,51 +65,48 @@
 
             <div class="book-credits">
                 <div class="credit-row">
-                    <span class="credit-label">Author:</span>
+                    <span class="credit-label">Author</span>
                     <span class="credit-value">{{ book.author }}</span>
                 </div>
                 <div class="credit-row">
-                    <span class="credit-label">Publisher:</span>
-                    <span class="credit-value" style="color: rgb(16 194 130);">
-                        LeafyReads
-                    </span>
+                    <span class="credit-label">Publisher</span>
+                    <span class="credit-value" style="color: var(--primary-color);">LeafyReads</span>
                 </div>
                 <div class="credit-row">
-                    <span class="credit-label">Language:</span>
+                    <span class="credit-label">Language</span>
                     <span class="credit-value">{{book.book_language}}</span>
                 </div>
                 <div class="credit-row">
-                    <span class="credit-label">Type:</span>
-                    <span class="credit-value">{{ book.genre }}, {{book.genre.category}}</span>
+                    <span class="credit-label">Genre</span>
+                    <span class="credit-value">{{ book.genre }}, {{ book.genre.category }}</span>
                 </div>
                 <div class="credit-row">
-                    <span class="credit-label">Published:</span>
-                    <span class="credit-value">
-                        {{ book.uploaded_at|date:"d-m-Y h:i A" }}
+                    <span class="credit-label">Published</span>
+                    <span class="credit-value local-time" data-utc="{{ book.uploaded_at|date:'c' }}">
+                        {{ book.uploaded_at|date:"M d, Y" }}
                     </span>
                 </div>
             </div>
 
             <div class="book-description">
-                <h4>About this story</h4>
+                <h4>Summary</h4>
                 <p>{{ book.bookcontent|escape }}....</p>
             </div>
 
             <div class="action-area">
                 <a href="{% url 'read-book' book.slug %}" class="btn btn-primary btn-lg icon-btn">
                     <i data-lucide="book-open-text"></i> 
-                    <span> Read Now</span>
+                    <span>Start Reading</span>
                 </a>
             </div>
 
         </section>
     </div>
 
-    <!-- Explore Section -->
     <section class="explore-section">
         <div class="explore-header">
-            <h3>You may also like</h3>
-            <a href="#" class="explore-link">View All</a>
+            <h3>You might also like</h3>
+            <a href="{% url 'library' %}" class="explore-link">View Library</a>
         </div>
 
         <div class="books-grid">
@@ -133,9 +130,7 @@
                         </div>
 
                         <div style="display:flex;justify-content:space-between;align-items:center;" class="truncate">
-                            <p>
-                                <span style="font-weight:700;">by:</span> {{ b.author }}
-                            </p>
+                            <p><span style="font-weight:700;">by:</span> {{ b.author }}</p>
                             <div style="font-size:14px;display:flex;align-items:center;margin-right:5px;">
                                 ❤️ {{ b.likes_count }}
                             </div>
@@ -146,38 +141,51 @@
             {% endfor %}
             {% else %}
             <p class="muted">No similar books found.</p>
-        {% endif %}
+            {% endif %}
         </div>
     </section>
 
 </main>
-<script>
-    async function shareLink() {
-  // Define what you want to share
-  const shareData = {
-    title: document.title,
-    text: 'Check out this Book published on LeafyReads!',
-    url: window.location.href 
-  };
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-      console.log('Shared successfully');
-    } catch (err) {
-      console.error('Error sharing:', err);
-    }
-  } else {
-    copyToClipboard(shareData.url);
-  }
-}
 
-// Helper function for the fallback
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    alert('Link copied to clipboard!');
-  }).catch(err => {
-    console.error('Failed to copy:', err);
-  });
-}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+
+        // --- Timezone Logic ---
+        const timeElements = document.querySelectorAll('.local-time');
+        timeElements.forEach(function (elem) {
+            const utcTime = elem.getAttribute('data-utc');
+            if (utcTime) {
+                const localDate = new Date(utcTime);
+                // Shows: Jan 19, 2026, 10:30 AM
+                elem.innerText = localDate.toLocaleString(undefined, {
+                    year: 'numeric', month: 'short', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            }
+        });
+    });
+
+    async function shareLink() {
+        const shareData = {
+            title: "{{ book.title|escapejs }}",
+            text: 'Read {{ book.title|escapejs }} on LeafyReads!',
+            url: window.location.href 
+        };
+        
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {}
+        } else {
+            copyToClipboard(shareData.url);
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Link copied to clipboard!');
+        }).catch(err => console.error('Failed to copy:', err));
+    }
 </script>
 {% endblock %}

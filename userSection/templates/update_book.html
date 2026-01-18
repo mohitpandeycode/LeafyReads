@@ -1,0 +1,374 @@
+{% extends 'user_dashboard.html' %}
+{% load static %}
+
+{% block title %}
+Update Book - LeafyReads
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/userbookcreate.css' %}" />
+<style>
+    /* --- Spinner CSS --- */
+    .loader-icon {
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    
+    /* --- File Input Fix --- */
+    .hide-default-file-input input[type="file"] {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+        width: 1px;
+        height: 1px;
+    }
+
+    /* --- Reset Image Button (X) --- */
+    .image-upload {
+        position: relative;
+    }
+    .remove-btn {
+        position: absolute;
+        top: 0;
+        right: 2px;
+        background: #32445c;
+        color: white;
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 10;
+        transition: transform 0.2s;
+    }
+    .remove-btn:hover {
+        transform: scale(1.1);
+        background: #872f2f;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="addbookcontainer">
+    <form method="POST" enctype="multipart/form-data" id="bookForm">
+        {% csrf_token %}
+
+        <div class="header-section">
+            <h1>Update Book: <span style="color:rgb(35, 135, 35)">{{ book.title }}</span> </h1>
+        </div>
+
+        {% if book_form.non_field_errors %}
+            <div style="background: var(--danger-color); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                {{ book_form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div id="word-limit-alert" style="display: none;">
+            <strong>Limit Exceeded:</strong> Content cannot exceed 5000 words. Please shorten your text to publish or make PART 2!
+        </div>
+
+        <div class="split-layout">
+            
+            <div class="form-left">
+                <div class="form-group">
+                    <label>Book Cover <span style="color: var(--danger-color)">*</span></label>
+                    
+                    <div class="image-upload">
+                        <input type="hidden" id="original_cover_url" value="{% if book.cover_front %}{{ book.cover_front.url }}{% endif %}">
+
+                        <label for="{{ book_form.cover_front.id_for_label }}" class="image-upload-label">
+                            {% if book.cover_front %}
+                                <img id="preview" src="{{ book.cover_front.url }}" alt="Cover Preview" style="display: block;">
+                                <div id="placeholder-ui" class="upload-placeholder" style="display: none;">
+                            {% else %}
+                                <img id="preview" src="" alt="Cover Preview" style="display: none;">
+                                <div id="placeholder-ui" class="upload-placeholder">
+                            {% endif %}
+                                <i data-lucide="image-plus" style="width: 48px; height: 48px;"></i>
+                                <span>Click to Change Cover</span>
+                            </div>
+                            
+                            <div class="overlay-icon"><i data-lucide="camera"></i></div>
+                        </label>
+
+                        <div class="hide-default-file-input">
+                            {{ book_form.cover_front }}
+                        </div>
+
+                        <button type="button" id="reset-image-btn" class="remove-btn" style="display: none;" title="Reset to original cover">X</button>
+                    </div>
+
+                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">Recommended ratio 2:3</small>
+                    {{ book_form.cover_front.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Title <span style="color: var(--danger-color)">*</span></label>
+                    {{ book_form.title }}
+                    {{ book_form.title.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Genre <span style="color: var(--danger-color)">*</span></label>
+                    {{ book_form.genre }}
+                </div>
+
+                <div class="form-group">
+                    <label>Book Language <span style="color: var(--danger-color)">*</span></label>
+                    {{ book_form.book_language }}
+                </div>
+
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>Price</label>
+                        {{ book_form.price }}
+                    </div>
+                    <div>
+                        <label>ISBN</label>
+                        {{ book_form.isbn }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-right">
+                <div class="form-group">
+                    <label>Book Content <span style="color: var(--danger-color)">*</span></label>
+                    {{ content_form.media }}
+                    {{ content_form.content }}
+                    
+                    <div id="word-counter" class="word-counter-box">
+                        0 / 5000 words
+                    </div>
+
+                    {{ content_form.content.errors }}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" name="action" value="save" class="btn-primary" id="btn-publish">
+                        <i data-lucide="send"></i> <span>Publish Updates</span>
+                    </button>
+                    
+                    <button type="submit" name="action" value="continue" class="btn-secondary" id="btn-draft">
+                        <i data-lucide="save"></i> <span>Save & Continue</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+        
+        // --- VARIABLES ---
+        const WORD_LIMIT = 5000;
+        const counterDisplay = document.getElementById('word-counter');
+        const alertBox = document.getElementById('word-limit-alert');
+        const btnPublish = document.getElementById('btn-publish');
+        const btnDraft = document.getElementById('btn-draft');
+        const bookForm = document.getElementById('bookForm');
+
+        // Image Variables
+        const coverInput = document.getElementById('{{ book_form.cover_front.id_for_label }}');
+        const previewImg = document.getElementById('preview');
+        const placeholderUi = document.getElementById('placeholder-ui');
+        // Check if original url input exists (only on update page)
+        const originalUrlInput = document.getElementById('original_cover_url'); 
+        const originalCoverUrl = originalUrlInput ? originalUrlInput.value : null;
+        const resetBtn = document.getElementById('reset-image-btn');
+
+        // --- NEW FLAG: Tracks if form is currently sending data ---
+        let isSubmitting = false;
+
+        // --- 1. SUBMIT LOGIC ---
+        let lastClickedBtn = null;
+        if (btnPublish) btnPublish.addEventListener('click', () => lastClickedBtn = 'publish');
+        if (btnDraft) btnDraft.addEventListener('click', () => lastClickedBtn = 'draft');
+
+        bookForm.addEventListener('submit', function(e) {
+            // A. SYNC CKEDITOR
+            if (typeof CKEDITOR !== 'undefined') {
+                for (const instanceName in CKEDITOR.instances) {
+                    CKEDITOR.instances[instanceName].updateElement();
+                }
+            }
+
+            // B. CHECK HTML5 VALIDITY
+            if (!this.checkValidity()) return;
+
+            // C. CHECK WORD LIMIT
+            if (counterDisplay && counterDisplay.classList.contains('limit-exceeded')) {
+                e.preventDefault();
+                alert("Word limit exceeded. Please shorten your content.");
+                return;
+            }
+
+            // D. LOCK THE FORM
+            // Set flag to true so the word counter doesn't re-enable buttons
+            isSubmitting = true; 
+
+            // Use setTimeout to ensure the 'value' of the button sends before disabling
+            setTimeout(() => {
+                btnPublish.disabled = true;
+                btnDraft.disabled = true;
+                btnPublish.style.opacity = "0.7";
+                btnDraft.style.opacity = "0.7";
+                btnPublish.style.cursor = "not-allowed";
+                btnDraft.style.cursor = "not-allowed";
+
+                const loaderHtml = `<i data-lucide="loader-2" class="loader-icon"></i>`;
+                
+                if (lastClickedBtn === 'publish') {
+                    const span = btnPublish.querySelector('span');
+                    if(span) span.innerText = "Publishing...";
+                    const icon = btnPublish.querySelector('svg'); 
+                    if(icon) icon.outerHTML = loaderHtml;
+                } 
+                else if (lastClickedBtn === 'draft') {
+                    const span = btnDraft.querySelector('span');
+                    if(span) span.innerText = "Saving...";
+                    const icon = btnDraft.querySelector('svg');
+                    if(icon) icon.outerHTML = loaderHtml;
+                }
+                
+                lucide.createIcons();
+            }, 10);
+        });
+
+        // --- 2. RESTORE BUTTONS IF USER CLICKS 'BACK' ---
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                isSubmitting = false; // Reset flag
+                btnPublish.disabled = false;
+                btnDraft.disabled = false;
+                btnPublish.style.opacity = "1";
+                btnDraft.style.opacity = "1";
+                btnPublish.style.cursor = "pointer";
+                btnDraft.style.cursor = "pointer";
+                
+                // Reset Text
+                const pSpan = btnPublish.querySelector('span');
+                if(pSpan) pSpan.innerText = btnPublish.getAttribute('data-original-text') || "Publish Now";
+                const dSpan = btnDraft.querySelector('span');
+                if(dSpan) dSpan.innerText = btnDraft.getAttribute('data-original-text') || "Save Draft";
+                
+                // Reset Icons
+                const pIcon = btnPublish.querySelector('.loader-icon');
+                if(pIcon) pIcon.outerHTML = `<i data-lucide="send"></i>`;
+                const dIcon = btnDraft.querySelector('.loader-icon');
+                if(dIcon) dIcon.outerHTML = `<i data-lucide="save"></i>`;
+
+                lucide.createIcons();
+            }
+        });
+
+        // --- 3. WORD COUNT & UI UPDATE ---
+        function countWords(str) {
+            if (!str) return 0;
+            const text = str.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ');
+            return text.trim().split(/\s+/).filter(w => w.length > 0).length;
+        }
+
+        function updateUI(content) {
+            if (isSubmitting) return; 
+
+            const count = countWords(content);
+            if(counterDisplay) {
+                counterDisplay.textContent = `${count} / ${WORD_LIMIT} words`;
+
+                if (count > WORD_LIMIT) {
+                    counterDisplay.classList.add('limit-exceeded');
+                    if(alertBox) alertBox.style.display = 'block';
+                    
+                    btnPublish.disabled = true;
+                    btnDraft.disabled = true;
+                    btnPublish.style.opacity = "0.5";
+                    btnDraft.style.opacity = "0.5";
+                    btnPublish.style.cursor = "not-allowed";
+                    btnDraft.style.cursor = "not-allowed";
+                } else {
+                    counterDisplay.classList.remove('limit-exceeded');
+                    if(alertBox) alertBox.style.display = 'none';
+                    
+                    btnPublish.disabled = false;
+                    btnDraft.disabled = false;
+                    btnPublish.style.opacity = "1";
+                    btnDraft.style.opacity = "1";
+                    btnPublish.style.cursor = "pointer";
+                    btnDraft.style.cursor = "pointer";
+                }
+            }
+        }
+
+        // --- 4. CKEDITOR SYNC ---
+        function syncEditor() {
+            if (typeof CKEDITOR !== 'undefined') {
+                for (const instanceName in CKEDITOR.instances) {
+                    const editor = CKEDITOR.instances[instanceName];
+                    if (editor) {
+                        updateUI(editor.getData());
+                    }
+                }
+            } else {
+                const textArea = document.getElementById('{{ content_form.content.id_for_label }}');
+                if (textArea) updateUI(textArea.value);
+            }
+        }
+
+        if (typeof CKEDITOR !== 'undefined') {
+            CKEDITOR.on('instanceReady', function(evt) {
+                const editor = evt.editor;
+                updateUI(editor.getData());
+                editor.on('change', syncEditor);
+                editor.on('key', syncEditor);
+                editor.on('paste', syncEditor);
+                editor.on('blur', syncEditor);
+            });
+        }
+        setInterval(syncEditor, 1000);
+
+        // --- 5. IMAGE PREVIEW ---
+        if (coverInput) {
+            coverInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        previewImg.style.display = 'block'; 
+                        if(placeholderUi) placeholderUi.style.display = 'none'; 
+                        if(resetBtn) resetBtn.style.display = 'flex';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // --- 6. RESET IMAGE (Only for Update Page) ---
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function() {
+                coverInput.value = ""; 
+                if (originalCoverUrl) {
+                    previewImg.src = originalCoverUrl;
+                    previewImg.style.display = 'block';
+                    if(placeholderUi) placeholderUi.style.display = 'none';
+                } else {
+                    previewImg.src = "";
+                    previewImg.style.display = 'none';
+                    if(placeholderUi) placeholderUi.style.display = 'flex';
+                }
+                resetBtn.style.display = 'none';
+            });
+        }
+    });
+</script>
+{% endblock body %}

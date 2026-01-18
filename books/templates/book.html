@@ -277,10 +277,12 @@
                       <i data-lucide="gem"></i>
                       <span>Go Pro</span>
                     </li>
-                    <li class="dropdown-item">
-                      <i data-lucide="circle-question-mark"></i>
-                      <span>Get Help</span>
-                    </li>
+                    <a href="{% url 'aboutUs' %}">
+                      <li class="dropdown-item">
+                        <i data-lucide="info"></i>
+                        <span>About Us</span>
+                      </li>
+                    </a>
                   {% endif %}
                     <li class="separator"></li>
                     <a href="{% url 'logout' %}">

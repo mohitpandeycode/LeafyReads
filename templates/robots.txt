@@ -3,6 +3,8 @@ Disallow: /admin/
 Disallow: /tryhardadmin/
 Disallow: /accounts/
 Disallow: /admin-dashboard/
+Disallow: /profile/
+
 Allow: /
 
 Sitemap: https://leafyreads.com/sitemap.xml

@@ -1,0 +1,259 @@
+    /* --- 1. THEME VARIABLES --- */
+    :root {
+        --bg-body: #f8f9fa;
+        --bg-card: #ffffff;
+        --text-main: #2c3e50;
+        --text-muted: #6c757d;
+        --border-color: #e9ecef;
+        --primary-color: #25b95f;
+        --primary-hover: #20a152;
+        --danger-color: #ff6b6b;
+        --badge-draft-bg: #e2e8f0;
+        --badge-draft-text: #475569;
+        --badge-pending-bg: #ffd6a2;
+        --badge-pending-text: #c2410c;
+        --badge-pub-bg: #bdffd1;
+        --badge-pub-text: #15803d;
+        --table-hover: #f8fafc;
+    }
+
+    body.dark-mode {
+        --bg-body: #0f172a;
+        --bg-card: #1e293b;
+        --text-main: #e2e8f0;
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+        --primary-color: #25b95f;
+        --badge-draft-bg: #334155;
+        --badge-draft-text: #cbd5e1;
+        --badge-pending-bg: #431407;
+        --badge-pending-text: #fb923c;
+        --badge-pub-bg: #064e3b;
+        --badge-pub-text: #4ade80;
+        --table-hover: #2d3748;
+    }
+
+    /* --- 2. CONTAINER LAYOUT --- */
+    .dashboard-wrapper {
+        padding: 20px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .books-container {
+        background: var(--bg-card);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid var(--border-color);
+        overflow: hidden; /* Contains the children */
+    }
+
+    /* --- 3. HEADER & ACTIONS --- */
+    .books-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .books-header h4 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--text-main);
+        font-weight: 700;
+    }
+
+    .action-bar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    /* Search Form */
+    .search-form {
+        display: flex;
+        gap: 8px;
+        position: relative;
+    }
+
+    .search-input {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-body);
+        color: var(--text-main);
+        outline: none;
+        min-width: 250px;
+        transition: border 0.2s;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-color);
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        transition: opacity 0.2s;
+    }
+
+    .btn-search { background: var(--primary-color); color: white; }
+    .btn-search:hover { opacity: 0.9; }
+
+    .btn-add { background: var(--text-main); color: var(--bg-card); }
+    .btn-add:hover { opacity: 0.9; }
+
+    .btn-clear { background: var(--bg-body); color: var(--text-muted); border: 1px solid var(--border-color); }
+    
+    /* --- 4. BULK ACTIONS --- */
+    .bulk-toolbar {
+        padding: 15px 20px;
+        background: var(--bg-body); /* Slightly different bg to separate from table */
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .action-select {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-card);
+        color: var(--text-main);
+    }
+
+    .selected-count {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* --- 5. RESPONSIVE TABLE --- */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto; /* Horizontal scroll on mobile */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px; /* Forces scroll on small screens so layout doesn't break */
+    }
+
+    .data-table th, .data-table td {
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-main);
+        white-space: nowrap; /* Prevents awkward wrapping */
+    }
+
+    .data-table th {
+        background-color: var(--bg-body);
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .data-table tr:hover {
+        background-color: var(--table-hover);
+    }
+
+    .book-title-link {
+        color: var(--text-main);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .book-title-link:hover { color: var(--primary-color); }
+
+    /* --- 6. STATUS BADGES --- */
+    .badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .badge.published { background: var(--badge-pub-bg); color: var(--badge-pub-text); }
+    .badge.draft { background: var(--badge-draft-bg); color: var(--badge-draft-text); }
+    .badge.pending { background: var(--badge-pending-bg); color: var(--badge-pending-text); }
+
+    /* --- 7. PAGINATION --- */
+    .pagination-container {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border-color);
+        background: var(--bg-card);
+    }
+
+    .page-info { color: var(--text-muted); font-size: 0.9rem; }
+
+    .page-nav { display: flex; gap: 8px; }
+
+    .btn-page {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-body);
+        color: var(--text-main);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+
+    .btn-page:hover:not(.disabled) {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-page.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* --- 8. MOBILE TWEAKS --- */
+    @media (max-width: 768px) {
+        .books-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .action-bar {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .search-form { width: 100%; }
+        .search-input { width: 100%; min-width: 0; }
+        .btn-add { width: 100%; }
+
+        .pagination-container {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+    }

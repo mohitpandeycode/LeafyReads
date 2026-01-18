@@ -78,12 +78,12 @@ All Books - LeafyReads Admin
         </form>
 
         {% if books.has_other_pages %}
-        <div class="pagination-controls" style="margin-top: 20px; text-align: center; display: flex; justify-content: space-between; align-items: center; padding: 10px; border-top: 1px solid #eee;">
+        <div class="pagination-controls" style="text-align: center; display: flex; justify-content: center; align-items: center;gap:10px; padding: 15px;">
             
             {% if books.has_previous %}
-                <a href="?page={{ books.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn-page" style="text-decoration: none; padding: 8px 15px; border: 1px solid #ccc; border-radius: 4px; background-color: #a8ede6;color: black;">&laquo; Previous</a>
+                <a href="?page={{ books.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn-page" style="text-decoration: none; padding: 5px; border: 1px solid #ccc; border-radius: 10px; background-color: #a8ede6;color: black;">&laquo; Previous</a>
             {% else %}
-                <span class="btn-page disabled" style="padding: 8px 15px; border: 1px solid #f0f0f0; border-radius: 4px; color: #ccc;">&laquo; Previous</span>
+                <span class="btn-page disabled" style="padding: 5px; border: 1px solid #f0f0f0; border-radius: 10px; color: #ccc;">&laquo; Previous</span>
             {% endif %}
 
             <span class="page-current" style="font-weight: bold;">
@@ -91,9 +91,9 @@ All Books - LeafyReads Admin
             </span>
 
             {% if books.has_next %}
-                <a href="?page={{ books.next_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn-page" style="text-decoration: none; padding: 8px 15px; border: 1px solid #ccc; border-radius: 4px; background-color: #a8ede6;color:black;">Next &raquo;</a>
+                <a href="?page={{ books.next_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn-page" style="text-decoration: none; padding: 5px; border: 1px solid #ccc; border-radius: 10px; background-color: #a8ede6;color:black;">Next &raquo;</a>
             {% else %}
-                <span class="btn-page disabled" style="padding: 8px 15px; border: 1px solid #f0f0f0; border-radius: 4px; color: #ccc;">Next &raquo;</span>
+                <span class="btn-page disabled" style="padding: 5px; border: 1px solid #f0f0f0; border-radius: 10px; color: #ccc;">Next &raquo;</span>
             {% endif %}
 
         </div>

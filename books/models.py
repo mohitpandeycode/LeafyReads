@@ -106,6 +106,8 @@ class Book(models.Model):
         null=True
     )
 
+
+    is_draft = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -8,12 +8,12 @@ from django.db.models import F
 
 @receiver([post_save, post_delete], sender=Book)
 def invalidate_book_caches(sender, instance, **kwargs):
-    # Clears BOTH home books and library pages
+    # 1. Clear Home Cache
     cache.delete("home_books")
     try:
-        cache.delete_pattern("library_books_page_*")
+        cache.delete_pattern("library_books_*")
     except AttributeError:
-        cache.delete("library_books_page_1")
+        cache.delete("library_books_p1_snewest_l")
 
 @receiver([post_save, post_delete], sender=Genre)
 def invalidate_genre_caches(sender, instance, **kwargs):

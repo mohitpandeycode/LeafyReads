@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Posts | LeafyReads{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/community.css' %}" />
+<link rel="stylesheet" href="{% static 'css/mobilehome.css' %}" />
+<style>
+    .my-posts-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .page-header {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 50px;
+        color: #666;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #eee;
+    }
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+        padding: 20px 0;
+        border-top: 1px solid #eee;
+    }
+    .btn-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        color: #555;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .btn-chip:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% include 'login.html' %}
+
+{% csrf_token %}
+
+<div class="my-posts-container">
+    <div class="page-header">
+        <h2 style="color: inherit;">Your Community Posts</h2>
+    </div>
+
+    <div id="postsFeed" class="posts-feed">
+        {% if posts %}
+            {% for post in posts %}
+            <article class="post-card" data-post-id="{{ post.id }}">
+                
+                <div class="post-header">
+                    <div class="avatar">
+                        <img class="profileimage" src="https://i.pravatar.cc/150?u={{ post.author.username }}"
+                             alt="{{ post.author.username }}" loading="lazy">
+                    </div>
+                    <div style="display: flex;flex-direction: column;">
+                        <span class="username">You</span>
+                        <span class="post-meta">{{ post.created_at|timesince }} ago</span>
+                    </div>
+
+                    <div class="menu-wrapper" style="margin-left: auto; position: relative;">
+                        <i class="threedot" style="cursor: pointer;" data-lucide="ellipsis-vertical"></i>
+                        <a href="#" class="postoption deletepost" data-url="{% url 'delete_post' post.id %}">
+                            <i style="width: 14px;" data-lucide="trash-2"></i> Delete Post
+                        </a>
+                    </div>
+                </div>
+
+                <p class="post-content" data-full="{{ post.content }}">{{ post.content }}</p>
+                
+                {% if post.book %}
+                <a href="{% url 'book' post.book.slug %}" class="book-mention">
+                    <span style="font-size: 20px;padding: 0px 0 6px 0;">📖</span> {{ post.book.title }}
+                </a>
+                {% endif %}
+
+                {% if post.images.all or post.book %}
+                <div class="contentbox">
+                    <div class="post-images">
+                        {% if post.book %}
+                        <img src="{{ post.book.cover_front.url }}?q=auto&f_auto" class="post-image" alt="book cover" loading="lazy">
+                        {% endif %}
+                        {% for image in post.images.all %}
+                        <img src="{{ image.image.url }}?w=500&q=auto&f_auto" class="post-image" alt="post image" loading="lazy">
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="post-actions">
+                    <button class="action-btn {% if post.has_liked %}liked{% endif %}" 
+                            data-post-id="{{ post.id }}"
+                            onclick="toggleLike(this)">
+                        <span class="heart">{% if post.has_liked %}❤️{% else %}🤍{% endif %}</span>
+                        <span class="count">{{ post.likes_count }}</span> Like
+                    </button>
+
+                    <button class="action-btn" onclick="openComments(this)">
+                        <span>💬</span>
+                        <span class="count">{{ post.comments_count }}</span> Comment
+                    </button>
+                </div>
+            </article>
+            {% endfor %}
+
+            {% if posts.has_other_pages %}
+            <div class="pagination-container">
+                {% if posts.has_previous %}
+                    <a href="?page={{ posts.previous_page_number }}" class="btn-chip">Previous</a>
+                {% endif %}
+                <span style="margin: 0 10px;">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+                {% if posts.has_next %}
+                    <a href="?page={{ posts.next_page_number }}" class="btn-chip">Next</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        {% else %}
+            <div class="empty-state">
+                <i data-lucide="message-square-off" style="width: 48px; height: 48px; margin-bottom: 10px; opacity: 0.5;"></i>
+                <h3>No posts yet</h3>
+                <p>You haven't shared anything with the community.</p>
+                <a href="{% url 'community' %}" class="btn-chip" style="margin-top: 15px; display: inline-block;">Go to Community</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="comment-overlay" style="display:none;"></div>
+<div class="openpost">
+  {% include 'comment.html' %}
+</div>
+
+<div id="imageModal" class="image-modal" style="display:none;">
+  <span id="closeImageModal" class="close-img-modal">&times;</span>
+  <img id="modalImage" class="modal-content-img" loading="lazy" alt="preview" />
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+        
+        // 1. Menu Toggle Logic
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            const dotBtn = target.closest('.threedot');
+            
+            // Toggle Menu
+            if (dotBtn) {
+                e.stopPropagation();
+                const wrapper = dotBtn.closest('.menu-wrapper');
+                const menu = wrapper.querySelector('.postoption');
+                
+                document.querySelectorAll('.postoption').forEach(el => {
+                    if (el !== menu) el.style.display = 'none';
+                });
+
+                if (menu) menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+                return;
+            }
+
+            // Close Menu
+            if (!target.closest('.postoption')) {
+                document.querySelectorAll('.postoption').forEach(el => el.style.display = 'none');
+            }
+
+            // 2. DELETE POST LOGIC (ADDED HERE)
+            const deleteBtn = target.closest('.deletepost');
+            if (deleteBtn) {
+                e.preventDefault();
+                if (!confirm("Are you sure you want to delete this post?")) return;
+
+                const url = deleteBtn.getAttribute('data-url');
+                const postCard = deleteBtn.closest('.post-card'); 
+                const originalText = deleteBtn.innerHTML;
+                
+                deleteBtn.textContent = 'Deleting...';
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        postCard.style.transition = "all 0.5s ease";
+                        postCard.style.opacity = "0";
+                        setTimeout(() => postCard.remove(), 500);
+                    } else {
+                        alert(data.message || "Error deleting post");
+                        deleteBtn.innerHTML = originalText;
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert("Something went wrong.");
+                    deleteBtn.innerHTML = originalText;
+                });
+            }
+        });
+    });
+
+    // Helper: Get Cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // --- LIKE FUNCTION ---
+    function toggleLike(btn) {
+        const postId = btn.dataset.postId;
+        const heartSpan = btn.querySelector('.heart');
+        const countSpan = btn.querySelector('.count');
+        const isLiked = btn.classList.contains('liked');
+        let count = parseInt(countSpan.innerText) || 0;
+
+        // UI Optimistic Update
+        if (isLiked) {
+            btn.classList.remove('liked');
+            heartSpan.innerText = '🤍';
+            countSpan.innerText = Math.max(0, count - 1);
+        } else {
+            btn.classList.add('liked');
+            heartSpan.innerText = '❤️';
+            countSpan.innerText = count + 1;
+        }
+
+        const formData = new FormData();
+        formData.append('post_id', postId);
+        
+        fetch('{% url "like_post" %}', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Re-sync with server truth
+            if (data.is_liked) {
+                btn.classList.add('liked');
+                heartSpan.innerText = '❤️';
+            } else {
+                btn.classList.remove('liked');
+                heartSpan.innerText = '🤍';
+            }
+            countSpan.innerText = data.likes_count;
+        });
+    }
+
+    // --- COMMENTS LOGIC ---
+    let activePostId = null;
+
+    function openComments(btn) {
+        const postCard = btn.closest(".post-card");
+        activePostId = postCard.dataset.postId;
+        document.querySelector(".comment-overlay").style.display = "block";
+        document.getElementById("commentModal").style.display = "block";
+        document.body.style.overflow = "hidden";
+        loadComments(activePostId);
+    }
+
+    function loadComments(postId) {
+        const list = document.getElementById("commentList");
+        const owner = document.getElementById("commentOwner");
+        owner.innerHTML = "";
+        list.innerHTML = `<div style="padding:20px;text-align:center;">Loading...</div>`;
+
+        fetch(`/community/comment/${postId}/`)
+            .then(res => res.json())
+            .then(data => {
+                list.innerHTML = "";
+                // Render Owner (Same as before)
+                if(data.post) {
+                    owner.innerHTML = `
+                        <div style="display:flex; gap:10px; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                            <img src="${data.post.avatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                            <div>
+                                <div style="font-weight:bold;">${data.post.author}</div>
+                                <div style="font-size:0.9rem;">${data.post.content}</div>
+                            </div>
+                        </div>`;
+                }
+                // Render Comments
+                if(!data.comments || data.comments.length === 0) {
+                    list.innerHTML = `<div style="text-align:center;color:#777;">No comments yet.</div>`;
+                } else {
+                    data.comments.forEach(c => {
+                        list.innerHTML += `
+                            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                                <img src="${c.avatar}" style="width:32px;height:32px;border-radius:50%;">
+                                <div>
+                                    <div style="font-weight:600;font-size:0.9rem;">${c.author}</div>
+                                    <div style="font-size:0.9rem;">${c.content}</div>
+                                    <div style="font-size:0.75rem;color:#999;margin-top:2px;">${c.created}</div>
+                                </div>
+                            </div>`;
+                    });
+                }
+            });
+    }
+
+    // Send Comment
+    const sendCommentBtn = document.getElementById("sendCommentBtn");
+    if (sendCommentBtn) {
+        sendCommentBtn.addEventListener("click", () => {
+            const input = document.getElementById("commentInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const formData = new FormData();
+            formData.append("post_id", activePostId);
+            formData.append("content", text);
+            
+            fetch("/community/comment/add/", {
+                method: "POST",
+                body: formData,
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            })
+            .then(res => res.json())
+            .then(() => {
+                input.value = "";
+                loadComments(activePostId);
+                // Update count on card
+                const card = document.querySelector(`.post-card[data-post-id="${activePostId}"]`);
+                const countSpan = card.querySelector('button[onclick="openComments(this)"] .count');
+                if(countSpan) countSpan.innerText = parseInt(countSpan.innerText) + 1;
+            });
+        });
+    }
+
+    // Close Modal
+    const closeComment = document.getElementById("closeComment");
+    if (closeComment) {
+        closeComment.addEventListener('click', () => {
+            document.getElementById("commentModal").style.display = "none";
+            document.querySelector(".comment-overlay").style.display = "none";
+            document.body.style.overflow = "auto";
+        });
+    }
+</script>
+{% endblock %}

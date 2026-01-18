@@ -29,9 +29,13 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     mentioned_users = models.ManyToManyField(User, related_name='mentioned_in_posts', blank=True)
     slug = models.SlugField(max_length=255, null=True, blank=True, unique=True)
+    likes_count = models.PositiveIntegerField(default=0)
+    comments_count = models.PositiveIntegerField(default=0)
 
-    class Meta:
-        ordering = ['-created_at']
+    indexes = [
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['-likes_count']),
+        ]
 
     def __str__(self):
         if self.book:

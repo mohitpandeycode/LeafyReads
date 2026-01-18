@@ -74,6 +74,67 @@
     </div>
   </div>
   {% endif %}
+  <div class="notification-box glass-panel" id="notificationBox">
+    <div class="notif-header">
+      <h3>Notifications</h3>
+      <button class="mark-read-text">Mark all read</button>
+    </div>
+
+    <div class="notif-list">
+      {% if notifications %}
+      {% for notif in notifications %}
+
+      {% if notif.notification_type == 'post_delete' %}
+      <div class="notif-item" style="cursor: default;">
+        <div class="notif-icon-box bg-teal">
+          🗑️
+        </div>
+        <div class="notif-content">
+          <p>{{ notif.message|safe }}</p>
+          <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+        </div>
+      </div>
+      {% else %}
+      <a href="{% url 'post_view' notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
+        <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
+          <div class="notif-icon-box bg-teal">
+            {% if notif.notification_type == 'like' %}❤️
+            {% elif notif.notification_type == 'comment' %}💬
+            {% elif notif.notification_type == 'book_mention' %}📚
+            {% else %}🔔{% endif %}
+          </div>
+          <div class="notif-content">
+            <p>{{ notif.message|safe }}</p>
+            <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+          </div>
+          {% if not notif.is_read %}
+          <div class="unread-dot"></div>
+          {% endif %}
+        </div>
+      </a>
+      {% endif %}
+
+      {% endfor %}
+      {% else %}
+      <div style="padding: 1.5rem; text-align: center; color: #94a3b8; font-size: 0.85rem;">
+        <p>No new updates</p>
+      </div>
+      {% endif %}
+
+      <div class="notif-item">
+        <div class="notif-icon-box bg-teal">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <div class="notif-content">
+          <p><strong>Welcome to LeafyReads!</strong> 🌿 Discover new books...</p>
+          <span class="notif-time">{{ user.date_joined|timesince }} ago</span>
+        </div>
+      </div>
+    </div>
+    <div class="notif-footer">
+      <a href="#">View All History</a>
+    </div>
+  </div>
   <section class="loginpagesection" id="loginSection">
     <div class="leafy-auth-container" style="width: 380px;" id="loginContainer">
       <button class="close-btn" id="closelogin">&times;</button>
@@ -148,18 +209,21 @@
                   <span>Profile</span>
                 </li>
               </a>
+              <li onclick="toggleNotifications()" class="dropdown-item" style="position: relative;">
+                <i data-lucide="bell"></i>
+                <p class="notify-dot" style="left: 25px;"></p>
+                <span>Notification</span>
+              </li>
               <li class="dropdown-item">
                 <i data-lucide="gem"></i>
                 <span>Go Pro</span>
               </li>
-              <li class="dropdown-item">
-                <i data-lucide="credit-card"></i>
-                <span>Billing & Plans</span>
-              </li>
-              <li class="dropdown-item">
-                <i data-lucide="circle-question-mark"></i>
-                <span>Get Help</span>
-              </li>
+              <a href="{% url 'aboutUs' %}">
+                <li class="dropdown-item">
+                  <i data-lucide="info"></i>
+                  <span>About Us</span>
+                </li>
+              </a>
               {% endif %}
               <li class="separator"></li>
               <a href="{% url 'logout' %}">
@@ -331,6 +395,17 @@
     uiClickSound.currentTime = 0;
     uiClickSound.play().catch(e => { /* Ignore auto-play errors */ });
   };
+  window.toggleNotifications = function() {
+    // 1. Force Close the Dropdown Menu if it's open
+    const dropdown = document.getElementById('dropdown-menu');
+    if (dropdown) {
+      dropdown.classList.add('hidden'); 
+    }
+
+    // 2. Toggle the Notification Box
+    const box = document.getElementById('notificationBox');
+    if (box) box.classList.toggle('active');
+  };
 
   document.addEventListener('DOMContentLoaded', () => {
 
@@ -348,6 +423,21 @@
         alert(message);
       }
     }
+    document.addEventListener('click', (event) => {
+    const target = event.target;
+
+    // 1. Close Notifications
+    const notifBox = document.getElementById('notificationBox');
+
+    const isTrigger = target.closest('[onclick="toggleNotifications()"]') || target.closest('.notif-btn');
+
+    if (notifBox && notifBox.classList.contains('active')) {
+      // If click is NOT inside the box AND NOT on a trigger button, close it
+      if (!notifBox.contains(target) && !isTrigger) {
+        notifBox.classList.remove('active');
+      }
+    }
+  });
 
     // --- 3. RESIZE LOGIC (With SessionStorage) ---
     const shell = document.getElementById('resize-shell');
@@ -676,7 +766,9 @@
             img.loading = "lazy";
             img.decoding = "async";
         });
+        
     }
+    
 
     // --- 13. INITIALIZE ICONS---
     if (typeof lucide !== 'undefined') lucide.createIcons();

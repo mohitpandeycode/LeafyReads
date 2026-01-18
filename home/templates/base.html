@@ -145,14 +145,6 @@
         height: 18px;
         display: none;
       }
-
-      /* Optional: reduce bell spacing */
-      .notify-dot {
-        width: 6px;
-        height: 6px;
-        top: 3px;
-        right: 3px;
-      }
     }
   </style>
 
@@ -290,15 +282,16 @@
                   <span>Profile</span>
                 </li>
               </a>
-              
+              <li onclick="toggleNotifications()" class="dropdown-item" style="position: relative;">
+                <i data-lucide="bell"></i>
+                <p class="notify-dot" style="left: 25px;"></p>
+                <span>Notification</span>
+              </li>
               <li class="dropdown-item">
                 <i data-lucide="gem"></i>
                 <span>Go Pro</span>
               </li>
-              <li class="dropdown-item">
-                <i data-lucide="circle-question-mark"></i>
-                <span>Get Help</span>
-              </li>
+
               <a href="{% url 'aboutUs' %}">
                 <li class="dropdown-item">
                   <i data-lucide="info"></i>
@@ -342,20 +335,13 @@
             <span style="color: white">LeafyReads</span>
           </div>
           <p style="color: #9CA3AF;">Your digital reading sanctuary.</p>
+          <div style="margin-top: 15px;">
+          <div class="footer-socials">
+            <a href="#"><i data-lucide="twitter"></i></a>
+            <a href="#"><i data-lucide="instagram"></i></a>
+            <a href="#"><i data-lucide="facebook"></i></a>
+          </div>
         </div>
-        <div>
-          <h4>Product</h4>
-          <ul>
-            <li>
-              <a href="#">Features</a>
-            </li>
-            <li>
-              <a href="#">Pricing</a>
-            </li>
-            <li>
-              <a href="#">Updates</a>
-            </li>
-          </ul>
         </div>
         <div>
           <h4>Company</h4>
@@ -367,7 +353,7 @@
               <a href="#">Careers</a>
             </li>
             <li>
-              <a href="#">Contact</a>
+              <a href="mailto:support@leafyreads.com">Contact Us</a>   
             </li>
           </ul>
         </div>
@@ -375,23 +361,12 @@
           <h4>Resources</h4>
           <ul>
             <li>
-              <a href="#">Blog</a>
-            </li>
-            <li>
               <a href="#">Help Center</a>
             </li>
             <li>
               <a href="{% url 'privacy-policy' %}">Privacy</a>
             </li>
           </ul>
-        </div>
-        <div>
-          <h4>Follow Us</h4>
-          <div class="footer-socials">
-            <a href="#"><i data-lucide="twitter"></i></a>
-            <a href="#"><i data-lucide="instagram"></i></a>
-            <a href="#"><i data-lucide="facebook"></i></a>
-          </div>
         </div>
       </div>
       <div class="footer-copyright">&copy; 
@@ -404,6 +379,13 @@
   <script>
 
   window.toggleNotifications = function() {
+    // 1. Force Close the Dropdown Menu if it's open
+    const dropdown = document.getElementById('dropdown-menu');
+    if (dropdown) {
+      dropdown.classList.add('hidden'); 
+    }
+
+    // 2. Toggle the Notification Box
     const box = document.getElementById('notificationBox');
     if (box) box.classList.toggle('active');
   };
@@ -573,16 +555,22 @@
     // 
     // Handles closing Notifications, Dropdowns, and Search Results in one go
     document.addEventListener('click', (event) => {
-      const target = event.target;
+    const target = event.target;
 
-      // 1. Close Notifications
-      const notifBox = document.getElementById('notificationBox');
-      const notifBtn = document.querySelector('.notif-btn');
-      if (notifBox && notifBox.classList.contains('active')) {
-        if (!notifBox.contains(target) && (!notifBtn || !notifBtn.contains(target))) {
-          notifBox.classList.remove('active');
-        }
+    // 1. Close Notifications
+    const notifBox = document.getElementById('notificationBox');
+    
+    // FIXED LOGIC:
+    // Check if the clicked target is the box OR if it is a button meant to toggle notifications
+    // We check triggers by looking for the onclick attribute or the .notif-btn class
+    const isTrigger = target.closest('[onclick="toggleNotifications()"]') || target.closest('.notif-btn');
+
+    if (notifBox && notifBox.classList.contains('active')) {
+      // If click is NOT inside the box AND NOT on a trigger button, close it
+      if (!notifBox.contains(target) && !isTrigger) {
+        notifBox.classList.remove('active');
       }
+    }
 
       // 2. Close Dropdown
       if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
