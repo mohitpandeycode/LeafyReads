@@ -414,7 +414,7 @@ def searchbooks(request):
     cached_suggestions = cache.get("popular_books_sidebar")
     if not cached_suggestions:
         cached_suggestions = list(
-            Book.objects.filter(is_published=True,is_draft=False)
+            Book.objects.filter(is_published=True)
             .only("id", "title", "slug", "author", "cover_front", "likes_count", "views_count", "is_published")
             .order_by('-likes_count')[:12]
         )
@@ -515,7 +515,7 @@ def ajax_search(request):
 
     
     books = list(
-        Book.objects.filter(is_published=True,is_draft=False)
+        Book.objects.filter(is_published=True)
         .annotate(
             similarity=(
                 # Weighted search: Title matches are most important
