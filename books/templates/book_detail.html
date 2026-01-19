@@ -7,14 +7,44 @@
     "@type": "Person",
     "name": "{{ book.author|escapejs }}"
   },
-  {% if book.cover_front %}
-  "image": "{{ request.scheme }}://{{ request.get_host }}{{ book.cover_front.url }}",
-  {% endif %}
   "url": "{{ request.build_absolute_uri }}",
-  "inLanguage": "en",
-  {% if book.uploaded_at %}
-  "datePublished": "{{ book.uploaded_at|date:'Y-m-d' }}", 
+  "inLanguage": "{{ book.book_language|default:'en' }}",
+  
+  {# 1. HANDLE CLOUDINARY IMAGE #}
+  {% if book.cover_front %}
+  "image": "{{ book.cover_front.url }}",
   {% endif %}
-  "genre": "{{ book.genre|escapejs }}"
+
+  {# 2. HANDLE DATES #}
+  "datePublished": "{{ book.uploaded_at|date:'Y-m-d' }}",
+  "dateModified": "{{ book.updated_at|date:'Y-m-d' }}",
+
+  {# 3. GENERATE DESCRIPTION FROM CKEDITOR #}
+  {% if book.content %}
+  "description": "{{ book.content.content|striptags|truncatewords:50|escapejs }}",
+  {% endif %}
+
+  {# 4. GENRE #}
+  {% if book.genre %}
+  "genre": "{{ book.genre.name|escapejs }}",
+  {% endif %}
+
+  {# 5. AGGREGATE RATING (Using your Like Model) #}
+  {% if book.likes_count > 0 %}
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5",
+    "ratingCount": "{{ book.likes_count }}",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  {% endif %}
+
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/InStock",
+    "price": "{{ book.price|default:'0.00' }}",
+    "priceCurrency": "USD"
+  }
 }
 </script>

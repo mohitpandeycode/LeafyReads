@@ -4,7 +4,8 @@ from books.models import Book
 
 class StaticViewSitemap(Sitemap):
     priority = 0.5
-    changefreq = 'monthly'
+    changefreq = 'weekly'
+    protocol = 'https'  # Force HTTPS links
 
     def items(self):
         return ['home', 'aboutUs'] 
@@ -18,10 +19,11 @@ class BookSitemap(Sitemap):
     """
     changefreq = "weekly"
     priority = 0.8
+    protocol = 'https'
 
     def items(self):
-        # OPTIMIZATION: .only() fetches ONLY these fields from the DB.
-        return Book.objects.only('id', 'title', 'uploaded_at','author','updated_at','slug').all()
+        return Book.objects.filter(is_published=True).only('id', 'slug', 'updated_at')
 
     def lastmod(self, obj):
         return obj.updated_at
+        
