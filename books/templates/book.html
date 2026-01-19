@@ -15,6 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="canonical" href="{{ request.build_absolute_uri }}" />
     <title>{{ title }} - By {{ book.author }} | LeafyReads</title>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-2QEBBBDZKY"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2QEBBBDZKY');
+      </script>
     <meta property="og:type" content="book" />
     <meta property="og:title" content="{{ title }} - By {{ book.author }}" />
     <meta property="og:description" content="Read {{ title }} online at LeafyReads." />

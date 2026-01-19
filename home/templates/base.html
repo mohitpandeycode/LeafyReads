@@ -14,6 +14,15 @@
 
     {% endblock %}
   </title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2QEBBBDZKY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-2QEBBBDZKY');
+  </script>
   <link rel="icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=96 height=96 crop='scale' %}" sizes="96x96" type="image/png">
   <link rel="icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=48 height=48 crop='scale' %}" sizes="48x48" type="image/png">
   <link rel="apple-touch-icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=180 height=180 crop='scale' %}">

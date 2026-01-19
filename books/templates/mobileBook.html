@@ -12,6 +12,14 @@
     <title>{{ title }} - By {{ book.author }} | LeafyReads</title>
     <meta property="og:type" content="book" />
     <meta property="og:title" content="{{ title }} - By {{ book.author }}" />
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-2QEBBBDZKY"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2QEBBBDZKY');
+      </script>
     <meta property="og:description" content="Read {{ title }} online at LeafyReads." />
     <meta property="og:image" content="{{ book.cover_front.url }}" /> <meta property="og:url" content="{{ request.build_absolute_uri }}" />
     <link rel="icon" href="{% cloudinary_url 'tydxjsqbzu7g2vvuoonc' format='png' width=96 height=96 crop='scale' %}" sizes="96x96" type="image/png">
