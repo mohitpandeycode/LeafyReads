@@ -21,12 +21,11 @@ def home(request):
     
     if books is None:
         books = list(
-            Book.objects.select_related("genre")
+            Book.objects.filter(is_published=True).select_related("genre")
             .defer("pdf_file", "audio_file", "price", "isbn", "updated_at")
             .order_by("-uploaded_at")[:28]
         )
         cache.set("home_books", books, timeout=60 * 15)
-
     return render(request, "home.html", {"books": books, "category": categories})
 
 
