@@ -44,6 +44,9 @@ CKEDITOR_5_CONFIGS = {
             ],
             'shouldNotGroupWhenFull': True,
         },
+        'mediaEmbed': {
+            'previewsInData': True,
+        },
         'height': 400,
         'width': '100%',
     },

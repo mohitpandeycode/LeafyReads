@@ -274,13 +274,16 @@ CKEDITOR_5_UPLOAD_PATH = "uploads/ckeditor/"
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = lambda user: user.is_staff
 CKEDITOR_5_IMAGE_BACKEND = "pillow"
-
+# This tells the browser to send the 'Referer' header to YouTube
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 CSRF_TRUSTED_ORIGINS = [
     "https://leafyreads.com", 
     "https://www.leafyreads.com",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
 ]
-
 
 if ENVIRONMENT != 'development':
 
