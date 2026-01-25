@@ -8,6 +8,7 @@ from community.models import Post, PostImage,Comment
 from django.contrib import messages
 from django.db.models import Count, Exists, OuterRef
 from django.db.models import Q
+from home.models import Notification,ContentType
 
 @login_required
 def profilepage(request):
@@ -52,6 +53,7 @@ def readBooks(request):
     return render(request, 'read_books.html', {'books': page_obj})
 
 
+
 @login_required(login_url="/")
 def createBook(request):
     genres = Genre.objects.all()
@@ -62,35 +64,55 @@ def createBook(request):
 
         if book_form.is_valid() and content_form.is_valid():
             
-            # 1. Prepare Book
+            # 1. Prepare Book Instance (In Memory)
             book = book_form.save(commit=False)
             book.uploaded_by = request.user
             book.author = request.user.get_full_name() or request.user.username
-            book.is_published = False
             
-            # --- THE save LOGIC ---
+            # 2. Configure Status based on Action
             action = request.POST.get("action")
             
             if action == "save":
                 book.is_draft = False 
-                success_message = f'We have started reviewing your book "{book.title}". You will be notified once it is published to the community.'
+                book.is_published = False
                 redirect_url = "draftBooks"
+                success_message = f'We have started reviewing your book "{book.title}". You will be notified once it is published to the community.'
                 
             elif action == "continue":
-                # User clicked "Save & Continue"
                 book.is_draft = True
                 book.is_published = False
-                success_message = f'"{book.title}" saved to draft. You can continue editing.'
                 redirect_url = None 
+                success_message = f'"{book.title}" saved to draft. You can continue editing.'
 
+            # 3. SAVE THE BOOK FIRST
+            # This generates the ID needed for the notification below.
             book.save() 
 
-            # 2. Save Content
+            # 4. Create Notification
+            if action == "save":
+                Notification.objects.create(
+                    recipient=request.user,
+                    notification_type='book_review',
+                    message=f'Your book <strong>{book.title}</strong> has been submitted for review. You will be notified once it is published to the community.',
+                    content_type=ContentType.objects.get_for_model(Book),
+                    object_id=book.id
+                )
+                
+            elif action == "continue":
+                Notification.objects.create(
+                    recipient=request.user,
+                    notification_type='draft_saved',
+                    message=f'Your book <strong>{book.title}</strong> successfully saved to Drafts. You can continue editing. ',
+                    content_type=ContentType.objects.get_for_model(Book),
+                    object_id=book.id
+                )
+
+            # 5. Save Content
             bookcontent = content_form.save(commit=False)
             bookcontent.book = book
             bookcontent.save() 
 
-            # 3. Final Redirect
+            # 6. Final Redirect
             messages.success(request, success_message)
             
             if action == "continue":
@@ -117,6 +139,14 @@ def createBook(request):
 def updateUserBook(request, slug):
     book = get_object_or_404(Book, slug=slug, uploaded_by=request.user)
     bookcontent, created = BookContent.objects.get_or_create(book=book)
+    # Find all unread notifications for THIS user regarding THIS specific book
+    book_content_type = ContentType.objects.get_for_model(Book)
+    Notification.objects.filter(
+        recipient=request.user,
+        content_type=book_content_type,
+        object_id=book.id,
+        is_read=False
+    ).update(is_read=True)
 
     if request.method == "POST":
         book_form = UserBookForm(request.POST, request.FILES, instance=book)
@@ -127,30 +157,44 @@ def updateUserBook(request, slug):
             # 1. Capture Action
             action = request.POST.get("action")
             
-            # 2. Save Book & Update Draft Status
-            if book_form.has_changed() or action:
-                book = book_form.save(commit=False)
-                
-                if action == "save":
-                    book.is_draft = False
-                elif action == "continue":
-                    book.is_draft = True
-                    book.is_published = False
-        
-                book.save() 
+            # 2. Prepare Book & Status
+            book = book_form.save(commit=False)
             
-            # 3. Save Content
+            if action == "save":
+                book.is_draft = False
+                # Reset published status if they edit a live book and re-submit
+                book.is_published = False 
+                success_message = f'We have started reviewing your book "{book.title}". You will be notified once it is published to the community.'
+                
+            elif action == "continue":
+                book.is_draft = True
+                book.is_published = False
+                success_message = "Saved to drafts. Make sure to Publish it once done."
+    
+            # 3. SAVE BOOK (Ensures status is updated in DB)
+            book.save() 
+            
+            # 4. Create Notification
+            if action == "save":
+                Notification.objects.create(
+                    recipient=request.user,
+                    notification_type='book_review',
+                    message=f'Your book <strong>{book.title}</strong> has been submitted for review. You will be notified once it is published to the community.',
+                    content_type=ContentType.objects.get_for_model(Book),
+                    object_id=book.id
+                )
+            
+            # 5. Save Content
             if content_form.has_changed():
                 content = content_form.save(commit=False)
                 content.save() 
 
-            # 4. Redirect
-            if action == "save":
-                messages.success(request, f'We have started reviewing your book "{book.title}". You will be notified once it is published to the community.')
-                return redirect("draftBooks")
+            # 6. Redirect
+            messages.success(request, success_message)
             
+            if action == "save":
+                return redirect("draftBooks")
             elif action == "continue":
-                messages.success(request, "Saved to drafts. Make sure to Publish it once done.")
                 return redirect("updateUserBook", slug=book.slug)
 
     else:
@@ -162,7 +206,6 @@ def updateUserBook(request, slug):
         "content_form": content_form,
         "book": book,
     })
-    
     
 def draftBooks(request):
     books_queryset = Book.objects.filter(uploaded_by=request.user).select_related('genre').order_by('-uploaded_at')

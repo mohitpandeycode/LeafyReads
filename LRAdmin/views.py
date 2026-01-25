@@ -78,7 +78,7 @@ def dashboard(request):
         
     #Apply Pagination 
 
-    PAGESIZE = 50
+    PAGESIZE = 20
     paginator = Paginator(books_list, PAGESIZE)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -89,10 +89,12 @@ def dashboard(request):
     }
     return render(request, "dashboard.html", context)
 
+
+
 @login_required(login_url="login_admin")
 def updateBook(request, slug):
     # Fetch objects
-    book = get_object_or_404(Book, slug=slug, uploaded_by=request.user)
+    book = get_object_or_404(Book, slug=slug)
     bookcontent, created = BookContent.objects.get_or_create(book=book)
 
     # Initialize forms
@@ -110,7 +112,7 @@ def updateBook(request, slug):
                 # we don't have custom 'save' logic that modifies other fields on the fly.
                 book.save(update_fields=book_form.changed_data) 
             
-            # --- 2. CONTENT SAVE (THE FIX) ---
+            # --- 2. CONTENT SAVE---
             if content_form.has_changed():
                 content = content_form.save(commit=False)
                 content._updated_by = request.user
@@ -182,7 +184,7 @@ def addBook(request):
 
 @login_required(login_url="login_admin")
 def viewBookAdmin(request, slug):
-    book = get_object_or_404(Book.objects.select_related("genre"), slug=slug, uploaded_by=request.user)
+    book = get_object_or_404(Book.objects.select_related("genre"), slug=slug)
     bookcontent = get_object_or_404(BookContent.objects.only("content"), book=book)
     return render(
         request, "viewBook.html", {"book": book, "bookcontent": bookcontent.content}

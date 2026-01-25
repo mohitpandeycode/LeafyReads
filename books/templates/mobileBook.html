@@ -102,6 +102,36 @@
           <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
         </div>
       </div>
+      {% elif notif.notification_type == 'draft_saved' %}
+      <a href="{% url 'updateUserBook'  notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
+        <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
+          <div class="notif-icon-box bg-purple">📖</div>
+          <div class="notif-content">
+            <p>{{ notif.message|safe }}</p>
+            <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+          </div>
+        </div>
+      </a>
+      {% elif notif.notification_type == 'book_review' %}
+      <a href="{% url 'updateUserBook'  notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
+        <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
+          <div class="notif-icon-box bg-purple">📤</div>
+          <div class="notif-content">
+            <p>{{ notif.message|safe }}</p>
+            <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+          </div>
+        </div>
+      </a>
+      {% elif notif.notification_type == 'book_published' %}
+      <a href="{% url 'book'  notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
+        <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
+          <div class="notif-icon-box bg-purple">🎉</div>
+          <div class="notif-content">
+            <p>{{ notif.message|safe }}</p>
+            <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+          </div>
+        </div>
+      </a>
       {% else %}
       <a href="{% url 'post_view' notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
         <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
@@ -115,9 +145,6 @@
             <p>{{ notif.message|safe }}</p>
             <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
           </div>
-          {% if not notif.is_read %}
-          <div class="unread-dot"></div>
-          {% endif %}
         </div>
       </a>
       {% endif %}

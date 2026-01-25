@@ -9,6 +9,9 @@ class Notification(models.Model):
         ('book_mention', 'Book Mention'),
         ('post_publish', 'Post Published'),
         ('like', 'Like'),
+        ('draft_saved', 'Draft Saved'),
+        ('book_review', 'Book Under Review'),
+        ('book_published', 'Book Published'),
     )
 
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')

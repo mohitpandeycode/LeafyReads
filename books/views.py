@@ -8,6 +8,8 @@ from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.contrib.postgres.search import TrigramSimilarity
 from django.utils.html import strip_tags
+from home.models import Notification 
+from django.contrib.contenttypes.models import ContentType
 import hashlib
 import random
 from django.utils import timezone
@@ -242,7 +244,15 @@ def openBook(request, slug):
         slug=slug,
         is_published=True,
     )
-
+    if request.user.is_authenticated:
+        content_type = ContentType.objects.get_for_model(Book)
+        
+        Notification.objects.filter(
+            recipient=request.user,
+            content_type=content_type,
+            object_id=book.id,
+            is_read=False
+        ).update(is_read=True)
     # 2. Optimized Content Fetching
     content_data = BookContent.objects.filter(book=book).values("chunks").first()
     
@@ -308,7 +318,7 @@ def library(request):
         if sort_param == 'newest':
             books_queryset = books_queryset.order_by('-uploaded_at')
 
-        paginator = Paginator(books_queryset, 30)
+        paginator = Paginator(books_queryset, 50)
         books = paginator.get_page(page_number)
         
         cache.set(books_cache_key, books, timeout=60 * 15)
@@ -358,7 +368,7 @@ def categories(request, slug):
     if sort_param == 'newest':
         books_queryset = books_queryset.order_by("-uploaded_at")
 
-    paginator = Paginator(books_queryset, 30)
+    paginator = Paginator(books_queryset, 50)
     books = paginator.get_page(page_number)
 
     all_categories = Genre.objects.all().order_by("name")
@@ -457,7 +467,7 @@ def searchbooks(request):
             # Default: Relevance
             books_queryset = books_queryset.order_by('-similarity', '-likes_count')
 
-        paginator = Paginator(books_queryset, 30)
+        paginator = Paginator(books_queryset, 50)
         books = paginator.get_page(page_number)
 
         if len(books) == 0:
@@ -480,7 +490,7 @@ def searchbooks(request):
         if sort_param == 'relevance' or sort_param == 'newest':
              books_queryset = books_queryset.order_by("-uploaded_at")
 
-        paginator = Paginator(books_queryset, 30)
+        paginator = Paginator(books_queryset, 50)
         books = paginator.get_page(page_number)
         suggested_books = cached_suggestions
 

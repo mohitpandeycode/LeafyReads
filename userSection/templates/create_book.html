@@ -43,7 +43,7 @@ Create Book | LeafyReads
         {% endif %}
 
         <div id="word-limit-alert" style="display: none;">
-            <strong>Limit Exceeded:</strong> Content cannot exceed 5000 words. Please shorten your text to publish or make PART 2.
+            <strong>Limit Exceeded:</strong> Content cannot exceed 15000 words. Please shorten your text to publish or make PART 2.
         </div>
 
         <div class="split-layout">
@@ -108,7 +108,7 @@ Create Book | LeafyReads
                     {{ content_form.content }}
                     
                     <div id="word-counter" class="word-counter-box">
-                        0 / 5000 words
+                        0 / 15000 words
                     </div>
 
                     {{ content_form.content.errors }}
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function() {
         lucide.createIcons();
         
         // --- VARIABLES ---
-        const WORD_LIMIT = 5000;
+        const WORD_LIMIT = 15000;
         const counterDisplay = document.getElementById('word-counter');
         const alertBox = document.getElementById('word-limit-alert');
         const btnPublish = document.getElementById('btn-publish');
