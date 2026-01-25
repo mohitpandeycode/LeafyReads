@@ -105,6 +105,8 @@
         <nav class="desktop-nav">
           <a href="{% url 'dashboard' %}" class="{% if request.path == '/admin-dashboard/' %}active{% endif %}">Admin
             Home</a>
+          <a href="{% url 'userUploads' %}"
+            class="{% if request.path == '/admin-dashboard/user-uploads-books' %}active{% endif %}">User Uploads</a>
           <a href="{% url 'addBook' %}"
             class="{% if request.path == '/admin-dashboard/add-book' %}active{% endif %}">Add Book</a>
           {% if request.resolver_match.url_name == 'updateBook' %}

@@ -330,7 +330,7 @@ def library(request):
         request,
         "library.html",
         {
-            "title": "Library",
+            "title": "Digital Library",
             "books": books,
             "recently_read_books": recently_read_books,
             "categories": categories,
@@ -362,7 +362,6 @@ def categories(request, slug):
     books = paginator.get_page(page_number)
 
     all_categories = Genre.objects.all().order_by("name")
-
     return render(
         request,
         "library.html",

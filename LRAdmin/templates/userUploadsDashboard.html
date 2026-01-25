@@ -1,0 +1,129 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+
+{% block title %}
+All Books - LeafyReads Admin
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+{% endblock %}
+
+
+{% block body %}
+    <div class="books-container" style="margin: 5px 20px;">
+        <div class="books-header">
+            <h4>All Books</h4>
+            <div class="action-bar">
+                <form method="GET" class="search-form" style="display: flex; gap: 5px;">
+                    <input type="text" name="search" placeholder="Search title, author, slug..." value="{{ search|default:'' }}" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                    <button type="submit" class="btn-search">Search</button>
+                    {% if search %}
+                        <a href="{% url 'dashboard' %}" class="btn-clear" style="padding: 5px; border-radius: 4px; background: #f0f0f0; color: #333;">Clear</a>
+                    {% endif %}
+                </form>
+                <a href="{% url 'addBook' %}" class="btn-add">+ Add Book</a>
+            </div>
+        </div>
+        
+        <form style="overflow-x: auto;" method="POST" id="bulk-action-form">
+            {% csrf_token %}
+            <div class="bulk-actions" style="margin-bottom: 10px;">
+                <select name="action" id="action-select">
+                    <option value="">-- Select Action --</option>
+                    <option value="delete">Delete selected books</option>
+                </select>
+                <button type="submit">Go</button>
+                <span id="selected-count">0 of {{ books.paginator.count }} selected</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Genre</th>
+                        <th>Language</th>
+                        <th>Is Published</th>
+                        <th>Uploaded At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% if books %}
+                    {% for book in books %}
+                    <tr>
+                        <td><input type="checkbox" class="book-checkbox" name="selected_books" value="{{ book.id }}"></td>
+                        <td><a style="color: #4b72ff;" href="{% url 'updateBook' book.slug %}">{{book.title}}</a></td>
+                        <td>{{book.author}}</td>
+                        <td>{{book.genre}}</td>
+                        <td>{{book.book_language}}</td>
+                        {% if book.is_published %}
+                        <td><span class="status">Published</span></td>
+                        {% else %}
+                        <td><span class="status" style="color: rgb(255, 81, 0);">Not Published</span></td>
+                        {% endif %}
+                        <td>{{book.updated_at}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; font-size:16px; padding: 20px;">Hmm... No books matched your search!</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </form>
+
+        {% if books.has_other_pages %}
+        <div class="pagination-controls" style="text-align: center; display: flex; justify-content: center; align-items: center;gap:10px; padding: 15px;">
+            
+            {% if books.has_previous %}
+                <a href="?page={{ books.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn-page" style="text-decoration: none; padding: 5px; border: 1px solid #ccc; border-radius: 10px; background-color: #a8ede6;color: black;">&laquo; Previous</a>
+            {% else %}
+                <span class="btn-page disabled" style="padding: 5px; border: 1px solid #f0f0f0; border-radius: 10px; color: #ccc;">&laquo; Previous</span>
+            {% endif %}
+
+            <span class="page-current" style="font-weight: bold;">
+                Page {{ books.number }} of {{ books.paginator.num_pages }}
+            </span>
+
+            {% if books.has_next %}
+                <a href="?page={{ books.next_page_number }}{% if search %}&search={{ search }}{% endif %}" class="btn-page" style="text-decoration: none; padding: 5px; border: 1px solid #ccc; border-radius: 10px; background-color: #a8ede6;color:black;">Next &raquo;</a>
+            {% else %}
+                <span class="btn-page disabled" style="padding: 5px; border: 1px solid #f0f0f0; border-radius: 10px; color: #ccc;">Next &raquo;</span>
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+        <div class="books-footer" style="padding-top: 10px; text-align: right; color: #777;">
+            Showing {{ books.start_index }} out of  {{ books.end_index }} books.
+        </div>
+    </div>
+<script>
+    // NOTE: The selected count logic needs an update to use books.paginator.count
+    const selectAllCheckbox = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('.book-checkbox');
+    const selectedCountSpan = document.getElementById('selected-count');
+    
+    // Pass the total count to JS from the Django context
+    const totalBookCount = {{ books.paginator.count }};
+
+    function updateSelectedCount() {
+        const selected = document.querySelectorAll('.book-checkbox:checked').length;
+        selectedCountSpan.textContent = `${selected} of ${totalBookCount} selected`;
+    }
+
+    selectAllCheckbox.addEventListener('change', function() {
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateSelectedCount();
+    });
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedCount));
+    updateSelectedCount(); // Initial count load
+
+</script>
+{% endblock body %}

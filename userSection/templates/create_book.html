@@ -66,8 +66,11 @@ Create Book | LeafyReads
                             {{ book_form.cover_front }}
                         </div>
                     </div>
-                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">Recommended ratio 2:3</small>
+                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">Recommended ratio 2:3 (size:5MB)</small>
                     {{ book_form.cover_front.errors }}
+                    <div id="file-size-alert" style="display: none;background: rgb(236 51 51);color: white;padding: 7px;font-size: 12px;border-radius: 5px;border: 1px solid #bb0808;">
+                        <strong>File Too Large:</strong> Image must be less than 5MB.
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -298,11 +301,39 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         setInterval(syncEditor, 1000);
 
-        // --- 5. IMAGE PREVIEW ---
+        // --- 5. IMAGE PREVIEW & SIZE LIMIT ---
+        const fileAlert = document.getElementById('file-size-alert');
+
         if (coverInput) {
             coverInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
+                const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
                 if (file) {
+                    if (file.size > MAX_SIZE) {
+                        // 1. Show our custom alert box
+                        if (fileAlert) fileAlert.style.display = 'block';
+                        
+                        // 2. Clear the input so it doesn't upload
+                        this.value = ""; 
+                        
+                        // 3. Reset UI to placeholder state
+                        previewImg.style.display = 'none';
+                        if(placeholderUi) placeholderUi.style.display = 'flex';
+                        if(resetBtn) resetBtn.style.display = 'none';
+                        
+                        // 4. Disable publish button to prevent error submission
+                        btnPublish.disabled = true;
+                        btnPublish.style.opacity = "0.5";
+                        return;
+                    } else {
+                        // File is okay - Hide alert and re-enable buttons
+                        if (fileAlert) fileAlert.style.display = 'none';
+                        btnPublish.disabled = false;
+                        btnPublish.style.opacity = "1";
+                    }
+
+                    // Proceed with preview if size is valid
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         previewImg.src = e.target.result;

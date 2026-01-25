@@ -186,7 +186,7 @@ def draftBooks(request):
                 uploaded_by=request.user
             ).delete()
             
-            messages.success(request, f"Successfully deleted {deleted_count} book(s).")
+            messages.success(request, f"Successfully deleted.")
             return redirect("draftBooks") # Redirect to prevent form resubmission
 
     # --- HANDLE PAGINATION ---

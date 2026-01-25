@@ -187,3 +187,54 @@ def viewBookAdmin(request, slug):
     return render(
         request, "viewBook.html", {"book": book, "bookcontent": bookcontent.content}
     )
+
+
+@login_required(login_url="login_admin")
+def userUploads(request):
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        selected_books = request.POST.getlist("selected_books")
+        
+        if action == "delete" and selected_books:
+            # Perform delete operation
+            for book in Book.objects.filter(id__in=selected_books):
+                book._updated_by = request.user
+                book.delete()
+            return redirect("dashboard")
+
+
+    
+    # Start with all books, fetch genre relationship efficiently
+    books_list = Book.objects.select_related("genre").filter(is_draft=False).order_by("-uploaded_at")
+
+    book_query = request.GET.get("search", "").strip()
+
+    if book_query:
+        
+        keywords = book_query.split()
+        query = Q()
+        for keyword in keywords:
+            q = (
+                Q(title__icontains=keyword)
+                | Q(author__icontains=keyword)
+                | Q(genre__name__icontains=keyword)
+                | Q(slug__icontains=keyword)
+            )
+            query |= q
+            
+        books_list = books_list.filter(query).distinct()
+        
+    #Apply Pagination 
+
+    PAGESIZE = 50
+    paginator = Paginator(books_list, PAGESIZE)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        "books": page_obj,
+        "search": book_query,
+    }
+    return render(request, "userUploadsDashboard.html", context)
+    

@@ -6,7 +6,7 @@
 {{ title }} - By {{ book.author }} | LeafyReads
 {% endblock %}
 
-{% block meta_description %}{{ book.content|truncatewords:25 }} | {% endblock %}
+{% block meta_description %}{{ title }} by {{ book.author }} online only on LeafyReads.{{ book.content|truncatewords:25 }} | {% endblock %}
 
 {% block social_tags %}
 <meta property="og:title" content="{{ book.title }} - By {{ book.author }}" />
