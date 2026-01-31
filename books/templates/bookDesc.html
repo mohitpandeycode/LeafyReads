@@ -69,7 +69,7 @@
                     <span class="credit-value">{{ book.author }}</span>
                 </div>
                 <div class="credit-row">
-                    <span class="credit-label">Publisher</span>
+                    <span class="credit-label">Digital Publisher</span>
                     <span class="credit-value" style="color: var(--primary-color);">LeafyReads</span>
                 </div>
                 <div class="credit-row">
@@ -81,7 +81,7 @@
                     <span class="credit-value">{{ book.genre }}, {{ book.genre.category }}</span>
                 </div>
                 <div class="credit-row">
-                    <span class="credit-label">Published</span>
+                    <span class="credit-label">Added ON</span>
                     <span class="credit-value local-time" data-utc="{{ book.uploaded_at|date:'c' }}">
                         {{ book.uploaded_at|date:"M d, Y" }}
                     </span>
