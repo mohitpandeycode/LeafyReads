@@ -179,3 +179,72 @@ body.dark-mode .login-leafy-dark {
  .leafy-explore a:hover {
    text-decoration: underline;
  }
+
+.leafy-auth-button.donate {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 28px;
+  background: #fdfcf0; 
+  color: #4a3728; 
+  border: 1px solid #e2dcc5;
+  border-radius: 4px; 
+  font-family: 'Georgia', serif; 
+  font-style: italic;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #e2dcc5;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.leafy-auth-button.donate img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Subtle "Shy" Animation */
+@keyframes sway {
+  0% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+  100% { transform: rotate(-1deg); }
+}
+
+.leafy-auth-button.donate {
+  animation: sway 3s ease-in-out infinite;
+}
+
+/* Hover: A soft, emotional swell */
+.leafy-auth-button.donate:hover {
+  background: #fff;
+  border-color: #ffafaf; 
+  color: #b33939; 
+  box-shadow: 4px 4px 0px #ffafaf;
+  transform: scale(1.02);
+}
+
+/* The Heart "blooms" on hover */
+.leafy-auth-button.donate:hover img {
+  transform: scale(1.3);
+  opacity: 1;
+}
+
+/* A soft "glow" that feels like warmth, not a lightbulb */
+.leafy-auth-button.donate::after {
+  content: '❤';
+  position: absolute;
+  top: -15px;
+  right: 10px;
+  font-size: 12px;
+  color: #ffafaf;
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+
+.leafy-auth-button.donate:hover::after {
+  opacity: 1;
+  top: -25px;
+  transform: rotate(15deg);
+}

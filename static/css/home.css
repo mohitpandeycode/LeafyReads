@@ -1240,6 +1240,10 @@ body.dark-mode .book-item img:hover {
     background-color: #E9D5FF;
     color: #9333EA
 }
+.feature-icon.bg-orange {
+    background-color: #ffe5ca;
+    color: #ea8833
+}
 
 .truncate {
     width: 100%;
@@ -1752,7 +1756,7 @@ body.dark-mode .hero-bg {
 
 
     .features-grid {
-        grid-template-columns: repeat(3, 1fr)
+        grid-template-columns: repeat(4, 1fr)
     }
 
     .testimonials-grid {

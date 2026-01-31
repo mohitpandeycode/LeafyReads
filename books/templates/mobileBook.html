@@ -195,17 +195,18 @@
         Sign in with Facebook
       </a>
 
-      <button class="leafy-auth-button apple">
-        <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" loading="lazy" alt="Apple icon" />
-        Sign in with Apple
-      </button>
+      <div class="support-section">
+        <h4>Support LeafyReads</h4>
+        <p style="font-size: 13px;">Your contributions help us keep the library free and support rising authors.</p>
+        
+        <button class="leafy-auth-button donate">
+          <img src="https://cdn-icons-png.flaticon.com/512/2589/2589175.png" loading="lazy" alt="Heart icon" />
+          Support our Mission
+        </button>
+      </div>
 
       <div class="leafy-terms">
         By clicking "signup" you agree to our <a href="{% url 'terms-of-service' %}">Terms of Service</a> & <a href="{% url 'privacy-policy' %}">Privacy Policy</a>.
-      </div>
-
-      <div class="leafy-explore">
-        Continue without signup? <a href="/">explore</a>
       </div>
     </div>
   </section>
@@ -241,7 +242,7 @@
               <a href="{% url 'profilepage' %}">
                 <li class="dropdown-item">
                   <i data-lucide="user-pen"></i>
-                  <span>Profile</span>
+                  <span>My Dashboard</span>
                 </li>
               </a>
               <li onclick="toggleNotifications()" class="dropdown-item" style="position: relative;">
