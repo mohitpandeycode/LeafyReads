@@ -3,10 +3,12 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
 import re
+import bleach
 from django.urls import reverse
 from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
 from django.contrib.postgres.indexes import GinIndex
+from bleach.css_sanitizer import CSSSanitizer
 
 def book_folder(instance):
     return f"books/{slugify(instance.title)}"
@@ -150,8 +152,6 @@ class Book(models.Model):
 
 
 # BOOK CONTENT MODEL
-
-
 class BookContent(models.Model):
     book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="content")
     content = CKEditor5Field("content", config_name="extends")
@@ -160,6 +160,43 @@ class BookContent(models.Model):
 
     def save(self, *args, **kwargs):
         if self.content:
+            # --- 1. SECURITY: Sanitize HTML (Prevent XSS) ---
+            allowed_tags = [
+                'p', 'b', 'i', 'u', 'em', 'strong', 'a', 'span', 'div', 'br',
+                'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+                'ul', 'ol', 'li', 
+                'blockquote', 's', 'strike', 'del', 'sub', 'sup', 'mark', 'hr',
+                'pre', 'code',
+                'img', 'figure', 'figcaption',
+                'table', 'tbody', 'thead', 'tr', 'td', 'th', 'caption'
+            ]
+
+            allowed_attrs = {
+                '*': ['class', 'style'],
+                'a': ['href', 'rel', 'target'],
+                'img': ['src', 'alt', 'style', 'width', 'height'],
+                'table': ['border', 'cellpadding', 'cellspacing'],
+                'th': ['scope', 'colspan', 'rowspan'],
+                'td': ['colspan', 'rowspan'],
+            }
+            
+            # --- NEW CSS SANITIZER SETUP ---
+            allowed_css_properties = [
+                'color', 'font-weight', 'background-color', 'text-align', 
+                'font-size', 'font-family', 'list-style-type', 'width', 'height'
+            ]
+            css_sanitizer = CSSSanitizer(allowed_css_properties=allowed_css_properties)
+
+            # Clean the content
+            self.content = bleach.clean(
+                self.content, 
+                tags=allowed_tags, 
+                attributes=allowed_attrs, 
+                css_sanitizer=css_sanitizer,  # <--- CHANGED THIS ARGUMENT
+                strip=True
+            )
+            
+            # --- 2. CHUNKING LOGIC ---
             pattern = r'(</p>|</div>|<br\s*/?>)'
             parts = re.split(pattern, self.content, flags=re.IGNORECASE)
 
@@ -168,20 +205,15 @@ class BookContent(models.Model):
 
             for part in parts:
                 current_buffer += part
-                # If this part was a closing tag/break, finalize the chunk
                 if re.match(pattern, part, re.IGNORECASE):
-                    # Only add if it has actual content (ignore empty paragraphs)
-                    if re.search(r'[a-zA-Z0-9]', current_buffer): 
+                    if re.search(r'\S', current_buffer):
                         clean_chunks.append(current_buffer)
-                    current_buffer = "" # Reset buffer
+                    current_buffer = "" 
 
-            # Append any remaining text
             if current_buffer.strip():
                 clean_chunks.append(current_buffer)
 
-            # Fallback: If split failed (chunk len is 1), force split by character count
             if len(clean_chunks) < 2 and len(self.content) > 1000:
-                # Naive split every 1000 chars if HTML structure is broken
                 clean_chunks = [self.content[i:i+1000] for i in range(0, len(self.content), 1000)]
 
             self.chunks = clean_chunks
@@ -192,7 +224,6 @@ class BookContent(models.Model):
 
     def __str__(self):
         return f"Content for {self.book.title}"
-
 
 # REVIEW MODEL
 

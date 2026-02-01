@@ -282,7 +282,7 @@ function hideAlert() {
     { once: true }
   );
 }
-setTimeout(hideAlert, 10000);
+setTimeout(hideAlert, 7000);
 closeButton?.addEventListener("click", hideAlert);
 
 // === Shortcuts panel toggle ===

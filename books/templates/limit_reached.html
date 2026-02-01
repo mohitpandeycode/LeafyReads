@@ -1,0 +1,80 @@
+{% load static %}
+<style>
+    /* 1. Default State: Hidden & Scaled Down */
+    .loginpagesection {
+        opacity: 0;
+        transform: translate(0, 20px) scale(0.95);
+    }
+
+    /* 2. Active State: Visible & Normal Size */
+    .loginpagesection.active {
+        opacity: 1 !important;
+        pointer-events: all !important;
+        transform: translate(0, 0) scale(1) !important;
+    }
+    .leafy-auth-button {
+        width: 95%;
+    }
+    @media (max-width: 480px) {
+       body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(#009eff, #221f1f63);
+    }
+}
+</style>
+{% include 'login.html' %}
+
+<div class="impact-card">
+    <div class="impact-visual">
+        <div class="icon-bg">
+          <img style="width: 100%; object-fit: cover;" src="{% static 'images/lockbook.png' %}" alt="">
+        </div>
+        <div class="status-tag"><p class="badge"></p>Limit Reached [3/3]</div>
+    </div>
+
+    <div class="impact-content">
+        <h2>Unlock the Full Library</h2>
+        <p>You’ve enjoyed your 3 free books. Log in now to continue reading this story and discover thousands more.</p>
+    </div>
+
+    <div class="impact-action">
+        <div id="startlogin" class="impact-btn">
+            <span>Login to Continue</span>
+            <i data-lucide="arrow-right"></i>
+        </div>
+        <span class="sub-text">It's free and takes 10 seconds.</span>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. Select Elements ---
+        const loginBtn = document.getElementById('startlogin');   
+        const closeBtn = document.getElementById('closelogin');    
+        const loginOverlay = document.querySelector('.loginpagesection'); 
+
+        const loginBox = document.querySelector('.leafy-auth-container') || loginOverlay.firstElementChild;
+
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                e.stopPropagation(); 
+                loginOverlay.classList.add('active');
+            });
+        }
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginOverlay.classList.remove('active');
+            });
+        }
+        document.addEventListener('click', function(e) {
+            if (loginOverlay.classList.contains('active')) {
+                if (!loginBox.contains(e.target) && !loginBtn.contains(e.target)) {
+                    loginOverlay.classList.remove('active');
+                }
+            }
+        });
+    });
+</script>

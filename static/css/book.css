@@ -1077,7 +1077,7 @@ body.dark-mode #progress-bar {
     z-index: 999;
     bottom: 15px;
     left: 1%;
-    width: 23%;
+    width: 18%;
     background-color: #044578;
     color: #fff;
     padding: 10px 10px;
@@ -1097,7 +1097,7 @@ body.dark-mode #progress-bar {
     height: 4px;
     background-color: #f59e0b;
     width: 100%;
-    animation: countdown 10s linear forwards;
+    animation: countdown 7s linear forwards;
 }
 
 @keyframes countdown {

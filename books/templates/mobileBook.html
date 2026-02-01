@@ -29,8 +29,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="{% static 'css/mobilebook.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/mobilebook.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/limit_reached.css' %}">
 
  <style>
     body {
@@ -54,6 +55,9 @@
 </head>
 
 <body>
+  {% if limit_reached %}
+{% include 'limit_reached.html' %}
+{% else %}
   {% if messages %}
   <div
     class="error max-w-md w-full fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start"
@@ -811,7 +815,7 @@
 
   });
 </script>
-
+{% endif %}
 </body>
 
 </html>

@@ -60,36 +60,27 @@ def apply_common_filters(queryset, lang_param, sort_param):
 
 
 def home(request, slug):
+    # --- 1. VIEW COUNTER LOGIC ---
     book_id = Book.objects.filter(slug=slug).values_list('id', flat=True).first()
     
     if book_id:
-        # CONFIGURATION of hours here
         VIEW_COOLDOWN_HOURS = 3 
-        
-        # Create a unique session key for this specific book
         session_key = f'viewed_book_{book_id}_last_at'
         last_view_str = request.session.get(session_key)
-        
         should_increment = False
 
         if not last_view_str:
-            # Case 1: User has NEVER viewed this book (or cleared cookies)
             should_increment = True
         else:
-            # Case 2: User viewed before. Check if X hours have passed.
             try:
                 last_view_time = timezone.datetime.fromisoformat(last_view_str)
                 if timezone.now() > last_view_time + timedelta(hours=VIEW_COOLDOWN_HOURS):
                     should_increment = True
             except ValueError:
-                # If the session data is weird/corrupt, reset it
                 should_increment = True
 
         if should_increment:
-            # Increment DB Counter efficiently using F() expression
             Book.objects.filter(id=book_id).update(views_count=F('views_count') + 1)
-            
-            # Update Session Timestamp to NOW
             request.session[session_key] = timezone.now().isoformat()
             request.session.modified = True
 
@@ -110,24 +101,43 @@ def home(request, slug):
 
     book = get_object_or_404(book_qs, slug=slug)
 
-    # --- 3. RECORD HISTORY (Async-safe) ---
+    # non logged in book read limit LOGIC
+    limit_reached = False
+    
+    if not request.user.is_authenticated:
+        viewed_books = request.session.get('viewed_books', [])
+        
+        if book.id not in viewed_books:
+            if len(viewed_books) >= 3:
+                limit_reached = True
+            else:
+                viewed_books.append(book.id)
+                request.session['viewed_books'] = viewed_books
+                request.session.modified = True
+   
+    # --- 3. RECORD HISTORY ---
     if request.user.is_authenticated:
         def save_read():
             ReadBy.objects.get_or_create(user=request.user, book=book)
         transaction.on_commit(save_read)
-
+    
     # --- 4. CONTENT HANDLING ---
-    try:
-        content_obj = book.content
-        has_content = True
-    except Exception:
-        content_obj = None
+    content_obj = None
+    display_content = ""
+    pagination_context = None
+
+    # If limit reached, send empty content
+    if limit_reached:
         has_content = False
+    else:
+        try:
+            content_obj = book.content
+            has_content = True
+        except Exception:
+            content_obj = None
+            has_content = False
 
     # --- 5. DEVICE DETECTION & RENDERING ---
-    pagination_context = None
-    display_content = ""
-
     if request.user_agent.is_mobile:
         template_name = "mobileBook.html"
         content_chunks = getattr(content_obj, "chunks", []) if has_content else []
@@ -156,7 +166,8 @@ def home(request, slug):
             "page_obj": pagination_context,
             "saved": getattr(book, "is_saved", False),
             "liked": getattr(book, "is_liked", False),
-            "title": book.title
+            "title": book.title,
+            "limit_reached": limit_reached,
         },
     )
     
