@@ -1,6 +1,8 @@
 
+{% extends 'basic.html' %}
+{% load static %}
 {% block title %}
-<title>LeafyReads - Login To Admin Account</title>
+LeafyReads - Login To Admin Account
 {% endblock %}
 {% load cloudinary %}
 {% block css %}
@@ -141,7 +143,7 @@ body.dark-mode .login-leafy-dark {
 
 {% block body %}
 
-<section style="padding: 3rem;" class="loginpagesection" id="loginSection">
+<section class="loginpagesection" id="loginSection">
     <div class="leafy-auth-container" id="loginContainer">
         <div style="align-items: center;justify-content: center;display: flex;">
               {% cloudinary "qqeschqzlywacz6rqsbl" quality="auto" fetch_format="auto" style="width: 60px; border-radius: 15px;" loading="lazy" alt="logo" %}

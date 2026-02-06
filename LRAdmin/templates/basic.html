@@ -7,6 +7,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex">
   <title>
     {% block title %}
 
@@ -102,6 +103,9 @@
           {% cloudinary "tdehybbsyciqodgxs2rq" quality="auto" fetch_format="auto" class="logo-light" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
           {% cloudinary "kp6b6xlwuu8d52cfhfba" quality="auto" fetch_format="auto" class="logo-dark" style="width: 140px; border-radius: 15px;" alt="LeafyReads" %}
         </a>
+        
+        {% if user.is_staff %}
+
         <nav class="desktop-nav">
           <a href="{% url 'dashboard' %}" class="{% if request.path == '/admin-dashboard/' %}active{% endif %}">Admin
             Home</a>
@@ -122,6 +126,9 @@
               style="display: none;border: none; background: #25b95f;border-radius: 8px;color: white;padding: 5px;cursor:pointer;"><span>Search</span></button>
           </form>
         </nav>
+                  
+        {% endif %}
+          
 
         <div class="header-actions">
           <button id="theme-toggle" class="theme-toggle-btn">
