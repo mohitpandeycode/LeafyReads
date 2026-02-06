@@ -1,10 +1,32 @@
 User-agent: *
-Disallow: /admin/
-Disallow: /tryhardadmin/
-Disallow: /accounts/
-Disallow: /admin-dashboard/
-Disallow: /profile/
 
+# --- Admin & Security ---
+Disallow: /tryhardadmin/
+Disallow: /admin-dashboard/
+Disallow: /ht/
+Disallow: /ckeditor5/
+
+# --- User Accounts & Private Data ---
+Disallow: /accounts/
+Disallow: /profile/
+Disallow: /logout/
+Disallow: /book/my-books/
+
+# --- Search & Dynamic Filters ---
+Disallow: /book/search-results-of/
+Disallow: /book/ajax/
+
+# --- Actions & API Endpoints ---
+Disallow: /book/toggle-read-later/
+Disallow: /book/toggle-like/
+Disallow: /book/read/
+Disallow: /community/ajax/
+Disallow: /community/comment/
+Disallow: /community/post/delete/
+
+# --- Resources ---
+Allow: /static/
+Allow: /media/
 Allow: /
 
 Sitemap: https://leafyreads.com/sitemap.xml

@@ -7,6 +7,7 @@ from .forms import BookContentForm,BookForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import user_passes_test
 
 # Create your views here.
 
@@ -21,16 +22,16 @@ def loginAdmin(request):
         except User.DoesNotExist:
             messages.error(
                 request,
-                f'An admin account with the username "{username}" was not found.',
+                f'We are unable to login you. Invalid Credential',
             )
             return redirect("login_admin")
 
         if not user.check_password(password):
-            messages.error(request, "Incorrect password. Please try again.")
+            messages.error(request, "We are unable to login you. Invalid Credential.")
             return redirect("login_admin")
 
         if not user.is_staff:
-            messages.error(request, "This account does not have admin privileges.")
+            messages.error(request, "We are unable to login you. Invalid Credential.")
             return redirect("login_admin")
 
         user.backend = "django.contrib.auth.backends.ModelBackend"
@@ -40,7 +41,7 @@ def loginAdmin(request):
     return render(request, "loginAdmin.html")
 
 
-@login_required(login_url="login_admin")
+@user_passes_test(lambda u: u.is_staff, login_url="login_admin")
 def dashboard(request):
 
     if request.method == "POST":
@@ -91,7 +92,7 @@ def dashboard(request):
 
 
 
-@login_required(login_url="login_admin")
+@user_passes_test(lambda u: u.is_staff, login_url="login_admin")
 def updateBook(request, slug):
     # Fetch objects
     book = get_object_or_404(Book, slug=slug)
@@ -138,7 +139,7 @@ def updateBook(request, slug):
     return render(request, "updateBook.html", context)
 
 
-@login_required(login_url="login_admin")
+@user_passes_test(lambda u: u.is_staff, login_url="login_admin")
 def addBook(request):
     genres = Genre.objects.all()
 
@@ -182,7 +183,7 @@ def addBook(request):
     })
 
 
-@login_required(login_url="login_admin")
+@user_passes_test(lambda u: u.is_staff, login_url="login_admin")
 def viewBookAdmin(request, slug):
     book = get_object_or_404(Book.objects.select_related("genre"), slug=slug)
     bookcontent = get_object_or_404(BookContent.objects.only("content"), book=book)
@@ -191,7 +192,7 @@ def viewBookAdmin(request, slug):
     )
 
 
-@login_required(login_url="login_admin")
+@user_passes_test(lambda u: u.is_staff, login_url="login_admin")
 def userUploads(request):
 
     if request.method == "POST":
