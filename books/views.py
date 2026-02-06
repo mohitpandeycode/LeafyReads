@@ -381,6 +381,19 @@ def categories(request, slug):
 
     paginator = Paginator(books_queryset, 50)
     books = paginator.get_page(page_number)
+    
+    # --- 4. RECOMMENDATION LOGIC (Always Fetch) ---
+    # We fetch this every time now, so it's available even if 'books' has data.
+    related_books = cache.get("popular_books_sidebar")
+    
+    if not related_books:
+        related_books = list(
+            Book.objects.filter(is_published=True)
+            .only("id", "title", "slug", "author", "cover_front", "likes_count", "views_count")
+            .order_by('-likes_count')[:21]
+        )
+        # Cache for 1 hour to keep it fast
+        cache.set("popular_books_sidebar", related_books, 3600)
 
     all_categories = Genre.objects.all().order_by("name")
     return render(
@@ -392,6 +405,7 @@ def categories(request, slug):
             "category": current_genre,
             "categories": all_categories,
             "languages": LANGUAGE_CHOICES,
+            "related_books": related_books,
         },
     )
 
