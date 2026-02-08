@@ -624,35 +624,24 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
       });
 
       // --- Submit Handler ---
-postForm.addEventListener("submit", (e) => {
-    // 1. Create the clone
-    const clone = editable.cloneNode(true);
-    clone.querySelectorAll(".book-tag").forEach(t => t.remove());
-    clone.style.cssText = "position: fixed; left: -9999px; top: 0; white-space: pre-wrap; opacity: 0; pointer-events: none; z-index: -100;";
-    
-    // Add to body so the browser renders it
-    document.body.appendChild(clone);
-    const caption = clone.innerText.trim();
+      postForm.addEventListener("submit", (e) => {
+        const clone = editable.cloneNode(true);
+        clone.querySelectorAll(".book-tag").forEach(t => t.remove());
+        const caption = clone.innerText.trim();
 
-    // 5. Clean up: Remove the clone from the document
-    document.body.removeChild(clone);
+        if (caption === "" && bookMentionInput.value === "" && imageInput.files.length === 0) {
+          e.preventDefault();
+          alert("You cannot post empty content.");
+          return;
+        }
 
-    // --- Validation Checks ---
-    // If text, book, and image are ALL missing
-    if (caption === "" && bookMentionInput.value === "" && imageInput.files.length === 0) {
-        e.preventDefault();
-        alert("You cannot post empty content.");
-        return;
-    }
+        hiddenTextarea.value = caption;
 
-    hiddenTextarea.value = caption;
-
-    // Visual feedback
-    postBtn.disabled = true;
-    postBtn.innerText = "Posting...";
-    postBtn.style.opacity = "0.6";
-    postBtn.style.cursor = "not-allowed";
-});
+        postBtn.disabled = true;
+        postBtn.innerText = "Posting...";
+        postBtn.style.opacity = "0.6";
+        postBtn.style.cursor = "not-allowed";
+      });
 
     } // END OF IF(POSTFORM)
   });
