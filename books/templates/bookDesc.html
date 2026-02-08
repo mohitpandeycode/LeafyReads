@@ -115,8 +115,7 @@
             <div class="book-item" style="position: relative;">
                 <a href="{% url 'book' b.slug %}">
                     <img class="imgbook" src="{{ b.cover_front.url }}" alt="{{ b.title }}" loading="lazy"
-                        onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';"
-                        style="object-fit: cover;" />
+                        onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';" />
 
                     {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;" alt="frame random" %}
 

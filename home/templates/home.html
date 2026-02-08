@@ -132,8 +132,7 @@ LeafyReads - Your Digital Bookshelf
       <div class="book-item" style="position: relative;">
         <a href="{% url 'book' book.slug %}">
           <img class="imgbook" src="{{ book.cover_front.url }}?q_auto&f_auto" alt="{{ book.title }}" loading="lazy"
-            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"
-            style="object-fit: cover;" />
+            onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';" />
           {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" alt="frame random" %}
           <div style="box-shadow: 1px 1px 1px #61616138;border-radius: 0px 0px 5px 5px;">
             <div class="readby">
