@@ -354,10 +354,19 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
     //----------------------------------------------------------
     const postForm = document.getElementById("postForm");
     if (postForm) {
-
       // --- Element References ---
       const editable = document.getElementById("postContentEditable");
       const hiddenTextarea = document.getElementById("postContent");
+      if (editable) {
+        editable.addEventListener("paste", (e) => {
+          // 1. Prevent the default paste (which includes HTML/styles)
+          e.preventDefault();
+          // 2. Get clear text from clipboard
+          const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+          // 3. Insert text at the cursor position
+          document.execCommand("insertText", false, text);
+        });
+      }
       const postBtn = document.querySelector(".post-btn");
       const imageInput = document.getElementById("imageInput");
       const bookMentionInput = document.getElementById("bookMention");
@@ -615,24 +624,35 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
       });
 
       // --- Submit Handler ---
-      postForm.addEventListener("submit", (e) => {
-        const clone = editable.cloneNode(true);
-        clone.querySelectorAll(".book-tag").forEach(t => t.remove());
-        const caption = clone.innerText.trim();
+postForm.addEventListener("submit", (e) => {
+    // 1. Create the clone
+    const clone = editable.cloneNode(true);
+    clone.querySelectorAll(".book-tag").forEach(t => t.remove());
+    clone.style.cssText = "position: fixed; left: -9999px; top: 0; white-space: pre-wrap; opacity: 0; pointer-events: none; z-index: -100;";
+    
+    // Add to body so the browser renders it
+    document.body.appendChild(clone);
+    const caption = clone.innerText.trim();
 
-        if (caption === "" && bookMentionInput.value === "" && imageInput.files.length === 0) {
-          e.preventDefault();
-          alert("You cannot post empty content.");
-          return;
-        }
+    // 5. Clean up: Remove the clone from the document
+    document.body.removeChild(clone);
 
-        hiddenTextarea.value = caption;
+    // --- Validation Checks ---
+    // If text, book, and image are ALL missing
+    if (caption === "" && bookMentionInput.value === "" && imageInput.files.length === 0) {
+        e.preventDefault();
+        alert("You cannot post empty content.");
+        return;
+    }
 
-        postBtn.disabled = true;
-        postBtn.innerText = "Posting...";
-        postBtn.style.opacity = "0.6";
-        postBtn.style.cursor = "not-allowed";
-      });
+    hiddenTextarea.value = caption;
+
+    // Visual feedback
+    postBtn.disabled = true;
+    postBtn.innerText = "Posting...";
+    postBtn.style.opacity = "0.6";
+    postBtn.style.cursor = "not-allowed";
+});
 
     } // END OF IF(POSTFORM)
   });
