@@ -198,12 +198,20 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
       {% for post in posts %}
       <article class="post-card" data-post-id="{{ post.id }}">
         <div class="post-header">
-          <div class="avatar">
+          <div class="avatar"> 
+            {% if post.author.username == "leafyreads" %}
+            <img class="profileimage" style="object-fit: contain;" src="{% static 'images/logo1.png' %}" alt="{{ post.author.username }}" loading="lazy">
+            {% else %}
             <img class="profileimage" src="https://i.pravatar.cc/150?u={{ post.author.username }}"
               alt="{{ post.author.username }}" loading="lazy">
+            {% endif %}
           </div>
           <div style="display: flex;flex-direction: column;">
-            <span class="username">{{ post.author.get_full_name }}</span>
+            <span style="display: flex;align-items: center;gap:5px;" class="username">{{ post.author.get_full_name }}
+            {% if post.author.username == "leafyreads" %}
+            <img style="width: 20px;" class="verified" src="{% static 'images/verified.png' %}" loading="lazy">
+            {% endif %}
+            </span>
             <span class="post-meta">{{ post.created_at|timesince }} ago</span>
           </div>
 
