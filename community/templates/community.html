@@ -940,20 +940,35 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
         // 1. RENDER POST OWNER INFO
         // ------------------------------------------------------
         if (data.post) {
+          const adminLogo = "{% static 'images/logo1.png' %}";
+
+          let avatarSrc, avatarStyle,varifiedbadge;
+          if (data.post.username === "leafyreads") {
+              avatarSrc = adminLogo;
+              avatarStyle = "object-fit: contain;";
+              varifiedbadge = `<img style="width: 20px;" class="verified" src="{% static 'images/verified.png' %}" loading="lazy">`;
+          } else {
+              avatarSrc = data.post.avatar;
+              avatarStyle = "border: 3px solid green;";
+              varifiedbadge='';
+          }
+
+          // 3. Inject the variables into the HTML
           commentOwner.innerHTML = `
-                    <div style="display: flex; gap: 10px; align-items: flex-start;">
-                        <div class="avatar">
-                            <img class="profileimage" style="border: 3px solid green;" src="${data.post.avatar}" alt="ownerimg" loading="lazy">
-                        </div>
-                        <div style="display: flex; flex-direction: column; justify-content: center; width: 100%;">
-                            <div style="display:flex; align-items:center; gap:10px">
-                                <span class="username" style="font-weight:bold;">${data.post.author}</span>
-                                <span class="post-meta" style="font-size:12px; color:#666;">${data.post.created} ago</span>
-                            </div>
-                            <p class="ownertext">${data.post.content}</p>
-                        </div>
-                    </div>
-                `;
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                  <div class="avatar">
+                      <img class="profileimage" style="${avatarStyle}" src="${avatarSrc}" alt="User Avatar" loading="lazy">
+                  </div>
+                  <div style="display: flex; flex-direction: column; justify-content: center; width: 100%;">
+                      <div style="display:flex; align-items:center; gap:2px">
+                          <span class="username" style="font-weight:bold;">${data.post.author}</span>
+                          ${varifiedbadge}
+                          <span class="post-meta" style="font-size:12px; color:#666;">${data.post.created} ago</span>
+                      </div>
+                      <p class="ownertext">${data.post.content}</p>
+                  </div>
+              </div>
+          `;
         }
 
         // ------------------------------------------------------
@@ -974,34 +989,89 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
         // ------------------------------------------------------
         // 3. RENDER COMMENTS
         // ------------------------------------------------------
-        data.comments.forEach(c => {
+        // ------------------------------------------------------
+
+      // 1. Define these ONCE outside the loop
+      const adminLogo = "{% static 'images/logo1.png' %}";
+      const verifiedIcon = "{% static 'images/verified.png' %}";
+      const currentUser = "{{ request.user.username }}";
+
+      list.innerHTML = ""; 
+
+      data.comments.forEach(c => {
+          let avatarSrc, avatarStyle, verifiedBadge, deleteOption;
+
+          // --- Admin/Avatar Logic ---
+          if (c.username === "leafyreads") { 
+              avatarSrc = adminLogo;
+              avatarStyle = "object-fit: contain;";
+              verifiedBadge = `<img style="width: 20px;" class="verified" src="${verifiedIcon}" loading="lazy">`;
+          } else {
+              avatarSrc = c.avatar;
+              avatarStyle = "border: 3px solid green;";
+              verifiedBadge = '';
+          }
+
+          // --- Delete Button Logic ---
+          // check if the comment author matches the logged-in user
+          if (c.username === currentUser) {
+              deleteOption = `<span class="delete-comment-btn" data-id="${c.id}" onclick="deleteComment(${c.id})" style="font-size:13px;color:var(--accent);cursor:pointer">
+                                    Delete
+                              </span>`;
+          } else {
+              deleteOption = '';
+          }
+
+          // --- Render HTML ---
           list.innerHTML += `
-                    <div class="comment-card">
-                        <div class="avatar">
-                            <img class="profileimage" src="${c.avatar}" alt="profile" loading="lazy" />
-                        </div>
-                        <div class="comment-lines" style="margin-top:0">
-                            <div style="font-weight:600;font-size:15px">
-                                ${c.author}
-                            </div>
-                            <div style="font-size:14px;line-height:1.5">
-                                ${c.content}
-                            </div>
-                            <div style="display:flex;gap:16px;margin-top:6px">
-                                <span style="font-size:13px;color:var(--text-muted);">${c.created}</span>
-                                <span style="font-size:13px;color:var(--accent);cursor:pointer">Like</span>
-                                <span style="font-size:13px;color:var(--accent);cursor:pointer">Reply</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-        });
+              <div class="comment-card" id="comment-${c.id}">
+                  <div class="avatar">
+                      <img class="profileimage" style="${avatarStyle}" src="${avatarSrc}" alt="profile" loading="lazy" />
+                  </div>
+                  <div class="comment-lines" style="margin-top:0; width:100%;">
+                      <div style="font-weight:600;font-size:15px; display:flex; align-items:center; gap:5px;">
+                          ${c.author}
+                          ${verifiedBadge}
+                      </div>
+                      <div style="font-size:14px;line-height:1.5">
+                          ${c.content}
+                      </div>
+                      <div style="display:flex; gap:16px; margin-top:6px; align-items:center;">
+                          <span style="font-size:13px;color:var(--text-muted);">${c.created}</span>
+                          <span style="font-size:13px;color:var(--accent);cursor:pointer">Like</span>
+                          <span style="font-size:13px;color:var(--accent);cursor:pointer">Reply</span>
+                          ${deleteOption}
+                      </div>
+                  </div>
+              </div>
+          `;
+      });
       })
       .catch(err => {
         console.error("Error loading comments:", err);
         list.innerHTML = `<div style="text-align:center;">Unable to load comments</div>`;
       });
   }
+  // Delete user comment.
+  function deleteComment(commentId) {
+    if(!confirm("Are you sure you want to delete this comment?")) return;
+
+    fetch(`/community/comment/delete/${commentId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === "success") {
+            // Remove the comment from the screen immediately
+            document.getElementById(`comment-${commentId}`).remove();
+        } else {
+            alert("Error deleting comment");
+        }
+    });
+}
 
   // Add check here too: Button only exists if modal exists
   const sendCommentBtn = document.getElementById("sendCommentBtn");

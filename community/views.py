@@ -231,7 +231,9 @@ def get_comments(request, post_id):
 
     comments_data = [
         {
+            "id":c.id,
             "author": c.author.get_full_name(),
+            "username": c.author.username,
             "avatar": f"https://i.pravatar.cc/54?u={c.author.username}",
             "content": c.content,
             "created": c.created_at.strftime("%b %d, %H:%M"),
@@ -243,3 +245,22 @@ def get_comments(request, post_id):
         "post": post_data, 
         "comments": comments_data
     })
+
+
+
+@login_required
+@require_POST
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if comment.author == request.user or request.user.is_superuser:
+        post = comment.post 
+        comment.delete()
+        
+        post.comments_count = post.comments.count()
+        post.save()
+
+        return JsonResponse({'status': 'success', 'message': 'Comment deleted successfully'})
+    
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
