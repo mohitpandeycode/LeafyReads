@@ -354,19 +354,10 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
     //----------------------------------------------------------
     const postForm = document.getElementById("postForm");
     if (postForm) {
+
       // --- Element References ---
       const editable = document.getElementById("postContentEditable");
       const hiddenTextarea = document.getElementById("postContent");
-      if (editable) {
-        editable.addEventListener("paste", (e) => {
-          // 1. Prevent the default paste (which includes HTML/styles)
-          e.preventDefault();
-          // 2. Get clear text from clipboard
-          const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-          // 3. Insert text at the cursor position
-          document.execCommand("insertText", false, text);
-        });
-      }
       const postBtn = document.querySelector(".post-btn");
       const imageInput = document.getElementById("imageInput");
       const bookMentionInput = document.getElementById("bookMention");
