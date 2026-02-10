@@ -98,6 +98,8 @@ $(function () {
     width: currentWidth,
     height: currentHeight,
     autoCenter: true,
+    duration: 1000,
+    acceleration: true,
     elevation: 50,
     gradients: true,
     when: {

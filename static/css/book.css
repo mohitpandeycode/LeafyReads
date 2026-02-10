@@ -651,13 +651,15 @@ ul {
     transform-origin: center;
     content-visibility: auto;
     contain-intrinsic-size: 1200px;
+    transition: transform 0.5s ease-in-out, width 0.5s ease-in-out;
 }
 
 .flipbook {
     width: 880px;
     height: 580px;
     position: relative;
-    z-index: 1
+    z-index: 1;
+    transition: margin-left 0.5s ease-in-out;
 }
 
 .flipbook .page {
