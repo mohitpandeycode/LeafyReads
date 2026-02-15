@@ -168,7 +168,7 @@ logger = logging.getLogger(__name__)
 # --- 1. The Background Task (Worker) ---
 def send_welcome_email_thread(user_email, first_name):
     try:
-        subject = "Welcome to LeafyReads🌿"
+        subject = "Welcome to LeafyReads"
         context = {
             'user': {'first_name': first_name},
         }
