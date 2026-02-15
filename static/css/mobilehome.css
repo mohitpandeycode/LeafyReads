@@ -334,8 +334,9 @@
         font-size: 0.65rem !important;
     }
 
-    .layout-toggles {
-        display: none !important;
+    .icon-btn{
+        width: 20px !important;
+        height: 20px !important;
     }
 
     .dropdown-menu-box {

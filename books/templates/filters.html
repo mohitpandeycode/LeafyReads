@@ -100,10 +100,11 @@
                 </div>
 
                 <div class="layout-toggles">
-                    <button class="icon-btn active" aria-label="Grid View">
+                    <button id="btn-grid" class="icon-btn active" onclick="setView('grid')" aria-label="Grid View">
                         <i data-lucide="layout-grid"></i>
                     </button>
-                    <button class="icon-btn" aria-label="List View" style="opacity: 0.5; cursor: not-allowed;">
+                    
+                    <button id="btn-list" class="icon-btn" onclick="setView('list')" aria-label="List View">
                         <i data-lucide="list"></i>
                     </button>
                 </div>

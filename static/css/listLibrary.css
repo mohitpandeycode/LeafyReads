@@ -1,0 +1,223 @@
+/* list library */
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 40px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.library-card {
+    position: relative;
+    display: flex;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    padding: 16px;
+    overflow: visible;
+    height: 250px;
+}
+
+body.dark-mode .library-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.library-card:hover {
+    border-color: #00967e;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .library-card:hover {
+    border-color: #818cf8;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.book-cover-wrapper {
+    width: 150px;
+    height: 100%;
+    flex-shrink: 0;
+    position: relative;
+    border-radius: 8px;
+    transform: perspective(1000px) rotateY(0deg) translateZ(0);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .book-cover-wrapper {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.book-cover-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+}
+
+.library-card:hover .book-cover-wrapper {
+    transform: scale(1.08) translate(-10px, -10px) rotate(-3deg);
+    box-shadow: 15px 15px 25px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .library-card:hover .book-cover-wrapper {
+    box-shadow: 15px 15px 25px rgba(0, 0, 0, 0.6);
+}
+
+.library-content {
+    flex: 1;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.lib-header h3 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 5px 0;
+    line-height: 1.2;
+    transition: color 0.2s;
+}
+
+body.dark-mode .lib-header h3 {
+    color: #f8fafc;
+}
+
+.library-card:hover .lib-header h3 {
+    color: #00967e;
+}
+
+body.dark-mode .library-card:hover .lib-header h3 {
+    color: #818cf8;
+}
+
+.lib-author {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+body.dark-mode .lib-author {
+    color: #94a3b8;
+}
+
+.lib-summary {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+body.dark-mode .lib-summary {
+    color: #94a3b8;
+}
+
+.lib-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+}
+
+body.dark-mode .lib-footer {
+    border-top: 1px solid #334155;
+}
+
+.lib-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+body.dark-mode .lib-stats {
+    color: #94a3b8;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-lib-read {
+    background: #1e293b;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: transform 0.2s, background 0.2s;
+}
+
+body.dark-mode .btn-lib-read {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+.btn-lib-read:hover {
+    transform: scale(1.05);
+    background: #4f46e5;
+    color: #fff;
+}
+
+body.dark-mode .btn-lib-read:hover {
+    background: #818cf8;
+}
+
+@media (max-width: 768px) {
+    .library-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0;
+    }
+
+    .lib-summary {
+        font-size: 0.65rem;
+        line-height: normal;
+    }
+
+    .lib-footer {
+        padding: 4px;
+    }
+
+    .lib-header h3 {
+        margin: 0;
+    }
+
+    .lib-author {
+        font-size: 0.8rem;
+    }
+
+    .library-card {
+        height: auto;
+        flex-direction: row;
+        padding: 12px;
+    }
+
+    .library-card:hover .book-cover-wrapper {
+        transform: scale(1.05) translate(-5px, -5px) rotate(-2deg);
+        rotate: 0deg;
+    }
+
+    .book-cover-wrapper {
+        width: 100px;
+        height: 150px;
+    }
+
+    .lib-header h3 {
+        font-size: 1rem;
+    }
+}

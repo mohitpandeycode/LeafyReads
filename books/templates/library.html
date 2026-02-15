@@ -15,6 +15,7 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/mobilehome.css' %}" />
 <link rel="stylesheet" href="{% static 'css/library.css' %}" />
+<link rel="stylesheet" href="{% static 'css/listLibrary.css' %}" />
 {% endblock %}
 
 {% block body %}
@@ -103,7 +104,7 @@
                         onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';"
                          />
 
-                    {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;" alt="frame random" %}
+                    {% cloudinary "eeioc45vxaegfqqfujvd" loading="lazy" quality="auto" fetch_format="auto" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;" alt="frame random" %}
 
                     <div style="box-shadow:1px 1px 1px #61616138;border-radius:0 0 5px 5px;">
                         <div class="readby">
@@ -137,14 +138,18 @@
                 <p>A vast range of books curated just for you.</p>
                 {% endif %}
             </div>
-             {% include 'filters.html' %}
-            <div class="books-grid">
+            {% include 'filters.html' %}
+            <div id="view-list" class="listviewbooks hidden">
+                {% include 'list_library.html' %}
+            </div>
+
+            <div id="view-grid" class="books-grid">
                 {% for book in books %}
                 {% if book.is_published %}
                 <div class="book-item" style="position: relative;">
                     <a href="{% url 'book' book.slug %}">
                         <img class="imgbook" src="{{ book.cover_front.url }}" alt="{{ book.title }}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"  />
-                        {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" alt="frame random"  %}
+                        {% cloudinary "eeioc45vxaegfqqfujvd" loading="lazy" quality="auto" fetch_format="auto" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" alt="frame random"  %}
                         <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
                             <div class="readby">
                                 <h3 class="truncate">{{ book.title }}</h3>
@@ -213,7 +218,7 @@
                 <div class="book-item" style="position: relative;">
                     <a href="{% url 'book' book.slug %}">
                         <img class="imgbook" src="{{ book.cover_front.url }}" alt="{{ book.title }}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/cccccc/ffffff?text=Image+Failed';"  />
-                        {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" alt="frame random"  %}
+                        {% cloudinary "eeioc45vxaegfqqfujvd" loading="lazy" quality="auto" fetch_format="auto" style="position: absolute;left: -4px;top: -2px;box-shadow: none;width: 102%;height: 82%;" alt="frame random"  %}
                         <div style="box-shadow: 1px 1px 1px #5a5a5a38;border-radius: 0px 0px 5px 5px;">
                             <div class="readby">
                                 <h3 class="truncate">{{ book.title }}</h3>
@@ -247,5 +252,54 @@
             container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
         }
     }
+    // Main function to switch views
+    function setView(viewType) {
+        // 1. Get Elements
+        const gridView = document.getElementById('view-grid');
+        const listView = document.getElementById('view-list');
+        const btnGrid = document.getElementById('btn-grid');
+        const btnList = document.getElementById('btn-list');
+
+        // Safety check (in case filters.html isn't loaded yet)
+        if (!gridView || !listView || !btnGrid || !btnList) return;
+
+        // 2. Toggle Logic
+        if (viewType === 'list') {
+            gridView.classList.add('hidden');
+            listView.classList.remove('hidden');
+
+            // Update Buttons
+            btnGrid.classList.remove('active');
+            btnList.classList.add('active');
+
+            // Save Preference
+            localStorage.setItem('libraryView', 'list');
+        } else {
+            // Show Grid, Hide List
+            listView.classList.add('hidden');
+            gridView.classList.remove('hidden');
+
+            // Update Buttons
+            btnList.classList.remove('active');
+            btnGrid.classList.add('active');
+
+            // Save Preference
+            localStorage.setItem('libraryView', 'grid');
+        }
+    }
+
+    // 3. Initialize on Page Load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check local storage for saved preference, default to 'grid'
+        const savedView = localStorage.getItem('libraryView') || 'grid';
+        
+        // Apply the view
+        setView(savedView);
+        
+        // Refresh icons just in case
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
 </script>
 {% endblock %}

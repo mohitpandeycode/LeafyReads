@@ -269,7 +269,7 @@ def openBook(request, slug):
     
     if content_data and content_data.get("chunks"):
         raw_text = " ".join(content_data["chunks"][:5])
-        book.bookcontent = strip_tags(raw_text)[:1000]
+        book.bookcontent = strip_tags(raw_text)[:900]
     else:
         book.bookcontent = ""
     # 3. Related Books

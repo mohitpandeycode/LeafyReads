@@ -1,32 +1,47 @@
 User-agent: *
 
-# --- Admin & Security ---
+# --- 1. Query Parameters (The Filter Block) ---
+# Blocks urls containing these parameters to prevent duplicate indexing
+Disallow: /*?page=
+Disallow: /*?sort=
+Disallow: /*?lang=
+Disallow: /*?q=
+Disallow: /*?category=
+
+# --- 2. Admin & System ---
 Disallow: /tryhardadmin/
 Disallow: /admin-dashboard/
 Disallow: /ht/
 Disallow: /ckeditor5/
+Disallow: /__debug__/
 
-# --- User Accounts & Private Data ---
+# --- 3. User Accounts & Private Data ---
 Disallow: /accounts/
 Disallow: /profile/
 Disallow: /logout/
-Disallow: /book/my-books/
+Disallow: /redirecting/
 
-# --- Search & Dynamic Filters ---
+# --- 4. Books App Specifics ---
+# Block search results (standard SEO practice)
 Disallow: /book/search-results-of/
+# Block AJAX endpoints
 Disallow: /book/ajax/
-
-# --- Actions & API Endpoints ---
+# Block private user lists
+Disallow: /book/my-books/
+# Block toggle actions
 Disallow: /book/toggle-read-later/
 Disallow: /book/toggle-like/
-Disallow: /book/read/
+# Block the internal page-view API (keep the main book details page indexed)
+Disallow: /book/read/*/page-view/
+
+# --- 5. Community App Specifics ---
 Disallow: /community/ajax/
 Disallow: /community/comment/
 Disallow: /community/post/delete/
 
-# --- Resources ---
+# --- 6. Allow Resources ---
 Allow: /static/
 Allow: /media/
-Allow: /
 
+# --- Sitemap ---
 Sitemap: https://leafyreads.com/sitemap.xml

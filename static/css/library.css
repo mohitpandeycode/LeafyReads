@@ -169,19 +169,19 @@
       display: inline-block;
       padding: 8px 12px;
       border-radius: 5px;
-      border: 1px solid #3399ff;
+      border: 1px solid #269b92;
       text-decoration: none;
-      color: #3399ff;
+      color: #269b92;
       transition: all 0.2s ease;
   }
 
   .page-btn:hover {
-      background-color: #3399ff;
+      background-color: #269b92;
       color: #fff;
   }
 
   .page-btn.current {
-      background-color: #3399ff;
+      background-color: #269b92;
       color: #fff;
       pointer-events: none;
   }
@@ -477,6 +477,18 @@
       height: 16px;
   }
 
+  /* Utility to hide views */
+  .hidden {
+      display: none !important;
+  }
+
+  /* Active state for the toggle buttons */
+  .icon-btn.active {
+      background-color: #e2e8f0;
+      color: #0f172a;
+      border-radius: 6px;
+  }
+
   /* --- Layout Toggles --- */
   .layout-toggles {
       display: flex;
@@ -484,6 +496,7 @@
       padding: 4px;
       border-radius: 8px;
       gap: 2px;
+      border: 1px solid #9b9b9b;
   }
 
   body.dark-mode .layout-toggles {
@@ -501,6 +514,7 @@
       border-radius: 6px;
       color: #6b7280;
       cursor: pointer;
+      transition: all 0.2s ease-in-out;
   }
 
   .icon-btn.active {

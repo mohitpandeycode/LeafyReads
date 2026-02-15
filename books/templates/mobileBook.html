@@ -7,7 +7,7 @@
 <head>
   <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Read {{ title }} by {{ book.author }} online. {{ bookcontent|truncatewords:25 }}" />
+    <meta name="description" content="Read {{ title }} by {{ book.author }} online. {{ book.summary|truncatewords:25 }}" />
     <link rel="canonical" href="{{ request.build_absolute_uri }}" />
     <title>{{ title }} - By {{ book.author }} | LeafyReads</title>
     <meta property="og:type" content="book" />

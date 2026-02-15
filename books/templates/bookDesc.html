@@ -10,7 +10,7 @@
 
 {% block social_tags %}
 <meta property="og:title" content="{{ book.title }} - By {{ book.author }}" />
-<meta property="og:description" content="Read {{ book.title }} online. {{ book.bookcontent|truncatewords:20 }}" />
+<meta property="og:description" content="Read {{ book.title }} online. {{ book.summary|truncatewords:20 }}" />
 <meta property="og:image" content="{{ book.cover_front.url }}" />
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 {% endblock %}
@@ -93,7 +93,7 @@
                 {% if book.summary %}
                     <p>{{ book.summary|truncatechars:900 }}</p>
                 {% else %}                   
-                    <p>{{ book.bookcontent|escape }}....</p>
+                    <p>{{ book.bookcontent|striptags|truncatechars:500 }}</p>
                 {% endif %}
             </div>
              
@@ -121,7 +121,7 @@
                     <img class="imgbook" src="{{ b.cover_front.url }}" alt="{{ b.title }}" loading="lazy"
                         onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';" />
 
-                    {% cloudinary "rpy7fckyfzgkmnftr6ln" loading="lazy" quality="auto" fetch_format="auto" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;" alt="frame random" %}
+                    {% cloudinary "eeioc45vxaegfqqfujvd" loading="lazy" quality="auto" fetch_format="auto" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;" alt="frame random" %}
 
                     <div style="box-shadow:1px 1px 1px #61616138;border-radius:0 0 5px 5px;">
                         <div class="readby">
