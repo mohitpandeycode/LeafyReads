@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = (
+        ('promotion','promotion'),
         ('comment', 'Comment'),
         ('book_mention', 'Book Mention'),
         ('post_publish', 'Post Published'),
@@ -20,6 +21,7 @@ class Notification(models.Model):
     # We store the formatted HTML message here
     message = models.TextField() 
     notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    promotional_link = models.URLField(default='',blank=True,null=True)
     
     # Links to the actual object (Post, Book, etc.)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)

@@ -8,5 +8,6 @@ urlpatterns = [
     path('aboutus/', views.aboutUs, name = "aboutUs"),
     path('admin-dashboard/', include('LRAdmin.urls')),
     path('logout/', views.customLogout, name='logout'),
+    path('redirecting/<id>',views.promo_link, name="promo_link")
 
 ]

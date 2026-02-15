@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
 from books.models import Genre, Book
+from home.models import Notification
 from django.core.cache import cache
 import random
 
@@ -31,6 +32,14 @@ def home(request):
 
 def aboutUs(request):
     return render(request, "aboutUs.html")
+
+def promo_link(request,id):
+    notif = Notification.objects.get(id=id)
+    notif.is_read = True
+    notif.save()
+    if notif.promotional_link:
+        return redirect(notif.promotional_link)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def customLogout(request):

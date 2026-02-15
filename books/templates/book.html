@@ -223,6 +223,16 @@
                     <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
                   </div>
                 </div>
+                {% elif notif.notification_type == 'promotion' %}
+                <a href="{% url 'promo_link' notif.id %}" style="text-decoration: none; color: inherit;">
+                  <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">
+                    <div class="notif-icon-box bg-purple">🔥</div>
+                    <div class="notif-content">
+                      <p>{{ notif.message|safe }}</p>
+                      <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+                    </div>
+                  </div>
+                </a>
                 {% elif notif.notification_type == 'draft_saved' %}
                 <a href="{% url 'updateUserBook'  notif.content_object.slug %}" style="text-decoration: none; color: inherit;">
                   <div class="notif-item {% if not notif.is_read %}unread{% endif %} hover:bg-gray-50 transition">

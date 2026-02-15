@@ -162,7 +162,8 @@ body.dark-mode {
 .notification-box {
     position: absolute;
     top: 130%;
-    left: -100px; /* Adjusted based on your layout */
+    left: -100px;
+    /* Adjusted based on your layout */
     width: 430px;
     max-width: 90vw;
     background: #fff;
@@ -214,7 +215,7 @@ body.dark-mode {
     max-height: 400px;
     overflow-y: auto;
     padding: 0;
-    -webkit-overflow-scrolling: touch; 
+    -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     transform: translateZ(0);
 }
@@ -225,7 +226,7 @@ body.dark-mode {
     display: flex;
     gap: 10px;
     padding: 10px;
-    border-bottom: 1px solid #ededed;
+    border-bottom: 1px solid #b4b4b4;
     transition: background 0.1s;
     position: relative;
     cursor: pointer;
@@ -236,7 +237,7 @@ body.dark-mode {
 }
 
 .notif-item.unread {
-    background: rgb(125 255 240 / 13%);
+    background: rgb(0 255 226 / 21%);
 }
 
 /* Icons */
@@ -256,9 +257,20 @@ body.dark-mode {
 }
 
 /* Icon Colors */
-.bg-teal { background: #e0f2f1; color: #149585; }
-.bg-blue { background: #e0f2fe; color: #0ea5e9; }
-.bg-purple { background: #f3e8ff; color: #a855f7; }
+.bg-teal {
+    background: #e0f2f1;
+    color: #149585;
+}
+
+.bg-blue {
+    background: #e0f2fe;
+    color: #0ea5e9;
+}
+
+.bg-purple {
+    background: #f3e8ff;
+    color: #a855f7;
+}
 
 /* Content */
 .notif-content p {
@@ -267,7 +279,8 @@ body.dark-mode {
     color: #334155;
     line-height: 1.4;
 }
-body.dark-mode .notif-content strong{
+
+body.dark-mode .notif-content strong {
     color: white;
 }
 
@@ -298,12 +311,15 @@ body.dark-mode .notif-content strong{
 body.dark-mode .notif-btn {
     color: #cbd5e0;
 }
+
 body.dark-mode .notif-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
 }
+
 body.dark-mode .notif-badge {
-    border-color: #0f172a; /* Match dark header bg */
+    border-color: #0f172a;
+    /* Match dark header bg */
 }
 
 body.dark-mode .notification-box {
@@ -321,7 +337,7 @@ body.dark-mode .notif-header h3 {
 }
 
 body.dark-mode .notif-item {
-    border-bottom-color: #334155;
+    border-bottom-color: #5376a9;;
 }
 
 body.dark-mode .notif-item:hover {
@@ -329,7 +345,7 @@ body.dark-mode .notif-item:hover {
 }
 
 body.dark-mode .notif-item.unread {
-    background: rgba(20, 149, 133, 0.1);
+    background: rgb(13 190 162 / 26%);
 }
 
 body.dark-mode .notif-content p {
@@ -345,9 +361,17 @@ body.dark-mode .notif-footer {
 }
 
 /* Dark mode icons */
-body.dark-mode .bg-teal { background: rgba(20, 149, 133, 0.2); }
-body.dark-mode .bg-blue { background: rgba(14, 165, 233, 0.2); }
-body.dark-mode .bg-purple { background: rgba(168, 85, 247, 0.2); }
+body.dark-mode .bg-teal {
+    background: rgba(20, 149, 133, 0.2);
+}
+
+body.dark-mode .bg-blue {
+    background: rgba(14, 165, 233, 0.2);
+}
+
+body.dark-mode .bg-purple {
+    background: rgba(168, 85, 247, 0.2);
+}
 
 
 /* --- DROPDOWN CONTAINER --- */
@@ -767,10 +791,16 @@ section {
     animation: fadeUp 0.8s ease forwards;
     animation-delay: 0.8s;
 }
+
 /* SKELETON LOADER ANIMATION */
 @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 .skeleton-item {
@@ -778,8 +808,10 @@ section {
     align-items: center;
     gap: 12px;
     padding: 10px;
-    border-bottom: 1px solid #eee; /* Light mode border */
+    border-bottom: 1px solid #eee;
+    /* Light mode border */
 }
+
 .skeleton-line {
     height: 12px;
     border-radius: 4px;
@@ -820,8 +852,13 @@ section {
     animation: shimmer 1.5s infinite;
 }
 
-.skeleton-line.short { width: 40%; }
-.skeleton-line.long { width: 80%; }
+.skeleton-line.short {
+    width: 40%;
+}
+
+.skeleton-line.long {
+    width: 80%;
+}
 
 /* Dark mode adjustments for skeleton colors */
 body.dark-mode .skeleton-icon,
@@ -830,6 +867,7 @@ body.dark-mode .skeleton-line {
     background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
     background-size: 200% 100%;
 }
+
 .results {
     display: none;
     background: rgb(251 251 251 / 90%);
@@ -858,7 +896,7 @@ body.dark-mode .results {
     height: 200px;
     transform: translateZ(0);
     will-change: scroll-position;
-    -webkit-overflow-scrolling: touch; 
+    -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
 }
 
@@ -893,7 +931,7 @@ body.dark-mode .results {
     object-fit: cover;
     flex-shrink: 0;
     margin-right: 0;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .history-item-info {
@@ -927,6 +965,7 @@ body.dark-mode .history-item-title {
 body.dark-mode .history-item-author {
     color: #9ca3af;
 }
+
 body.dark-mode .hero-search-form {
     background: #12151d;
 }
@@ -1240,6 +1279,7 @@ body.dark-mode .book-item img:hover {
     background-color: #E9D5FF;
     color: #9333EA
 }
+
 .feature-icon.bg-orange {
     background-color: #ffe5ca;
     color: #ea8833
@@ -1439,15 +1479,18 @@ body.dark-mode .testimonial-card:hover {
     font-size: 2rem;
     margin-bottom: 1.5rem;
     line-height: 1.2;
-    color: #1e293b; /* Dark slate text */
+    color: #1e293b;
+    /* Dark slate text */
 }
 
 .text-highlight {
-    color: #149585; /* Brand Teal */
+    color: #149585;
+    /* Brand Teal */
 }
 
 .cta-description {
-    color: #64748b; /* Medium slate text */
+    color: #64748b;
+    /* Medium slate text */
     margin-bottom: 1rem;
     font-size: 1.1rem;
     line-height: 1.6;
@@ -1458,7 +1501,8 @@ body.dark-mode .testimonial-card:hover {
     list-style: none;
     padding: 0;
     margin-bottom: 2rem;
-    color: #475569; /* Slate text */
+    color: #475569;
+    /* Slate text */
 }
 
 .cta-features li {
@@ -1502,23 +1546,28 @@ body.dark-mode .testimonial-card:hover {
 
 /* --- Dark Mode Overrides --- */
 body.dark-mode .cta-section {
-    background-color: #111827; /* Dark background */
+    background-color: #111827;
+    /* Dark background */
 }
 
 body.dark-mode .cta-title {
-    color: #f1f5f9; /* Light text */
+    color: #f1f5f9;
+    /* Light text */
 }
 
 body.dark-mode .cta-description {
-    color: #cbd5e0; /* Light gray text */
+    color: #cbd5e0;
+    /* Light gray text */
 }
 
 body.dark-mode .cta-features {
-    color: #94a3b8; /* Muted light gray text */
+    color: #94a3b8;
+    /* Muted light gray text */
 }
 
 body.dark-mode .cta-blob {
-    opacity: 0.15; /* Slightly more visible on dark bg */
+    opacity: 0.15;
+    /* Slightly more visible on dark bg */
 }
 
 /* Dark Mode Secondary Button */
@@ -1534,7 +1583,7 @@ body.dark-mode .secondary-btn:hover {
     color: #ffffff;
 }
 
-.faq-grid{
+.faq-grid {
     width: 80%;
     margin: auto;
 }
