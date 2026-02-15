@@ -71,6 +71,7 @@ class Book(models.Model):
     genre = models.ForeignKey(
         Genre, on_delete=models.SET_NULL, null=True, related_name="books"
     )
+    summary = models.TextField(default="",blank=True,null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     isbn = models.CharField(max_length=20, blank=True, null=True)
     book_language = models.CharField(max_length=100, blank=True, null=True)

@@ -47,7 +47,7 @@ label {
 input[type="text"],
 input[type="number"],
 input[type="file"],
-select{
+select,textarea{
     width: 100%;
     padding: 12px;
     border: 1px solid #d1d5db;
@@ -57,7 +57,8 @@ select{
 }
 
 input:focus,
-select:focus{
+select:focus,
+textarea:focus{
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);

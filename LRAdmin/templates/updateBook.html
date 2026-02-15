@@ -57,7 +57,11 @@ Update Book - LeafyReads Admin
                 {{ book_form.slug }}
                 {{ book_form.slug.errors }}
             </div>
-
+            <div style="margin-bottom: 10px;">
+                    <label for="{{ book_form.author.id_for_label }}">Book Summary <span style="color: red;">*</span></label>
+                    {{ book_form.summary }}
+                    {{ book_form.summary.errors }}
+                </div>
             <div style="margin-bottom: 10px;">
                 <label for="{{ book_form.author.id_for_label }}">Author <span style="color: red;">*</span></label>
                 {{ book_form.author }}
@@ -74,17 +78,17 @@ Update Book - LeafyReads Admin
                 {{ book_form.book_language }}
                 {{ book_form.book_language.errors }}
             </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="{{ book_form.price.id_for_label }}">Price</label>
-                {{ book_form.price }}
-                {{ book_form.price.errors }}
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="{{ book_form.isbn.id_for_label }}">ISBN</label>
-                {{ book_form.isbn }}
-                {{ book_form.isbn.errors }}
+            <div style="margin-bottom: 10px;display: flex;gap: 10px;align-items: center;">
+                <div>
+                    <label for="{{ book_form.price.id_for_label }}">Price</label>
+                    {{ book_form.price }}
+                    {{ book_form.price.errors }}
+                </div>
+                <div>
+                    <label for="{{ book_form.isbn.id_for_label }}">ISBN</label>
+                    {{ book_form.isbn }}
+                    {{ book_form.isbn.errors }}
+                </div>
             </div>
 
             <label>Front Cover <span style="color: red;">*</span></label>

@@ -58,7 +58,7 @@
             </div>
         </aside>
 
-        <section class="book-info">
+        <section class="book-info" style="overflow: hidden;overflow-wrap: break-word;word-break: break-word;">
             <header class="book-header">
                 <h1 class="book-title">{{ book.title }}</h1>
             </header>
@@ -90,9 +90,13 @@
 
             <div class="book-description">
                 <h4>Summary</h4>
-                <p>{{ book.bookcontent|escape }}....</p>
+                {% if book.summary %}
+                    <p>{{ book.summary|truncatechars:900 }}</p>
+                {% else %}                   
+                    <p>{{ book.bookcontent|escape }}....</p>
+                {% endif %}
             </div>
-
+             
             <div class="action-area">
                 <a href="{% url 'read-book' book.slug %}" class="btn btn-primary btn-lg icon-btn">
                     <i data-lucide="book-open-text"></i> 

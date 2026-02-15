@@ -6,7 +6,7 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'slug', 'author', 'genre','book_language', 'price', 'isbn', 'is_published', 'cover_front', 'audio_file']
+        fields = ['title', 'slug', 'author', 'genre','book_language','summary', 'price', 'isbn', 'is_published', 'cover_front', 'audio_file']
         LANGUAGE_CHOICES = [
             ('', 'Select Language'),
             
@@ -35,6 +35,7 @@ class BookForm(forms.ModelForm):
         ]
         widgets = {
             'title': forms.TextInput(attrs={'id': 'title', 'placeholder': 'Enter book title'}),
+            'summary': forms.Textarea(attrs={'id': 'summary', 'placeholder': 'Enter book summary'}),
             'slug': forms.TextInput(attrs={'id': 'slug', 'placeholder': 'book-title-slug'}),
             'author': forms.TextInput(attrs={'id': 'author', 'placeholder': 'Enter author name'}),
             'genre': forms.Select(attrs={'id': 'genre'}),
