@@ -492,8 +492,8 @@
   /* --- Layout Toggles --- */
   .layout-toggles {
       display: flex;
-      background: #f3f4f6;
-      padding: 4px;
+      background: #dbdbdb;
+      padding: 2px;
       border-radius: 8px;
       gap: 2px;
       border: 1px solid #9b9b9b;
@@ -524,7 +524,7 @@
   }
 
   body.dark-mode .icon-btn.active {
-      background: #404040;
+      background: #858585;
       color: #fff;
   }
 
