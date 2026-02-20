@@ -3,7 +3,7 @@
 About Us | LeafyReads
 {% endblock %}
 {% load cloudinary %}
-
+{% load static %}
 {% block meta_description %}
 Learn about the mission behind LeafyReads.  
 {% endblock %}
@@ -15,295 +15,7 @@ Learn about the mission behind LeafyReads.
 {% endblock %}
 
 {% block css %}
-<style>
-    .reveal {
-        opacity: 0;
-        transform: translateY(40px);
-        transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .reveal.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* --- Hero Section --- */
-    .about-hero {
-        text-align: center;
-        background-color: var(--color-bg);
-        background-image: radial-gradient(circle at 10% 20%, rgb(136 176 224 / .1), transparent 30%), radial-gradient(circle at 90% 80%, rgb(224 136 176 / .1), transparent 30%);
-        transition: background-color 0.3s ease;
-        animation: heroBgPulse 8s infinite alternate ease-in-out
-    }
-
-    .about-hero h1 {
-        font-size: 3.5rem;
-        font-weight: 800;
-        color: var(--color-hero-heading);
-        margin-bottom: 1.5rem;
-        letter-spacing: -0.04em;
-    }
-
-    .about-hero p {
-        font-size: 1.25rem;
-        color: var(--color-text-medium);
-        max-width: 52rem;
-        margin: 0 auto;
-        line-height: 1.7;
-    }
-
-    .stats-section {
-        padding: 6rem 0;
-        background-color: var(--color-card-bg);
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-        text-align: center;
-    }
-
-    .stat-item h2 {
-        font-size: 3rem;
-        font-weight: 700;
-        color: var(--color-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-item p {
-        color: var(--color-text-medium);
-        font-size: 1rem;
-    }
-
-    /* --- NEW: Our Philosophy Section --- */
-    .philosophy-section {
-        padding: 6rem 0;
-    }
-
-    .philosophy-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2.5rem;
-    }
-
-    .philosophy-card {
-        text-align: center;
-    }
-
-    .philosophy-card .icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: #dbf3fe;
-        color: #3B82F6;
-        margin-bottom: 1.5rem;
-    }
-
-    body.dark-mode .philosophy-card .icon {
-        background-color: #1E3A8A;
-        color: #60A5FA;
-    }
-
-    .philosophy-card h3 {
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-    }
-
-    .philosophy-card p {
-        color: var(--color-text-medium);
-        line-height: 1.6;
-    }
-
-
-    /* --- Story Section (Redesigned as Roadmap) --- */
-    .story-section {
-        
-        padding: 6rem 0;
-        background-color: var(--color-card-bg);
-    }
-
-    .story-timeline {
-        max-width: 48rem;
-        margin: 0 auto;
-        position: relative;
-    }
-
-    .timeline-item {
-        padding: 2rem 0 4rem 2.5rem;
-        position: relative;
-        border-left: 2px solid var(--color-border);
-    }
-
-    .timeline-item:last-child {
-        padding-bottom: 2rem;
-    }
-
-    .timeline-dot {
-        position: absolute;
-        left: -9px;
-        top: 2.25rem;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background-color: var(--color-primary);
-        border: 3px solid var(--color-card-bg);
-    }
-
-    body.dark-mode .timeline-dot {
-        border-color: var(--color-card-bg);
-    }
-    body.dark-mode .timeline-item {
-        border-color:rgb(138, 138, 138);
-    }
-
-    .timeline-date {
-        font-weight: 600;
-        color: var(--color-text-light);
-        margin-bottom: 0.5rem;
-    }
-
-    .timeline-item h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-    }
-
-    .timeline-item p {
-        color: var(--color-text-medium);
-        line-height: 1.6;
-    }
-
-    /* --- REFINED Team Section --- */
-    .team-section {
-        padding: 6rem 0;
-    }
-
-    .team-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2.5rem;
-    }
-
-    .team-member-card {
-        position: relative;
-        border-radius: 0.75rem;
-        overflow: hidden;
-        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .team-member-card:hover {
-        transform: translateY(-10px) scale(1.02);
-        box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.2);
-    }
-
-    .team-member-card img {
-        width: 100%;
-        height: 400px;
-        object-fit: cover;
-        object-position: center top;
-        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .team-member-card:hover img {
-        transform: scale(1.05);
-    }
-
-    .team-member-info {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 2.5rem 1.5rem 1.5rem 1.5rem;
-        color: white;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%);
-        transform: translateY(35%);
-        transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .team-member-card:hover .team-member-info {
-        transform: translateY(0);
-    }
-
-    .team-member-info h3 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 0.25rem;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    }
-
-    .team-member-info .title {
-        font-weight: 500;
-        margin-bottom: 1rem;
-        color: #a7c5ff;
-    }
-
-    .social-links {
-        display: flex;
-        gap: 1.25rem;
-        margin-top: 1rem;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
-    }
-
-    .team-member-card:hover .social-links {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .social-links a {
-        color: rgba(255, 255, 255, 0.8);
-        transition: color 0.3s ease, transform 0.3s ease;
-    }
-
-    .social-links a:hover {
-        color: #fff;
-        transform: scale(1.1);
-    }
-
-    /* --- CTA Section --- */
-    .cta-section {
-        padding: 7rem 0;
-        text-align: center;
-        background-color: var(--color-bg);
-    }
-
-    .cta-section h2 {
-        font-size: 2.75rem;
-        font-weight: 700;
-        color: var(--color-hero-heading);
-        margin-bottom: 1.5rem;
-    }
-
-    .cta-section p {
-        max-width: 45rem;
-        margin: 0 auto 2.5rem;
-        color: var(--color-text-medium);
-    }
-
-    .cta-btn {
-        background-color: var(--color-primary);
-        color: white;
-        padding: 1rem 2.5rem;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        display: inline-block;
-    }
-
-    .cta-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
-        background-color: var(--color-primary-hover);
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/aboutus.css' %}" />
 {% endblock %}
 
 {% block body %}
@@ -321,6 +33,10 @@ Learn about the mission behind LeafyReads.
     <!-- By the Numbers Section -->
     <section class="stats-section">
         <div class="container">
+            <div class="section-header reveal">
+                <h2>Our Goal</h2>
+                <p>From a simple step, this is what we aim to build.</p>
+            </div>
             <div class="stats-grid">
                 <div class="stat-item reveal">
                     <h2>1M+</h2>
@@ -411,6 +127,36 @@ Learn about the mission behind LeafyReads.
                     <h3>Expanding Horizons</h3>
                     <p>We will explore AI-powered recommendations, audiobook integration, and new tools to support
                         independent authors, pushing the boundaries of the digital reading experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="support-section-wrapper">
+        <div class="container reveal">
+            <div class="support-card-premium">
+                <div class="support-bg-shape shape-1"></div>
+                <div class="support-bg-shape shape-2"></div>
+
+                <div class="support-content">
+                    <div class="support-badge">
+                        <i data-lucide="heart" style="width:16px; height:16px; color:#ef4444; fill:#ef4444;"></i> Back the Project
+                    </div>
+                    <h2>Keep LeafyReads Growing</h2>
+                    <p class="support-subtitle">LeafyReads is an independent passion project. Your generous contribution directly helps us maintain a pure, distraction-free environment for everyone.</p>
+                    
+                    <ul class="support-perks">
+                        <li><i data-lucide="server"></i> Covers monthly server costs</li>
+                        <li><i data-lucide="ban"></i> Keeps the platform 100% Ad-Free</li>
+                        <li><i data-lucide="pen-tool"></i> Builds better tools for rising authors</li>
+                    </ul>
+                </div>
+
+                <div class="support-qr-wrapper">
+                    <div class="support-qr-box">
+                        <div class="qr-label">Scan to Support</div>
+                        <img src="{% static 'images/QR.png' %}" style="width: 100%;" alt="Support LeafyReads QR Code">
+                    </div>
+                    <p class="qr-secure-text"><i data-lucide="shield-check" style="width:16px; height:16px;"></i> 100% Secure Transaction</p>
                 </div>
             </div>
         </div>

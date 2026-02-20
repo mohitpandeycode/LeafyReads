@@ -14,7 +14,6 @@
 
     {% endblock %}
   </title>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-2QEBBBDZKY"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -156,6 +155,298 @@
         display: none;
       }
     }
+    
+    /* --- FLOATING SUPPORT BUTTON & MODAL --- */
+    
+    /* The Floating Button */
+    .floating-support-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      cursor: pointer;
+      z-index: 998;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+      animation: floatPulse 2s infinite;
+    }
+
+    .floating-support-btn:hover {
+      transform: scale(1.1) translateY(-5px);
+      box-shadow: 0 15px 30px rgba(16, 185, 129, 0.6);
+      animation: none;
+    }
+
+    @keyframes floatPulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    @media (max-width: 768px) {
+      .floating-support-btn {
+        bottom: 60px;
+        right: 4px;
+        width: 45px;
+        height: 45px;
+      }
+    }
+
+    /* --- THE OVERLAY --- */
+    .support-modal-overlay,
+    .feedback-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .support-modal-overlay.active,
+    .feedback-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .support-modal-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateY(30px) scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .support-modal-overlay.active .support-modal-wrapper {
+      transform: translateY(0) scale(1);
+    }
+
+    .support-modal-card {
+      background: #ffffff;
+      border-radius: 1.5rem;
+      padding: 12px;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      transform: rotate(-2deg); 
+      transition: transform 0.3s ease;
+      margin-bottom: 1.5rem;
+      width: 90vw;
+      max-width: 450px;
+    }
+
+    .support-modal-card:hover {
+      transform: rotate(0deg); 
+    }
+
+    .scan-badge {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ef4444;
+      color: white;
+      font-weight: 700;
+      font-size: 1.15rem;
+      padding: 0.6rem 1.8rem;
+      border-radius: 2rem;
+      white-space: nowrap;
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.5);
+      z-index: 10;
+    }
+
+    .support-modal-inner {
+      background: #cbd5e1; 
+      border-radius: 1rem;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .support-modal-inner img {
+      width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+    }
+
+    .secure-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #94a3b8;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .support-modal-close {
+      position: absolute;
+      top: -45px;
+      right: -10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #cbd5e1;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      z-index: 20;
+    }
+
+    .support-modal-close:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .support-caption {
+      margin-top: 1.2rem;
+      color: #475569; 
+      font-size: 0.95rem;
+      line-height: 1.5;
+      text-align: center;
+      font-weight: 500;
+      max-width: 95%;
+    }
+
+    /* --- FEEDBACK FORM CSS --- */
+    .feedback-container {
+      position: relative;
+      width: 90vw;
+      max-width: 450px;
+      background: #ffffff;
+      border-radius: 1.25rem;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      border: 1px solid #e2e8f0;
+      text-align: center;
+      transform: translateY(30px) scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .feedback-modal-overlay.active .feedback-container {
+      transform: translateY(0) scale(1);
+    }
+
+    body.dark-mode .feedback-container {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .feedback-header h3 {
+      margin: 0 0 0.5rem 0;
+      color: #0f172a;
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    body.dark-mode .feedback-header h3 {
+      color: #f8fafc;
+    }
+
+    .feedback-header p {
+      margin: 0 0 1.5rem 0;
+      color: #64748b;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    body.dark-mode .feedback-header p {
+      color: #94a3b8;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.5rem;
+    }
+
+    body.dark-mode .form-group label {
+      color: #cbd5e1;
+    }
+
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 0.5rem;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: #0f172a;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
+      box-sizing: border-box;
+    }
+
+    body.dark-mode .form-group select,
+    body.dark-mode .form-group textarea {
+      background: rgba(15, 23, 42, 0.5);
+      border-color: #334155;
+      color: #f8fafc;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+
+    .submit-feedback-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .submit-feedback-btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
   </style>
 
   {% block css %}
@@ -198,7 +489,6 @@
           </div>
         </nav>
         <div class="header-actions">
-          <!-- Notification Pannel -->
           {% if user.is_authenticated %}
           <div class="notification-wrapper" style="position: relative; display: inline-block;">
             <button style="position: relative;" onclick="toggleNotifications()" aria-label="notification"
@@ -338,6 +628,10 @@
                 <i data-lucide="gem"></i>
                 <span>Go Pro</span>
               </li>
+              <li class="dropdown-item" id="openFeedbackBtn">
+                <i data-lucide="message-square"></i>
+                <span>Feedback</span>
+              </li>
 
               <a href="{% url 'aboutUs' %}">
                 <li class="dropdown-item">
@@ -372,6 +666,67 @@
   {% block body %}
 
   {% endblock %}
+  
+  <div class="floating-support-btn" id="fabSupportBtn" title="Support LeafyReads">
+      <i data-lucide="heart" style="fill: white; width: 24px; height: 24px;"></i>
+  </div>
+
+  <div class="support-modal-overlay" id="supportModalOverlay">
+    <div class="support-modal-wrapper">
+      <button class="support-modal-close" id="closeSupportModal" aria-label="Close Support Window">
+        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+      </button>
+      <div class="support-modal-card">
+        <div class="scan-badge">Scan to Support</div>
+        <div class="support-modal-inner">
+          <img src="{% static 'images/QR.png' %}" alt="Support LeafyReads QR Code">
+          <p class="support-caption">
+            A little support means everything. Thank you for standing with us ❤️✨
+          </p>
+        </div>
+      </div>
+      <div class="secure-text">
+        <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+        100% Secure Transaction
+      </div>
+    </div>
+  </div>
+
+  <div class="feedback-modal-overlay" id="feedbackModalOverlay">
+    <div class="feedback-container">
+      <button class="support-modal-close" id="closeFeedbackModal" aria-label="Close Feedback Window" style="position: absolute; top: -45px; right: -10px;">
+        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+      </button>
+
+      <div class="feedback-header">
+        <h3><i data-lucide="message-square" style="color: #10b981;"></i> Submit Feedback</h3>
+        <p>Please share your thoughts or report any issues you have encountered.</p>
+      </div>
+      
+      <form class="feedback-form" id="feedbackFormElement">
+        <div class="form-group">
+          <label for="feedbackType">Subject</label>
+          <select id="feedbackType" name="feedback_type">
+            <option value="book_suggestion">Book Suggestion</option>
+            <option value="feature_suggestion">Feature Suggestion</option>
+            <option value="bug_report">Bug Report</option>
+            <option value="content_issue">Content Issue</option>
+            <option value="report">Report</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="feedbackMessage">Message</label>
+          <textarea id="feedbackMessage" rows="4" placeholder="Please provide details here..." required></textarea>
+        </div>
+        
+        <button type="button" id="submitFeedbackBtn" class="submit-feedback-btn">
+          Submit Feedback <i data-lucide="send" style="width: 16px; height: 16px; margin-left: 5px;"></i>
+        </button>
+      </form>
+    </div>
+  </div>
 
   <footer class="footer">
     <div class="container footer-content">
@@ -598,18 +953,14 @@
       });
     }
 
-    // --- E. UNIFIED GLOBAL CLICK LISTENER---
-    // 
+    // --- UNIFIED GLOBAL CLICK LISTENER---
     // Handles closing Notifications, Dropdowns, and Search Results in one go
     document.addEventListener('click', (event) => {
     const target = event.target;
 
     // 1. Close Notifications
     const notifBox = document.getElementById('notificationBox');
-    
-    // FIXED LOGIC:
-    // Check if the clicked target is the box OR if it is a button meant to toggle notifications
-    // We check triggers by looking for the onclick attribute or the .notif-btn class
+  
     const isTrigger = target.closest('[onclick="toggleNotifications()"]') || target.closest('.notif-btn');
 
     if (notifBox && notifBox.classList.contains('active')) {
@@ -636,11 +987,132 @@
       }
     });
 
+    // --- FLOATING SUPPORT MODAL LOGIC ---
+    const fabSupportBtn = document.getElementById('fabSupportBtn');
+    const supportModalOverlay = document.getElementById('supportModalOverlay');
+    const closeSupportModal = document.getElementById('closeSupportModal');
+
+    if (fabSupportBtn && supportModalOverlay && closeSupportModal) {
+      // Open Modal
+      fabSupportBtn.addEventListener('click', () => {
+        supportModalOverlay.classList.add('active');
+      });
+
+      // Close Modal via X button
+      closeSupportModal.addEventListener('click', () => {
+        supportModalOverlay.classList.remove('active');
+      });
+
+      // Close Modal when clicking outside the box
+      supportModalOverlay.addEventListener('click', (e) => {
+        if (e.target === supportModalOverlay) {
+          supportModalOverlay.classList.remove('active');
+        }
+      });
+    }
+
+    //submit feedback
+    // --- HELPER: GET CSRF TOKEN ---
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === ('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // --- FEEDBACK MODAL LOGIC ---
+    const openFeedbackBtn = document.getElementById('openFeedbackBtn');
+    const feedbackModalOverlay = document.getElementById('feedbackModalOverlay');
+    const closeFeedbackModal = document.getElementById('closeFeedbackModal');
+    const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
+    const feedbackMessageInput = document.getElementById('feedbackMessage');
+    const feedbackTypeInput = document.getElementById('feedbackType');
+
+    if (openFeedbackBtn && feedbackModalOverlay && closeFeedbackModal) {
+      // Open Modal
+      openFeedbackBtn.addEventListener('click', () => {
+        feedbackModalOverlay.classList.add('active');
+      });
+
+      // Close Modal via X button
+      closeFeedbackModal.addEventListener('click', () => {
+        feedbackModalOverlay.classList.remove('active');
+      });
+
+      // Close Modal when clicking outside the box
+      feedbackModalOverlay.addEventListener('click', (e) => {
+        if (e.target === feedbackModalOverlay) {
+          feedbackModalOverlay.classList.remove('active');
+        }
+      });
+
+      // Handle Submit Feedback Button Click via AJAX
+      if (submitFeedbackBtn) {
+        submitFeedbackBtn.addEventListener('click', () => {
+          const messageVal = feedbackMessageInput.value.trim();
+          const typeVal = feedbackTypeInput.value;
+
+          if(messageVal === '') {
+            alert('Please enter a message before submitting.');
+            return;
+          }
+
+          // Show Loading State
+          const originalBtnText = submitFeedbackBtn.innerHTML;
+          submitFeedbackBtn.innerHTML = 'Sending...';
+          submitFeedbackBtn.disabled = true;
+          submitFeedbackBtn.style.opacity = '0.7';
+
+          // Send data to Django backend
+          fetch('/ajax/submit-feedback/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+              feedback_type: typeVal,
+              message: messageVal
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              alert(data.message); // Success message
+              feedbackMessageInput.value = '';
+              feedbackModalOverlay.classList.remove('active');
+            } else {
+              alert('Error: ' + data.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('A network error occurred. Please try again.');
+          })
+          .finally(() => {
+            // Revert Button UI back to normal
+            submitFeedbackBtn.innerHTML = originalBtnText;
+            submitFeedbackBtn.disabled = false;
+            submitFeedbackBtn.style.opacity = '1';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        });
+      }
+    }
+
     // --- F. INITIALIZE ICONS ---
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
   });
-</script>
+  </script>
 
 </body>
 

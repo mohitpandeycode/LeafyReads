@@ -3,6 +3,19 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+class Feedback(models.Model):
+    user = models.CharField(max_length=250)
+    feedback_type = models.CharField(max_length=250,default="Other")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Feedback from {self.user} for {self.feedback_type}"
+
+
 class Notification(models.Model):
     NOTIFICATION_TYPES = (
         ('promotion','promotion'),

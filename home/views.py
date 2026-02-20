@@ -7,6 +7,10 @@ from django.core.cache import cache
 import random
 from django.db.models import F, ExpressionWrapper, FloatField, Func
 from django.db.models.functions import Now, ExtractDay
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import Feedback
 
 def home(request):
     # 1. Categories
@@ -71,6 +75,33 @@ def promo_link(request,id):
         return redirect(notif.promotional_link)
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
+
+@require_POST
+def submit_feedback(request):
+    try:
+        data = json.loads(request.body)
+        feedback_type = data.get('feedback_type', 'Other')
+        message = data.get('message', '').strip()
+        if not message:
+            return JsonResponse({'status': 'error', 'message': 'Message cannot be empty.'}, status=400)
+        
+        # Check if the user is authenticated
+        if request.user.is_authenticated:
+            user_val = request.user.username 
+        else:
+            user_val = "unknown"
+
+        # Create and save the feedback to the database
+        Feedback.objects.create(
+            user=user_val,
+            feedback_type=feedback_type,
+            message=message
+        )
+
+        return JsonResponse({'status': 'success', 'message': 'Thank you for your feedback!'})
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': 'An error occurred. Please try again later.'}, status=500)
 
 def customLogout(request):
     logout(request)

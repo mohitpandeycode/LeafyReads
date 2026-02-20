@@ -8,6 +8,7 @@ urlpatterns = [
     path('aboutus/', views.aboutUs, name = "aboutUs"),
     path('admin-dashboard/', include('LRAdmin.urls')),
     path('logout/', views.customLogout, name='logout'),
-    path('redirecting/<id>',views.promo_link, name="promo_link")
+    path('redirecting/<id>',views.promo_link, name="promo_link"),
+    path('ajax/submit-feedback/', views.submit_feedback, name='submit_feedback'),
 
 ]

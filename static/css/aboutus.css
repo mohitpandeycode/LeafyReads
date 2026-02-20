@@ -1,0 +1,492 @@
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Hero Section --- */
+.about-hero {
+    text-align: center;
+    background-color: var(--color-bg);
+    background-image: radial-gradient(circle at 10% 20%, rgb(136 176 224 / .1), transparent 30%), radial-gradient(circle at 90% 80%, rgb(224 136 176 / .1), transparent 30%);
+    transition: background-color 0.3s ease;
+    animation: heroBgPulse 8s infinite alternate ease-in-out
+}
+
+.about-hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--color-hero-heading);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.04em;
+}
+
+.about-hero p {
+    font-size: 1.25rem;
+    color: var(--color-text-medium);
+    max-width: 52rem;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+.stats-section {
+    padding: 6rem 0;
+    background-color: var(--color-card-bg);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+
+.stat-item h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+.stat-item p {
+    color: var(--color-text-medium);
+    font-size: 1rem;
+}
+
+/* --- NEW: Our Philosophy Section --- */
+.philosophy-section {
+    padding: 6rem 0;
+}
+
+.philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+}
+
+.philosophy-card {
+    text-align: center;
+}
+
+.philosophy-card .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #dbf3fe;
+    color: #3B82F6;
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .philosophy-card .icon {
+    background-color: #1E3A8A;
+    color: #60A5FA;
+}
+
+.philosophy-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.philosophy-card p {
+    color: var(--color-text-medium);
+    line-height: 1.6;
+}
+
+
+/* --- Story Section (Redesigned as Roadmap) --- */
+.story-section {
+
+    padding: 6rem 0;
+    background-color: var(--color-card-bg);
+}
+
+.story-timeline {
+    max-width: 48rem;
+    margin: 0 auto;
+    position: relative;
+}
+
+.timeline-item {
+    padding: 2rem 0 4rem 2.5rem;
+    position: relative;
+    border-left: 2px solid var(--color-border);
+}
+
+.timeline-item:last-child {
+    padding-bottom: 2rem;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -9px;
+    top: 2.25rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    border: 3px solid var(--color-card-bg);
+}
+
+body.dark-mode .timeline-dot {
+    border-color: var(--color-card-bg);
+}
+
+body.dark-mode .timeline-item {
+    border-color: rgb(138, 138, 138);
+}
+
+.timeline-date {
+    font-weight: 600;
+    color: var(--color-text-light);
+    margin-bottom: 0.5rem;
+}
+
+.timeline-item h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.timeline-item p {
+    color: var(--color-text-medium);
+    line-height: 1.6;
+}
+
+/* --- REFINED Team Section --- */
+.team-section {
+    padding: 6rem 0;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2.5rem;
+}
+
+.team-member-card {
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.team-member-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.2);
+}
+
+.team-member-card img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.team-member-card:hover img {
+    transform: scale(1.05);
+}
+
+.team-member-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    color: white;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%);
+    transform: translateY(35%);
+    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.team-member-card:hover .team-member-info {
+    transform: translateY(0);
+}
+
+.team-member-info h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.team-member-info .title {
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: #a7c5ff;
+}
+
+.social-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 1rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
+}
+
+.team-member-card:hover .social-links {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.social-links a {
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* --- CTA Section --- */
+.cta-section {
+    padding: 7rem 0;
+    text-align: center;
+    background-color: var(--color-bg);
+}
+
+.cta-section h2 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--color-hero-heading);
+    margin-bottom: 1.5rem;
+}
+
+.cta-section p {
+    max-width: 45rem;
+    margin: 0 auto 2.5rem;
+    color: var(--color-text-medium);
+}
+
+.cta-btn {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
+    background-color: var(--color-primary-hover);
+}
+
+/* --- PREMIUM SUPPORT SECTION --- */
+.support-section-wrapper {
+    padding: 6rem 0;
+}
+
+.support-card-premium {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    border-radius: 1.5rem;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    text-align: center;
+    gap: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Glowing abstract background shapes */
+.support-bg-shape {
+    position: absolute;
+    filter: blur(60px);
+    z-index: 0;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+.support-bg-shape.shape-1 {
+    top: -50px;
+    left: -50px;
+    width: 250px;
+    height: 250px;
+    background: #3b82f6;
+    /* Blue glow */
+}
+
+.support-bg-shape.shape-2 {
+    bottom: -50px;
+    right: -50px;
+    width: 300px;
+    height: 300px;
+    background: #10b981;
+    /* Green/Leafy glow */
+}
+
+/* Ensure text stays above the glow */
+.support-content,
+.support-qr-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.support-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+    color: #e2e8f0;
+}
+
+.support-content h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.support-subtitle {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Benefits Checklist */
+.support-perks {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    text-align: left;
+    max-width: max-content;
+}
+
+.support-perks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.05rem;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.support-perks li i {
+    color: #10b981;
+    /* Green icon */
+    background: rgba(16, 185, 129, 0.1);
+    padding: 6px;
+    border-radius: 50%;
+}
+
+/* QR Code Styling */
+.support-qr-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 500px;
+    height: 300px;
+}
+
+.support-qr-box {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    transform: rotate(3deg);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.support-qr-box:hover {
+    transform: rotate(0deg) scale(1.05);
+    /* Straightens out and pops up on hover */
+}
+
+.qr-label {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ef4444;
+    /* Red popup badge */
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 1.2rem;
+    border-radius: 1rem;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+}
+
+.support-qr-box img {
+    width: 170px;
+    height: auto;
+    display: block;
+    border-radius: 0.5rem;
+}
+
+.qr-secure-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 1.5rem;
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+    .support-card-premium {
+        flex-direction: row;
+        text-align: left;
+        padding: 4rem;
+        justify-content: space-between;
+    }
+
+    .support-content {
+        flex: 1;
+    }
+
+    .support-subtitle {
+        margin-left: 0;
+        max-width: 100%;
+    }
+
+    .support-perks {
+        margin-left: 0;
+    }
+
+    .support-qr-wrapper {
+        flex-shrink: 0;
+        padding-left: 3rem;
+    }
+}

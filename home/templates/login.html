@@ -4,34 +4,54 @@
 <section class="loginpagesection" id="loginSection">
   <div class="leafy-auth-container" id="loginContainer">
     <button class="close-btn" id="closelogin">&times;</button>
+    
     <div class="login-logo" style="display: flex; align-items: center; justify-content: center;">
-  <!-- common small logo -->
       {% cloudinary "qqeschqzlywacz6rqsbl" quality="auto" fetch_format="auto" style="width: 60px; border-radius: 15px;" loading="lazy" alt="logo" %}
       {% cloudinary "tdehybbsyciqodgxs2rq" quality="auto" fetch_format="auto" class="login-leafy-light" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LeafyReads" %}
       {% cloudinary "kp6b6xlwuu8d52cfhfba" quality="auto" fetch_format="auto" class="login-leafy-dark" style="width: 140px; border-radius: 15px;" loading="lazy" alt="LafyReads" %}
     </div>
-    <h3>Create Your Account</h3>
-    <div class="leafy-sub-text">
-      Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
-    </div>
-    {% cloudinary "ht4lblz4fxlllxlbw5sa" width=400 crop="scale" quality="auto" fetch_format="auto" flags="lossy" style="width: 100%; height:25vh;" loading="lazy" alt="Funny loading GIF" %}
-    <a href="{% provider_login_url 'google' %}?next={{request.path}}" class="leafy-auth-button google">
-      <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
-      Continue with Google
-    </a>
+    
+    <h3 id="panelTitle">Create Your Account</h3>
 
-    <a href="{% provider_login_url 'facebook' method='oauth2' %}" style="background: #08446f;color: white;" class="leafy-auth-button facebook">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" loading="lazy" alt="Facebook icon" />
-      Sign in with Facebook
-    </a>
-
-    <div class="support-section">
-      <h4>Support LeafyReads</h4>
-      <p style="font-size: 13px;">Your contributions help us keep the library free and support rising authors.</p>
+    <div id="loginElements">
+      <div class="leafy-sub-text">
+        Already have an account? <a href="/" style="color:#4e8ef7;">Sign in</a>
+      </div>
       
-      <button class="leafy-auth-button donate">
-        <img src="https://cdn-icons-png.flaticon.com/512/2589/2589175.png" loading="lazy" alt="Heart icon" />
-        Support our Mission
+      <div id="funnyGif">
+        {% cloudinary "ht4lblz4fxlllxlbw5sa" width=400 crop="scale" quality="auto" fetch_format="auto" flags="lossy" style="width: 100%; height:25vh;" loading="lazy" alt="Funny loading GIF" %}
+      </div>
+
+      <a href="{% provider_login_url 'google' %}?next={{request.path}}" class="leafy-auth-button google">
+        <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" loading="lazy" alt="Google icon" />
+        Continue with Google
+      </a>
+
+      <a href="{% provider_login_url 'facebook' method='oauth2' %}" style="background: #08446f;color: white;" class="leafy-auth-button facebook">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" loading="lazy" alt="Facebook icon" />
+        Sign in with Facebook
+      </a>
+
+      <div class="support-section">
+        <h4>Support LeafyReads</h4>
+        <p style="font-size: 13px;">Your contributions help us keep the library free and support rising authors.</p>
+        <button id="showSupportBtn" class="leafy-auth-button donate">
+          <img src="https://cdn-icons-png.flaticon.com/512/2589/2589175.png" loading="lazy" alt="Heart icon" />
+          Support our Mission
+        </button>
+      </div>
+    </div>
+
+    <div id="supportElements" style="display: none; text-align: center; padding-top: 15px;">
+      
+      <img src="{% static 'images/QR.png' %}" alt="QR code" style="width: 100%; max-width: 100%; border-radius: 10px; margin-bottom: 15px;">
+
+      <p style="font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+        Thank you for choosing to support LeafyReads!❤️ Your generous contribution helps cover server costs, keeps the platform completely ad-free, and empowers us to build better tools for rising authors. <br><br><strong>Scan the QR code above to contribute securely.</strong>
+      </p>
+      
+      <button id="backToLoginBtn" class="leafy-auth-button" style="background: #f1f5f9; color: #334155; justify-content: center;">
+        &larr; Back to Login
       </button>
     </div>
 
@@ -39,5 +59,27 @@
       By clicking "signup" you agree to our <a href="{% url 'terms-of-service' %}">Terms of Service</a> & <a href="{% url 'privacy-policy' %}">Privacy Policy</a>.
     </div>
   </div>
-
 </section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const showSupportBtn = document.getElementById("showSupportBtn");
+    const backToLoginBtn = document.getElementById("backToLoginBtn");
+    
+    const loginElements = document.getElementById("loginElements");
+    const supportElements = document.getElementById("supportElements");
+    const panelTitle = document.getElementById("panelTitle");
+
+    // When "Support our Mission" is clicked
+    showSupportBtn.addEventListener("click", function() {
+      loginElements.style.display = "none";
+      supportElements.style.display = "block";
+      panelTitle.innerText = "Support LeafyReads";
+    });
+    backToLoginBtn.addEventListener("click", function() {
+      supportElements.style.display = "none";
+      loginElements.style.display = "block";
+      panelTitle.innerText = "Create Your Account";
+    });
+  });
+</script>
