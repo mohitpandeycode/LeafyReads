@@ -43,7 +43,7 @@ body.dark-mode {
 /* --- 2. Global Resets --- */
 html,
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: "Ek Mukta", sans-serif;
   margin: 0;
   padding: 0;
   transition: background 0.5s, color 0.5s;
@@ -983,7 +983,10 @@ body.dark-mode .goto-page-box input {
     height: 100%;
     overflow-y: auto;
     box-sizing: border-box;
-    padding-bottom: 40px;
+    padding: 0 25px 40px 25px;
+  }
+  #container p {
+    font-size: 18px;
   }
   figure img {
     width: 70%;

@@ -629,6 +629,19 @@ section {
     padding: 5rem 0
 }
 
+.highText {
+    display: inline-block;
+    background: #186464;
+    border-radius: 15px;
+    color: white;
+    padding: 0 9px;
+    transform-origin: left center; 
+    transform:rotate(-2deg); 
+}
+body.dark-mode .highText{
+    background: #96e7f1;
+    color: black;
+}
 
 /* Background */
 .hero-bg {
