@@ -229,7 +229,7 @@ Join the LeafyReads community. Connect with fellow book lovers, share reviews, d
         <p class="post-content" data-full="{{ post.content }}">{{ post.content }}</p>
         {% if post.book %}
         <a href="{% url 'book' post.book.slug %}" class="book-mention">
-          <span style="font-size: 20px;padding: 0px 0 6px 0;">📖</span> {{ post.book.title }}
+          <span style="font-size: 20px;padding: 0px 0 6px 0;">📖</span> {{ post.book.title }} by {{ post.book.author }}
         </a>
         {% endif %}
         {% if post.images.all.exists or post.book %}
