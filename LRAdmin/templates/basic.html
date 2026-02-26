@@ -110,13 +110,13 @@
           <a href="{% url 'dashboard' %}" class="{% if request.path == '/admin-dashboard/' %}active{% endif %}">Admin
             Home</a>
           <a href="{% url 'userUploads' %}"
-            class="{% if request.path == '/admin-dashboard/user-uploads-books' %}active{% endif %}">User Uploads</a>
+            class="{% if request.path == '/admin-dashboard/user-uploads-books/' %}active{% endif %}">User Uploads</a>
           <a href="{% url 'addBook' %}"
             class="{% if request.path == '/admin-dashboard/add-book' %}active{% endif %}">Add Book</a>
           {% if request.resolver_match.url_name == 'updateBook' %}
           <a href="{% url 'viewBookAdmin' book.slug %}" target="_blank" class="">View Book</a>
           {% endif %}
-          <a href="/" class="{% if request.path == '/' %}active{% endif %}">Visit Site</a>
+          <a href="{% url 'storyFormatter' %}" target="_blank" class="{% if request.path == '/admin-dashboard/story-formatter/' %}active{% endif %}">Story Formatter</a>
           <a href="/logout/">Logout</a>
           <form id="navSearch" class="nav-search-wrapper" method="get">
             <div id="navSearchBtn" class="nav-search-button" aria-label="Search"><i data-lucide="search"></i></div>

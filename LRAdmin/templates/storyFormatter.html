@@ -1,0 +1,130 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+
+{% block title %}
+All Books - LeafyReads Admin
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/storyFormatter.css' %}" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ek+Mukta:wght@400;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+
+{% block body %}
+  <div class="comparison-container">
+    
+    <div class="box">
+      <div class="box-header">
+        <h2>✍️ Raw Text</h2>
+        <select id="languageSelect" class="lang-select">
+          <option value="hindi">Hindi Story</option>
+          <option value="english">English Story</option>
+        </select>
+      </div>
+      <textarea id="inputText" placeholder="Paste your story here..."></textarea>
+      <button class="convert-btn" onclick="convertText()">✨ Format Text</button>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <h2>📄 Formatted Result</h2>
+        <button id="copyBtn" class="copy-btn" onclick="copyResult()">Copy Text</button>
+      </div>
+      <div id="outputText" class="output-area">
+        <span style="color: #94a3b8; font-style: italic;">Your nicely formatted text will appear here...</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- HINDI LOGIC (4 Sentences) ---
+    function formatHindiStory(text) {
+        let sentences = text.split('।').filter(Boolean);
+        let formattedHTML = "";
+        let group = [];
+
+        sentences.forEach((sentence, index) => {
+            if (sentence.trim() === "") return;
+            
+            group.push(sentence.trim() + "।");
+
+            if (group.length === 4 || index === sentences.length - 1) {
+                formattedHTML += `<p class="story-paragraph">${group.join(" ")}</p>`;
+                group = []; 
+            }
+        });
+        return formattedHTML;
+    }
+
+    // --- ENGLISH LOGIC ---
+    function formatEnglishStory(text) {
+        let sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+        let formattedHTML = "";
+        let group = [];
+
+        sentences.forEach((sentence, index) => {
+            if (sentence.trim() === "") return;
+            
+            group.push(sentence.trim());
+
+            if (group.length === 2 || index === sentences.length - 1) {
+                formattedHTML += `<p class="story-paragraph">${group.join(" ")}</p>`;
+                group = []; 
+            }
+        });
+        return formattedHTML;
+    }
+
+    // --- MAIN FUNCTION TO DECIDE WHICH TO RUN ---
+    function convertText() {
+        const rawText = document.getElementById("inputText").value;
+        const selectedLang = document.getElementById("languageSelect").value;
+        
+        if (!rawText.trim()) {
+            document.getElementById("copyBtn").style.display = "none";
+            document.getElementById("outputText").innerHTML = "<span style='color: #94a3b8; font-style: italic;'>Your nicely formatted text will appear here...</span>";
+            return;
+        }
+
+        let formattedHTML = "";
+
+        if (selectedLang === "hindi") {
+            formattedHTML = formatHindiStory(rawText);
+        } else if (selectedLang === "english") {
+            formattedHTML = formatEnglishStory(rawText);
+        }
+
+        document.getElementById("outputText").innerHTML = formattedHTML;
+        
+        document.getElementById("copyBtn").style.display = "block";
+        const copyBtn = document.getElementById("copyBtn");
+        copyBtn.innerText = "Copy Text";
+        copyBtn.classList.remove("success");
+    }
+
+    // --- COPY LOGIC ---
+    function copyResult() {
+        const outputText = document.getElementById("outputText").innerText;
+        
+        navigator.clipboard.writeText(outputText).then(() => {
+            const copyBtn = document.getElementById("copyBtn");
+            copyBtn.innerText = "Copied!";
+            copyBtn.classList.add("success");
+            
+            setTimeout(() => {
+                copyBtn.innerText = "Copy Text";
+                copyBtn.classList.remove("success");
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            alert("Failed to copy. Please select and copy manually.");
+        });
+    }
+  </script>
+
+{% endblock body %}

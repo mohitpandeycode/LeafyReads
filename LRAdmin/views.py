@@ -10,6 +10,29 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import user_passes_test
 
 # Create your views here.
+LANGUAGE_CHOICES = [
+    ('English', 'English'),
+    ('Hindi', 'Hindi'),
+    ('Arabic', 'Arabic'),
+    ('Bengali', 'Bengali'),
+    ('Chinese', 'Chinese'),
+    ('French', 'French'),
+    ('German', 'German'),
+    ('Gujarati', 'Gujarati'),
+    ('Japanese', 'Japanese'),
+    ('Kannada', 'Kannada'),
+    ('Malayalam', 'Malayalam'),
+    ('Marathi', 'Marathi'),
+    ('Odia', 'Odia'),
+    ('Portuguese', 'Portuguese'),
+    ('Punjabi', 'Punjabi'),
+    ('Russian', 'Russian'),
+    ('Sanskrit', 'Sanskrit'),
+    ('Spanish', 'Spanish'),
+    ('Tamil', 'Tamil'),
+    ('Telugu', 'Telugu'),
+    ('Urdu', 'Urdu')
+]
 
 
 def loginAdmin(request):
@@ -43,7 +66,7 @@ def loginAdmin(request):
 
 @user_passes_test(lambda u: u.is_staff, login_url="login_admin")
 def dashboard(request):
-
+    # --- 1. Handle Bulk Actions (POST) ---
     if request.method == "POST":
         action = request.POST.get("action")
         selected_books = request.POST.getlist("selected_books")
@@ -55,15 +78,22 @@ def dashboard(request):
                 book.delete()
             return redirect("dashboard")
 
-
     
-    # Start with all books, fetch genre relationship efficiently
+    # --- 2. Base Query & Dropdown Data ---
     books_list = Book.objects.select_related("genre").filter(uploaded_by=request.user).order_by("-uploaded_at")
+    genres = Genre.objects.all()
+    languages = [lang[0] for lang in LANGUAGE_CHOICES]
 
+    # --- 3. Extract GET Parameters ---
     book_query = request.GET.get("search", "").strip()
+    status_filter = request.GET.get("status", "")
+    lang_filter = request.GET.get("language", "")
+    genre_filter = request.GET.get("genre", "")
 
+    # --- 4. Apply Filters ---
+    
+    # Text Search Filter
     if book_query:
-        
         keywords = book_query.split()
         query = Q()
         for keyword in keywords:
@@ -77,17 +107,38 @@ def dashboard(request):
             
         books_list = books_list.filter(query).distinct()
         
-    #Apply Pagination 
+    # Status Filter
+    if status_filter == 'published':
+        books_list = books_list.filter(is_published=True)
+    elif status_filter == 'draft':
+        books_list = books_list.filter(is_published=False)
 
+    # Language Filter
+    if lang_filter:
+        books_list = books_list.filter(book_language=lang_filter)
+
+    # Genre Filter
+    if genre_filter:
+        # Assumes genre_filter is the genre's ID coming from the select dropdown
+        books_list = books_list.filter(genre__id=genre_filter)
+
+    # --- 5. Apply Pagination ---
     PAGESIZE = 20
     paginator = Paginator(books_list, PAGESIZE)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     
+    # --- 6. Context ---
     context = {
         "books": page_obj,
+        "genres": genres,
+        "languages": languages,
         "search": book_query,
+        "current_status": status_filter,
+        "current_language": lang_filter,
+        "current_genre": int(genre_filter) if genre_filter.isdigit() else '',
     }
+    
     return render(request, "dashboard.html", context)
 
 
@@ -240,4 +291,7 @@ def userUploads(request):
         "search": book_query,
     }
     return render(request, "userUploadsDashboard.html", context)
+
+def storyFormatter(request):
+    return render(request, 'storyFormatter.html')
     

@@ -2,15 +2,152 @@ body {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
-
-
 .books-container {
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
 }
+.books-header-top {
+        display: flex;
+        justify-content: space-between; 
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .books-header-top h4 {
+        margin: 0;
+        font-size: 24px;
+        color: #0f2e37;
+        font-weight: 700;
+    }
 
+    .btn-add-book {
+        background-color: #10b981;
+        color: #ffffff;
+        padding: 10px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .btn-add-book:hover {
+        background-color: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-input, .filter-select {
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 15px;
+        color: #0f2e37;
+        background-color: #ffffff;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .filter-input {
+        flex: 1; 
+        min-width: 220px;
+    }
+
+    .filter-input:focus, .filter-select:focus {
+        border-color: #0f2e37;
+        box-shadow: 0 0 0 3px rgba(15, 46, 55, 0.1); 
+    }
+
+    .btn-apply-filter {
+        background-color: #0f2e37;
+        color: #ffffff;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-apply-filter:hover {
+        background-color: #1a4957;
+        transform: translateY(-1px);
+    }
+
+    .btn-clear-filter {
+        background-color: transparent;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        padding: 9px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        text-align: center;
+    }
+
+    .btn-clear-filter:hover {
+        background-color: #f1f5f9;
+        color: #0f2e37;
+        border-color: #64748b;
+    }
+
+    /* --- DARK MODE OVERRIDES (Direct Hex Colors) --- */
+    body.dark-mode .books-header-top { border-bottom-color: #334155; }
+    body.dark-mode .books-header-top h4 { color: #f8fafc; }
+    
+    body.dark-mode .filter-input, 
+    body.dark-mode .filter-select {
+        border-color: #334155;
+        color: #f8fafc;
+        background-color: #0f172a;
+    }
+    body.dark-mode .filter-input:focus, 
+    body.dark-mode .filter-select:focus {
+        border-color: #4fd1c5;
+        box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15);
+    }
+    
+    body.dark-mode .btn-apply-filter { background-color: #4fd1c5; color: #0f172a; }
+    body.dark-mode .btn-apply-filter:hover { background-color: #319795; }
+    
+    body.dark-mode .btn-clear-filter { color: #94a3b8; border-color: #334155; }
+    body.dark-mode .btn-clear-filter:hover { background-color: #334155; color: #f8fafc; border-color: #94a3b8; }
+
+    /* --- MOBILE RESPONSIVENESS --- */
+    @media (max-width: 768px) {
+        .books-header-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .btn-add-book {
+            width: 100%;
+        }
+        
+        .filter-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-input, .filter-select, .btn-apply-filter, .btn-clear-filter {
+            width: 100%;
+        }
+    }
 .books-header {
     padding: 10px;
     font-size: 12px;
