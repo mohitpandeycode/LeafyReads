@@ -21,7 +21,7 @@
 
   {# 3. GENERATE DESCRIPTION FROM CKEDITOR #}
   {% if book.content %}
-  "description": "{{ book.summary.content|striptags|truncatewords:50|escapejs }}",
+  "description": "{{ book.summary|striptags|truncatewords:50|escapejs }}",
   {% endif %}
 
   {# 4. GENRE #}
