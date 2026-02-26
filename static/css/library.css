@@ -10,6 +10,7 @@
       width: 100%;
       z-index: 9;
       overflow: hidden;
+      scroll-behavior: smooth;
   }
 
   body.dark-mode .filter-section-wrapper {
@@ -19,13 +20,17 @@
   .filter-section {
       flex-grow: 1;
       display: flex;
-      overflow-x: scroll;
+      overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       white-space: nowrap;
       padding: 0 15px;
       gap: 8px;
       -ms-overflow-style: none;
       scrollbar-width: none;
+      scroll-behavior: smooth;
+      will-change: scroll-position;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
   }
 
   .filter-section::-webkit-scrollbar {
@@ -47,6 +52,8 @@
       cursor: pointer;
       transition: background-color 0.2s;
       flex-shrink: 0;
+      scroll-behavior: smooth;
+      scroll-snap-align: start;
   }
 
   body.dark-mode .filter-item {

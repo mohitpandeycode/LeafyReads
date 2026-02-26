@@ -310,12 +310,42 @@
     document.addEventListener('DOMContentLoaded', function() {
         const savedView = localStorage.getItem('libraryView') || 'grid';
         
-        // Apply instantly on load without animation delay
         executeViewSwitch(savedView);
         
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
-    });
+
+    const scrollContainer = document.getElementById('filter-scroll-container');
+    if (scrollContainer) {
+        let isScrolling = false;
+        
+        scrollContainer.addEventListener('wheel', (evt) => {
+            if (evt.deltaY !== 0) {
+                evt.preventDefault();
+                if (!isScrolling) {
+                    window.requestAnimationFrame(() => {
+                        scrollContainer.scrollBy({
+                            left: evt.deltaY * 1.5,
+                            behavior: 'smooth' 
+                        });
+                        isScrolling = false;
+                    });
+                    isScrolling = true;
+                }
+            }
+        }, { passive: false });
+    }
+});
+
+function scrollFilters(direction) {
+    const container = document.getElementById('filter-scroll-container');
+    const scrollAmount = 300; 
+    if (direction === 'left') {
+        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+}
 </script>
 {% endblock %}
