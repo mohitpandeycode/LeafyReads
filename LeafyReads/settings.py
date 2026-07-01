@@ -28,6 +28,7 @@ else:
     ALLOWED_HOSTS = [
         "leafyreads.com",
         "www.leafyreads.com",
+        "leafyreads.onrender.com",
         "15.206.60.20",            
         "127.0.0.1",               
         "localhost",               
@@ -283,6 +284,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.leafyreads.com",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
+    "https://leafyreads.onrender.com",
 ]
 
 if ENVIRONMENT != 'development':
