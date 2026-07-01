@@ -1,0 +1,11 @@
+
+
+services:
+    - type: web
+    plan: free # Consider 'standard' or higher for production apps
+    name: LeafyReads # Replace with your actual project name
+    runtime: python
+    buildCommand: './build.sh' # Specifies the build script
+    startCommand: 'python -m gunicorn LeafyReads.asgi:application -k uvicorn.workers.UvicornWorker' # Specifies the command to start your web server
+
+
