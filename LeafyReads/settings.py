@@ -29,6 +29,7 @@ else:
         "leafyreads.com",
         "www.leafyreads.com",
         "leafyreads.onrender.com",
+        "leafyreads-n4d3.onrender.com"
         "15.206.60.20",            
         "127.0.0.1",               
         "localhost",               
