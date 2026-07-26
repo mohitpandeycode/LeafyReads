@@ -6,13 +6,15 @@
 {{ title }} - By {{ book.author }} | LeafyReads
 {% endblock %}
 
-{% block meta_description %}{{ title }} by {{ book.author }} online only on LeafyReads.{{ book.content|truncatewords:25 }} | {% endblock %}
+{% block meta_description %}{{ title }} by {{ book.author }} online only on LeafyReads.{{ book.content|truncatewords:25
+}} | {% endblock %}
 
 {% block social_tags %}
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content="{{ book.title }} - By {{ book.author }}" />
-<meta property="og:description" content="Discover and read '{{ book.title }}' on LeafyReads. {{ book.summary|truncatewords:20 }}" />
+<meta property="og:description"
+    content="Discover and read '{{ book.title }}' on LeafyReads. {{ book.summary|truncatewords:20 }}" />
 <meta property="og:image" content="{{ book.cover_front.url }}" />
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 <meta name="twitter:card" content="summary_large_image">
@@ -32,37 +34,43 @@
         <aside class="book-sidebar">
             <div class="cover-container">
                 <img src="{{ book.cover_front.url }}?q=auto&f_auto" alt="{{ book.title }}" class="book-cover"
-                    onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';">
+                onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';">
+                <img class="smallbookdescframe" src="{% cloudinary_url 'eeioc45vxaegfqqfujvd' quality='auto' fetch_format='auto' %}" loading="lazy" alt="frame random" />
                 <div class="badge-overlay">
                     {% if book.level %}Level {{ book.level }}{% endif %}
                 </div>
             </div>
 
-            <div class="book-stats">
-                <div class="stat-item">
-                    <span class="count">{{ book.likes_count }}</span>
-                    <span class="label">Likes</span>
-                </div>
-                <div class="stat-item">
-                    <span class="count">{{ book.views_count }}</span>
-                    <span class="label">Reads</span>
-                </div>
-                <div class="stat-item verified">
-                    <span class="count">{{ book.read_later_count }}</span>
-                    <span class="label">Saves</span>
-                </div>
-            </div>
+            <div class="sidebar-right-content">
+                <!-- Mobile title, hidden on desktop -->
+                <h1 class="book-title mobile-title-inline">{{ book.title }}</h1>
 
-            <div class="share-row">
-                <button class="btn-chip share-btn" onclick="shareLink()">
-                    <i data-lucide="share-2" style="width: 16px;"></i> Share Book
-                </button>
-                
+                <div class="book-stats">
+                    <div class="stat-item">
+                        <i style="width:16px;" data-lucide="heart"></i>
+                        <span class="count">{{ book.likes_count }}</span>
+                    </div>
+                    <div class="stat-item">
+                         <i style="width:16px;" data-lucide="eye"></i>
+                         <span class="count">{{ book.views_count }}</span>
+                        
+                    </div>
+                    <div class="stat-item verified">
+                        <i style="width:16px;" data-lucide="bookmark"></i>
+                        <span class="count">{{ book.read_later_count }}</span>
+                    </div>
+                </div>
+
+                <div class="share-row">
+                    <button class="btn-chip share-btn" onclick="shareLink()">
+                        <i data-lucide="share-2" style="width: 16px;"></i> Share Book
+                    </button>
+                </div>
             </div>
         </aside>
 
         <section class="book-info" style="overflow: hidden;overflow-wrap: break-word;word-break: break-word;">
-            <header class="book-header">
+            <header class="book-header mobile-hidden">
                 <h1 class="book-title">{{ book.title }}</h1>
             </header>
 
@@ -83,26 +91,20 @@
                     <span class="credit-label">Genre</span>
                     <span class="credit-value">{{ book.genre }}, {{ book.genre.category }}</span>
                 </div>
-                <div class="credit-row">
-                    <span class="credit-label">Added ON</span>
-                    <span class="credit-value local-time" data-utc="{{ book.uploaded_at|date:'c' }}">
-                        {{ book.uploaded_at|date:"M d, Y" }}
-                    </span>
-                </div>
             </div>
 
             <div class="book-description">
                 <h4>Summary</h4>
                 {% if book.summary %}
-                    <p>{{ book.summary|truncatechars:900 }}</p>
-                {% else %}                   
-                    <p>{{ book.bookcontent|striptags|truncatechars:500 }}</p>
+                <p>{{ book.summary|truncatechars:900 }}</p>
+                {% else %}
+                <p>{{ book.bookcontent|striptags|truncatechars:500 }}</p>
                 {% endif %}
             </div>
-             
+
             <div class="action-area">
                 <a href="{% url 'read-book' book.slug %}" class="btn btn-primary btn-lg">
-                    <i data-lucide="book-open-text"></i> 
+                    <i data-lucide="book-open-text"></i>
                     <span>Start Reading</span>
                 </a>
             </div>
@@ -124,9 +126,11 @@
                     <img class="imgbook" src="{{ b.cover_front.url }}" alt="{{ b.title }}" loading="lazy"
                         onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';" />
 
-                    {% cloudinary "eeioc45vxaegfqqfujvd" loading="lazy" quality="auto" fetch_format="auto" style="position:absolute;left:-4px;top:-2px;width:102%;height:82%;" alt="frame random" %}
+                    <img src="{% cloudinary_url 'eeioc45vxaegfqqfujvd' quality='auto' fetch_format='auto' %}"
+                        loading="lazy" style="position:absolute;left:-4px;top:-2px;width:100%;height:82%;"
+                        alt="frame random" />
 
-                    <div style="box-shadow:1px 1px 1px #61616138;border-radius:0 0 5px 5px;">
+                    <div>
                         <div class="readby">
                             <h3 class="truncate">{{ b.title }}</h3>
                             <div class="views">
@@ -154,7 +158,7 @@
 </main>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         lucide.createIcons();
 
         // --- Timezone Logic ---
@@ -174,9 +178,9 @@
     async function shareLink() {
         const shareData = {
             title: "{{ book.title|escapejs }} | LeafyReads",
-            url: window.location.href 
+            url: window.location.href
         };
-        
+
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
