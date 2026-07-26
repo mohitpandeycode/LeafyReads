@@ -118,6 +118,7 @@
      display: flex;
      gap: 15px;
      margin-bottom: 40px;
+     flex-wrap: wrap;
  }
 
  .action-card {
@@ -216,6 +217,9 @@
      grid-template-columns: 2fr 1fr;
      gap: 24px;
      margin-bottom: 40px;
+ }
+ .dashboard-split-grid.equal-split {
+     grid-template-columns: 1fr 1fr;
  }
 
  /* --- CARDS --- */
@@ -355,7 +359,8 @@
 
  /* --- RESPONSIVE --- */
  @media (max-width: 900px) {
-     .dashboard-split-grid {
+     .dashboard-split-grid,
+     .dashboard-split-grid.equal-split {
          grid-template-columns: 1fr;
      }
  }
@@ -505,6 +510,8 @@
         justify-content: space-around;
         height: 100%;
         padding: 10px 0;
+        flex-wrap: wrap;
+        gap: 20px;
     }
 
     .donut-chart {
@@ -558,8 +565,16 @@
 
     /* Responsive adjustments */
     @media (max-width: 600px) {
-        .dashboard-split-grid {
+        .dashboard-split-grid,
+        .dashboard-split-grid.equal-split {
             grid-template-columns: 1fr !important; /* Stack charts on mobile */
+        }
+        .donut-wrapper {
+            flex-direction: column;
+            gap: 15px;
+        }
+        .chart-container {
+            height: 150px;
         }
     }
 
@@ -661,17 +676,39 @@
      }
 
      .quick-actions {
-         flex-wrap: wrap;
-         justify-content: center;
+         display: grid;
+         grid-template-columns: repeat(3, 1fr);
          gap: 10px;
      }
 
      .action-card {
-         width: 45%;
+         width: auto;
+         padding: 10px 5px;
+         font-size: 0.75rem;
+         height: auto;
+         min-height: 85px;
+     }
+     
+     .action-card i {
+         width: 24px;
+         height: 24px;
      }
 
      .profile-stats {
-         grid-template-columns: 1fr;
+         grid-template-columns: repeat(2, 1fr);
+         gap: 1rem;
+     }
+
+     .stat-item {
+         padding: 0.75rem;
+     }
+     
+     .stat-item h2 {
+         font-size: 1.5rem;
+     }
+
+     .stat-item p {
+         font-size: 0.7rem;
      }
 
      .book-list {

@@ -511,9 +511,25 @@
         font-size: 0.6rem;
     }
 
-    .category-card i {
-        width: 1.4rem !important;
-        height: 1.4rem !important;
+    .category-image {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .category-name {
+        font-size: 11px;
+    }
+    .category-card:hover .category-image {
+    width: 70%;
+    }
+
+    .category-card {
+        height: 85px;
+    }
+
+    .container {
+        padding-left: 0rem;
+        padding-right: 0rem;
     }
 
     .books-category-grid {

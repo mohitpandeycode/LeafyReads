@@ -162,13 +162,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (categoryCards.length && categoryToggleBtn) {
             let showingAll = false;
             const btnText = categoryToggleBtn.querySelector('div');
-            const btnIcon = categoryToggleBtn.querySelector('i');
 
             const updateView = () => {
-                categoryCards.forEach((card, i) => (card.style.display = showingAll || i < 17 ? 'inline-block' : 'none'));
+                // 1. Toggle cards
+                categoryCards.forEach((card, i) => (card.style.display = showingAll || i < 17 ? 'flex' : 'none'));
+                
+                // 2. Update text
                 if (btnText) btnText.textContent = showingAll ? 'Show Less' : 'Other';
-                if (btnIcon) {
-                    btnIcon.setAttribute('data-lucide', showingAll ? 'circle-chevron-up' : 'circle-chevron-down');
+                
+                // 3. Update icon
+                const currentIcon = categoryToggleBtn.querySelector('i, svg');
+                
+                if (currentIcon) {
+
+                    const newIcon = document.createElement('i');
+                    
+                    // Set the dynamic attribute
+                    newIcon.setAttribute('data-lucide', showingAll ? 'circle-chevron-up' : 'circle-chevron-down');
+                    
+                    newIcon.style.width = '2rem';
+                    newIcon.style.height = '2rem';
+                    newIcon.style.color = 'var(--color-primary)';
+                    newIcon.style.marginBottom = '0.5rem';
+
+                    currentIcon.replaceWith(newIcon);
+
                     if (window.lucide) lucide.createIcons({ root: categoryToggleBtn });
                 }
             };
@@ -177,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showingAll = !showingAll;
                 updateView();
             });
+            
             updateView();
         }
 

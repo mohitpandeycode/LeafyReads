@@ -58,8 +58,6 @@ section {
 /* --- SIDEBAR --- */
 .cover-container {
     position: relative;
-    border-radius: var(--radius-md);
-    overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     width: 100%;
     transition: transform 0.3s ease;
@@ -73,7 +71,7 @@ section {
 
 
 .cover-container:hover {
-    transform: translateY(-5px);
+    transform: scale(1.05) translateY(-8px) rotateZ(1deg);
 }
 
 .badge-overlay {
@@ -295,9 +293,17 @@ body.dark-mode .book-credits {
     display: none;
 }
 
-.smallbookdescframe {
-    display: none;
+.smallbookdescframe{
+     display: block;
+        position: absolute;
+        left: -3px;
+        top: -2px;
+        width: 104%;
+        height: 102%;
 }
+
+
+
 
 /* --- RESPONSIVE --- */
 @media (max-width: 900px) {
@@ -479,11 +485,6 @@ body.dark-mode .book-credits {
     .book-description p {
         line-height: 1.9;
         font-size: 0.9rem;
-    }
-
-    .cover-container {
-        border-radius: none;
-        overflow: visible;
     }
 
     .smallbookdescframe {

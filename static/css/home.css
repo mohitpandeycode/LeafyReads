@@ -337,7 +337,8 @@ body.dark-mode .notif-header h3 {
 }
 
 body.dark-mode .notif-item {
-    border-bottom-color: #5376a9;;
+    border-bottom-color: #5376a9;
+    ;
 }
 
 body.dark-mode .notif-item:hover {
@@ -635,10 +636,11 @@ section {
     border-radius: 15px;
     color: white;
     padding: 0 9px;
-    transform-origin: left center; 
-    transform:rotate(-2deg); 
+    transform-origin: left center;
+    transform: rotate(-2deg);
 }
-body.dark-mode .highText{
+
+body.dark-mode .highText {
     background: #96e7f1;
     color: black;
 }
@@ -1158,6 +1160,8 @@ body.dark-mode .dark-image {
     .books-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
+
 }
 
 /* Small desktops */
@@ -1195,7 +1199,6 @@ body.dark-mode .dark-image {
     object-fit: fill;
     border-bottom: none;
     transition: transform 0.5s ease, box-shadow 0.5s ease
-    
 }
 
 body.dark-mode .book-item img {
@@ -1336,16 +1339,57 @@ body.dark-mode .feature-icon.bg-purple {
     transition: color 0.3s ease
 }
 
+.category-card {
+    position: relative;
+    height: 140px;
+    overflow: hidden;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.75rem;
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--color-logo-dark);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.category-image {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.5rem;
+    object-fit: contain;
+    transition: all 0.45s ease;
+}
+
+.category-name {
+    font-weight: 700;
+    font-size: 14px;
+    transition: opacity 0.35s ease,
+        transform 0.35s ease,
+        max-height 0.35s ease;
+    max-height: 30px;
+    overflow: hidden;
+    opacity: 1;
+}
+
+.category-card:hover .category-image {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.category-card:hover .category-name {
+    opacity: 0;
+    transform: translateY(10px);
+    max-height: 0;
+}
+
 .books-category-grid .category-card {
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / .04);
     transition: box-shadow 0.5s, transform 0.5s, background 0.5s
-}
-
-.books-category-grid .category-card:hover {
-    background: var(--color-primary);
-    color: var(--color-white);
-    box-shadow: 0 8px 24px 0 rgb(59 130 246 / .15);
-    transform: translateY(-6px) scale(1.04)
 }
 
 .books-category-grid .category-card:hover i {

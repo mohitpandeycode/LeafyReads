@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.db.models import Count, Exists, OuterRef
 from django.db.models import Q
 from home.models import Notification,ContentType
+from django.utils import timezone
+import json
 
 @login_required
 def profilepage(request):
@@ -26,6 +28,85 @@ def profilepage(request):
         published_books_count=Count('uploaded_books', filter=Q(uploaded_books__is_published=True), distinct=True)
     )
 
+    # Calculate Day Streak
+    history = ReadBy.objects.filter(user=user).order_by('-readed_at').values_list('readed_at', flat=True)
+    read_dates = sorted(list(set(dt.date() for dt in history)), reverse=True)
+    day_streak = 0
+    if read_dates:
+        today = timezone.now().date()
+        curr = today
+        if read_dates[0] == today:
+            pass
+        elif read_dates[0] == today - timezone.timedelta(days=1):
+            curr = today - timezone.timedelta(days=1)
+        else:
+            curr = None
+        
+        if curr:
+            for d in read_dates:
+                if d == curr:
+                    day_streak += 1
+                    curr -= timezone.timedelta(days=1)
+                elif d > curr:
+                    continue
+                else:
+                    break
+                    
+    # Calculate Reading Tastes (Donut Chart)
+    genre_counts = ReadBy.objects.filter(user=user).values('book__genre__name').annotate(count=Count('id')).order_by('-count')
+    total_read = sum(g['count'] for g in genre_counts)
+    
+    reading_tastes = []
+    other_count = 0
+    colors = ['var(--dash-primary)', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6']
+    
+    for i, g in enumerate(genre_counts):
+        if i < 3:
+            reading_tastes.append({
+                'label': g['book__genre__name'] or 'Unknown',
+                'count': g['count'],
+                'color': colors[i % len(colors)]
+            })
+        else:
+            other_count += g['count']
+            
+    if other_count > 0:
+        reading_tastes.append({
+            'label': 'Other',
+            'count': other_count,
+            'color': colors[3]
+        })
+        
+    current_percentage = 0
+    gradient_parts = []
+    for item in reading_tastes:
+        percentage = (item['count'] / total_read) * 100 if total_read > 0 else 0
+        item['percentage'] = round(percentage)
+        next_percentage = current_percentage + percentage
+        gradient_parts.append(f"{item['color']} {current_percentage}% {next_percentage}%")
+        current_percentage = next_percentage
+        
+    donut_gradient = ", ".join(gradient_parts) if gradient_parts else "var(--dash-track) 0% 100%"
+
+    # Calculate Reading Activity (Last 7 Days)
+    today = timezone.now().date()
+    last_7_days = [today - timezone.timedelta(days=i) for i in range(6, -1, -1)]
+    activity_counts = {d: 0 for d in last_7_days}
+    
+    for dt in history:
+        d = dt.date()
+        if d in activity_counts:
+            activity_counts[d] += 1
+            
+    chart_data = {
+        'labels': [d.strftime('%a') for d in last_7_days],
+        'counts': [activity_counts[d] for d in last_7_days]
+    }
+    activity_chart_json = json.dumps(chart_data)
+    
+    # Calculate 2025 Goal Percentage
+    goal_percentage = min(int((stats['books_read_count'] / 30.0) * 100), 100)
+
     # 2.Fetch books + genre in ONE query
     recently_read_books = (
         ReadBy.objects.filter(user=user)
@@ -36,6 +117,11 @@ def profilepage(request):
     context = {
         "profile_user": user,
         "recently_read_books": recently_read_books,
+        "day_streak": day_streak,
+        "reading_tastes": reading_tastes,
+        "donut_gradient": donut_gradient,
+        "activity_chart_json": activity_chart_json,
+        "goal_percentage": goal_percentage,
         **stats, # This now includes 'community_posts_count'
     }
 

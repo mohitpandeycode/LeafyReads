@@ -36,6 +36,10 @@ class Category(models.Model):
 
 # GENRE MODEL
 
+def genre_folder(instance):
+    return f"genres/{slugify(instance.name)}"
+
+
 class Genre(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, related_name="genres"
@@ -43,7 +47,7 @@ class Genre(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     lucidicon = models.CharField(max_length=100, blank=True, null=True)
-    image = CloudinaryField("image",resource_type="image",folder=book_folder,blank=True,null=True,)
+    image = CloudinaryField("image",resource_type="image",folder=genre_folder,blank=True,null=True,)
 
     class Meta:
         ordering = ["name"]

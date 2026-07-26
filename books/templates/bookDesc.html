@@ -33,9 +33,9 @@
 
         <aside class="book-sidebar">
             <div class="cover-container">
-                <img src="{{ book.cover_front.url }}?q=auto&f_auto" alt="{{ book.title }}" class="book-cover"
+                <img src="{{ book.cover_front.url }}?q=auto&f_auto" alt="{{ book.title }}" class="book-cover larg"
                 onerror="this.onerror=null;this.src='https://placehold.co/400x600?text=No+Cover';">
-                <img class="smallbookdescframe" src="{% cloudinary_url 'eeioc45vxaegfqqfujvd' quality='auto' fetch_format='auto' %}" loading="lazy" alt="frame random" />
+                <img class="smallbookdescframe larg" src="{% cloudinary_url 'eeioc45vxaegfqqfujvd' quality='auto' fetch_format='auto' %}" loading="lazy" alt="frame random" />
                 <div class="badge-overlay">
                     {% if book.level %}Level {{ book.level }}{% endif %}
                 </div>

@@ -60,7 +60,7 @@ My Dashboard | LeafyReads
                 </a>
                 <div class="stat-item">
                     <div class="icon" style="color:#f59e0b;"><i data-lucide="flame"></i></div>
-                    <h2>5</h2>
+                    <h2>{{ day_streak }}</h2>
                     <p>Day Streak</p>
                 </div>
                 <a class="stat-item" href="{% url 'myBooks' %}">
@@ -105,11 +105,8 @@ My Dashboard | LeafyReads
                         <div class="read-author">By {{ book.author }}</div>
                         <div class="progress-container">
                             <div class="progress-row">
-                                <span>In Progress</span>
-                                <span>{% cycle '32%' '58%' '14%' %}</span>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill"></div>
+                                <span>Read on</span>
+                                <span>{{ read_item.readed_at|date:"M d, Y" }}</span>
                             </div>
                         </div>
                     </div>
@@ -127,9 +124,11 @@ My Dashboard | LeafyReads
                     <div class="dash-title"><i data-lucide="target" size="18"></i> 2025 Goal</div>
                 </div>
                 <div class="goal-wrapper">
-                    <div class="goal-ring">
-                        <span class="goal-num">{{ books_read_count }}</span>
-                        <span class="goal-label">of 30 Books</span>
+                    <div class="goal-ring" style="background: conic-gradient(var(--dash-primary) {{ goal_percentage }}%, var(--dash-track) {{ goal_percentage }}%); border: none;">
+                        <div style="background: var(--dash-bg-card); width: 110px; height: 110px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <span class="goal-num">{{ books_read_count }}</span>
+                            <span class="goal-label">of 30 Books</span>
+                        </div>
                     </div>
                     <p class="goal-text">You are on track to beat your reading goal this year!</p>
                     <button
@@ -142,7 +141,7 @@ My Dashboard | LeafyReads
     </section>
     <section style="margin-bottom: 40px;">
         <div class="container">
-            <div class="dashboard-split-grid" style="grid-template-columns: 1fr 1fr; align-items: stretch;">
+            <div class="dashboard-split-grid equal-split" style="align-items: stretch;">
                 
                 <div class="dash-card">
                     <div class="dash-header">
@@ -161,14 +160,12 @@ My Dashboard | LeafyReads
                                     <stop offset="100%" stop-color="var(--dash-primary)" stop-opacity="0"/>
                                 </linearGradient>
                             </defs>
-                            <path d="M0,150 C50,150 50,100 100,100 C150,100 150,160 200,160 C250,160 250,40 300,40 C350,40 350,120 400,120 C450,120 450,80 500,80 L500,200 L0,200 Z" 
-                                  fill="url(#gradientFill)" />
-                            <path d="M0,150 C50,150 50,100 100,100 C150,100 150,160 200,160 C250,160 250,40 300,40 C350,40 350,120 400,120 C450,120 450,80 500,80" 
-                                  fill="none" stroke="var(--dash-primary)" stroke-width="4" stroke-linecap="round"/>
+                            <path id="chartArea" d="" fill="url(#gradientFill)" />
+                            <path id="chartLine" d="" fill="none" stroke="var(--dash-primary)" stroke-width="4" stroke-linecap="round"/>
                         </svg>
 
-                        <div class="chart-labels">
-                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        <div class="chart-labels" id="chartLabels">
+                            <!-- Injected by JS -->
                         </div>
                     </div>
                 </div>
@@ -179,30 +176,24 @@ My Dashboard | LeafyReads
                     </div>
                     
                     <div class="donut-wrapper">
-                        <div class="donut-chart">
+                        <div class="donut-chart" style="background: conic-gradient({{ donut_gradient }});">
                             <div class="donut-hole">
-                                <span style="font-weight:800; font-size:1.5rem; color:var(--dash-text-main);">12</span>
+                                <span style="font-weight:800; font-size:1.5rem; color:var(--dash-text-main);">{{ books_read_count }}</span>
                                 <span style="font-size:0.75rem; color:var(--dash-text-sub);">Books</span>
                             </div>
                         </div>
 
                         <div class="chart-legend">
+                            {% for item in reading_tastes %}
                             <div class="legend-item">
-                                <span class="dot" style="background:var(--dash-primary);"></span>
-                                <span class="label">Fiction (50%)</span>
+                                <span class="dot" style="background:{{ item.color }};"></span>
+                                <span class="label">{{ item.label }} ({{ item.percentage }}%)</span>
                             </div>
+                            {% empty %}
                             <div class="legend-item">
-                                <span class="dot" style="background:#f59e0b;"></span>
-                                <span class="label">Sci-Fi (25%)</span>
+                                <span class="label">No reading data yet.</span>
                             </div>
-                            <div class="legend-item">
-                                <span class="dot" style="background:#3b82f6;"></span>
-                                <span class="label">History (15%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="dot" style="background:#ef4444;"></span>
-                                <span class="label">Other (10%)</span>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -225,5 +216,47 @@ My Dashboard | LeafyReads
         alertaudio.play().catch(e => console.log(e)); // Catch audio error if any
     });
 
+    // Chart logic
+    const activityData = JSON.parse('{{ activity_chart_json|escapejs }}');
+    const chartLabels = document.getElementById('chartLabels');
+    const chartLine = document.getElementById('chartLine');
+    const chartArea = document.getElementById('chartArea');
+    
+    if (activityData && activityData.labels) {
+        chartLabels.innerHTML = activityData.labels.map(l => `<span>${l}</span>`).join('');
+        
+        const counts = activityData.counts;
+        const maxCount = Math.max(...counts, 4); // minimum max is 4
+        const width = 500;
+        const height = 160; 
+        const stepX = width / (counts.length - 1);
+        
+        let pathD = "";
+        let areaD = "";
+        
+        counts.forEach((c, i) => {
+            const x = i * stepX;
+            const y = 200 - ((c / maxCount) * height); 
+            
+            if (i === 0) {
+                pathD += `M${x},${y} `;
+                areaD += `M${x},${y} `;
+            } else {
+                const prevX = (i - 1) * stepX;
+                const prevY = 200 - ((counts[i-1] / maxCount) * height);
+                const cp1x = prevX + stepX / 2;
+                const cp1y = prevY;
+                const cp2x = x - stepX / 2;
+                const cp2y = y;
+                
+                pathD += `C${cp1x},${cp1y} ${cp2x},${cp2y} ${x},${y} `;
+                areaD += `C${cp1x},${cp1y} ${cp2x},${cp2y} ${x},${y} `;
+            }
+        });
+        
+        chartLine.setAttribute('d', pathD);
+        areaD += `L${width},200 L0,200 Z`;
+        chartArea.setAttribute('d', areaD);
+    }
 </script>
 {% endblock %}
