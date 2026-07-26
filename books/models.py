@@ -43,6 +43,7 @@ class Genre(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     lucidicon = models.CharField(max_length=100, blank=True, null=True)
+    image = CloudinaryField("image",resource_type="image",folder=book_folder,blank=True,null=True,)
 
     class Meta:
         ordering = ["name"]
